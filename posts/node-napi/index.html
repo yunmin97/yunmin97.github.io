@@ -3,7 +3,7 @@
   <head>
     
       <title>
-        Node.js调用C&#43;&#43; ::
+        Node调用C&#43;&#43; ::
         个人博客
       </title>
     
@@ -11,7 +11,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta
   name="description"
-  content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec interdum metus. Aenean rutrum ligula sodales ex auctor, sed tempus dui mollis. Curabitur ipsum dui, aliquet nec commodo at"
+  content="此前，在我开发的SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C&#43;&#43;来实现，充分利用多核CPU的计算优势，于此记录一下Node调用C&#43;&#43;模块的简单实现。
+Node想要调用C&#43;&#43;的模块，就必须把C&#43;&#43;写的模块编译成Node能够使用的动态链接共享对象（插件）。再在Node中使用require对插件进行加载成为普通的Node模块。
+当你仔细阅读Node官网的文档时，你会发现实现这样的插件现在有三种方式（N-API, nan, or direct use of internal V8, libuv and Node.js libraries），官方给出的建议是：当你不准备使用N-API未公开的函数时，请使用N-API（本文使用的方式）。说实话在N-API出来之前，实现Node调C&#43;&#43;的插件真的很狗屎（知识点多、复杂、繁琐）。"
 />
 <meta
   name="keywords"
@@ -46,13 +48,13 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Node.js调用C&#43;&#43;"/>
-<meta name="twitter:description" content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec interdum metus. Aenean rutrum ligula sodales ex auctor, sed tempus dui mollis. Curabitur ipsum dui, aliquet nec commodo at"/>
+<meta name="twitter:title" content="Node调用C&#43;&#43;"/>
+<meta name="twitter:description" content="此前，在我开发的SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C&#43;&#43;来实现，充分利用多核CPU的计算优势..."/>
 
 
 
-<meta property="og:title" content="Node.js调用C&#43;&#43;" />
-<meta property="og:description" content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec interdum metus. Aenean rutrum ligula sodales ex auctor, sed tempus dui mollis. Curabitur ipsum dui, aliquet nec commodo at" />
+<meta property="og:title" content="Node调用C&#43;&#43;" />
+<meta property="og:description" content="此前，在我开发的SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C&#43;&#43;来实现，充分利用多核CPU的计算优势..." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/posts/node-napi/" />
 <meta property="article:published_time" content="2020-11-28T00:00:00+00:00" />
@@ -143,7 +145,7 @@
   
 
   <div class="post">
-    <h1 class="post-title">Node.js调用C++</h1>
+    <h1 class="post-title">Node调用C++</h1>
     <div class="post-meta">
       
         <span class="post-date">
@@ -175,7 +177,9 @@
 
     <div class="post-content">
       
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec interdum metus. Aenean rutrum ligula sodales ex auctor, sed tempus dui mollis. Curabitur ipsum dui, aliquet nec commodo at</p>
+      <p>  此前，在我开发的SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C++来实现，充分利用多核CPU的计算优势，于此记录一下Node调用C++模块的简单实现。<br>
+  Node想要调用C++的模块，就必须把C++写的模块编译成Node能够使用的动态链接共享对象（插件）。再在Node中使用require对插件进行加载成为普通的Node模块。<br>
+  当你仔细阅读Node官网的文档时，你会发现实现这样的插件现在有三种方式（N-API, nan, or direct use of internal V8, libuv and Node.js libraries），官方给出的建议是：当你不准备使用N-API未公开的函数时，请使用N-API（本文使用的方式）。说实话在N-API出来之前，实现Node调C++的插件真的很狗屎（知识点多、复杂、繁琐）。</p>
 
     </div>
     
