@@ -9,17 +9,18 @@
     <description>Recent content in Posts on 个人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 28 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <copyright>Copyright © 2020 Yunmin</copyright>
+    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Node调用C&#43;&#43;</title>
-      <link>/posts/node-napi/</link>
-      <pubDate>Sat, 28 Nov 2020 00:00:00 +0000</pubDate>
+      <link>/posts/node-2-cpp/</link>
+      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/node-napi/</guid>
+      <guid>/posts/node-2-cpp/</guid>
       <description>
         
           
@@ -28,7 +29,7 @@
         
         
         
-          此前，在我开发的SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C++来实现，充分利用多核CPU的计算优势...
+          此前，在我开发的一个SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C++来实现，以充分利用多核CPU的计算优势...
           
         
         </description>
@@ -37,7 +38,7 @@
     <item>
       <title>开启我的博客</title>
       <link>/posts/why-write-blog/</link>
-      <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 28 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>/posts/why-write-blog/</guid>
       <description>
@@ -48,7 +49,7 @@
         
         
         
-          我是个码农，其实真心不怎么喜欢写博客、日志这类东西。以前觉得写博客所花费的那些时间可以够我去学习更多的知识、技能...
+          作为一个码农，其实真心不怎么喜欢写博客、日志这类东西。以前觉得写博客所花费的那些时间可以够我去学习更多的知识、技能...
           
         
         </description>
