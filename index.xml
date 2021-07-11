@@ -10,17 +10,57 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © 2020 Yunmin</copyright>
-    <lastBuildDate>Sun, 04 Jul 2021 11:25:34 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 05 Jul 2021 22:19:30 +0800</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Cesium for Unreal插件（译）</title>
-      <link>/posts/cesium-for-unreal-ue4-plugin/</link>
+      <title>Cesium for Unreal：添加Datasets数据集</title>
+      <link>/posts/cesium/cesium-for-unreal-adding-datasets/</link>
+      <pubDate>Mon, 05 Jul 2021 22:19:30 +0800</pubDate>
+      
+      <guid>/posts/cesium/cesium-for-unreal-adding-datasets/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          这个教程将向你展示如何使用Cesium for Unreal插件导入模型...
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>Cesium for Unreal：快速入门</title>
+      <link>/posts/cesium/cesium-for-unreal-quickstart/</link>
+      <pubDate>Mon, 05 Jul 2021 21:19:30 +0800</pubDate>
+      
+      <guid>/posts/cesium/cesium-for-unreal-quickstart/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          这是一篇使用Cesium World Terrain世界地形和Cesium OSM Buildings建筑构建Cesium for Unreal应用...
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>Cesium for Unreal</title>
+      <link>/posts/cesium/cesium-for-unreal/</link>
       <pubDate>Sun, 04 Jul 2021 11:25:34 +0800</pubDate>
       
-      <guid>/posts/cesium-for-unreal-ue4-plugin/</guid>
+      <guid>/posts/cesium/cesium-for-unreal/</guid>
       <description>
         
           
@@ -37,10 +77,10 @@
     
     <item>
       <title>Node调用C&#43;&#43;</title>
-      <link>/posts/node-2-cpp/</link>
+      <link>/posts/nodejs/node-2-cpp/</link>
       <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/node-2-cpp/</guid>
+      <guid>/posts/nodejs/node-2-cpp/</guid>
       <description>
         
           
@@ -50,26 +90,6 @@
         
         
           此前，在我开发的一个SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C++来实现，以充分利用多核CPU的计算优势...
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>Why博客</title>
-      <link>/posts/why-blog/</link>
-      <pubDate>Sat, 28 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/posts/why-blog/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          和其他码农不一样，其实我真心不怎么喜欢写博客、日志这类东西。以前觉得写博客所花费的那些时间可以够我去学习更多的知识、技能...
           
         
         </description>
