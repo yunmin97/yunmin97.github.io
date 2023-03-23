@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：如何创建一个简单的游戏 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4教程中，你将创建一个第一人称无止尽的游戏。您将学习如何生成随机障碍并重新开始游戏。
+如果你刚开始游戏开发，一个常见的建议便是创造一款基本游戏。这是因为它教会你如何创造简单的机制以及物体之间的相互作用。
+在本教程中，你将创造一款可以无限延续的第一人称游戏。你将学习如何：
+让玩家不断前进。 生成玩家必须避开的障碍。 随机设置障碍以创造变化。 创建一个重启按钮，当玩家碰到障碍时显示。 最后，你的游戏会是这样的：
+请注意，您将在本教程中使用蓝图和UMG。如果您需要复习，请查看我们的 蓝图 和 UI 教程。
+1、准备开始：
+下载本教程 工程文件 并解压。前往项目文件夹下并双击InfiniteMatrix.uproject打开项目。
+注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。
+按Play按钮测试移动控制。您可以通过移动鼠标来垂直和水平移动： 你要做的第一件事就是让玩家不断前进。
+2、向前移动玩家：
+导航到blueprint文件夹并打开BP_Player。
+为了让玩家向前移动，你将在每一帧的玩家位置上添加一个偏移量。
+首先，你需要创造一个决定玩家前进速度的变量。创建一个名为ForwardSpeed的Float类型变量，并将其默认值设置为2000： 接下来，确保您在事件图中，然后找到事件Tick节点。创建以下设置： 通过将“ForwardSpeed”与“Delta Seconds”相乘，您将得到与帧速率无关的结果。
+注意：如果你不熟悉帧速率独立性，请阅读我们的 蓝图 教程。我们在帧速率独立性部分讨论了它。
+接下来，您将使用这个值沿单个轴移动玩家。
+3、沿轴移动：
+要移动玩家角色，创建一个AddActorWorldOffset节点。勾选其复选框，将Sweep设置为true： 如果你尝试将Float的结果值连接到“Delta Location”输入引脚上，虚幻将自动将其转换为Vector：
+但是，这将把Float值放到Vector的X、Y和Z组件中。对于这款游戏，向前移动只能沿着x轴。幸运的是，可以将Vector分成三个Float组件。
+确保AddActorWorldOffset节点的“Delta Location”引脚没有任何连接。右键单击“Delta Location”引脚并选择“Split Struct Pin”进行引脚结构拆分：
+最后，像下面一样连接它们：
+让我们来总结一下： a、在每一帧中，游戏都会将“ForwardSpeed”和“Delta Seconds”相乘以获得帧率无关的结果值。
+b、AddActorWorldOffset节点将使用结果值来沿x轴移动玩家。 c、因为“Sweep”是启用的，如果有任何阻碍玩家将停止前进。
+单击Compile，然后返回到主编辑器。如果你按“Play”键，你将在隧道中移动： 你可以创建一个自动生成隧道的蓝图，而不是手动放置隧道。
+4、创建隧道生成器：
+转到“内容浏览器”，并确保您在blueprint文件夹中。创建一个新的Blueprint类，将Actor作为其父类。命名为BP_TunnelSpawner，然后打开它。
+因为游戏将不断生成隧道，所以创建一个生成函数是个好主意。转到“我的蓝图”面板，创建一个名为SpawnTunnel的新函数。这个函数的目的是在给定的位置生成一个隧道。
+要向函数传递位置，函数需要一个输入参数。当调用函数时，这些将作为输入引脚出现： 它们也将作为函数的Entry节点上的输出引脚出现：
+让我们继续创建一个输入参数。确保你在SpawnTunnel函数的图表中。选择Entry节点，然后转到“细节”面板。单击在Inputs部分旁边的&#43;符号： 将输入参数重命名为SpawnLocation，并将其类型更改为Vector：
+要生成隧道，请添加一“Spawn Actor From Class”节点。单击Class引脚右侧的下拉列表并选择BP_Tunnel：
+要设置生成位置，右键单击“spawn Transform”引脚，选择“Split Struct pin”。然后，将从“Spawn Actor From Class”节点链接到Entry节点，如下所示：
+现在，无论何时调用SpawnTunnel函数，它都会在提供的位置生成一个BP_Tunnel的实例。
+让我们测试一下！
+5、测试隧道生成器："
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/5-how-to-create-a-simple-game/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：如何创建一个简单的游戏"/>
+<meta name="twitter:description" content="在这个虚幻引擎4教程中，你将创建一个第一人称无止尽的游戏。您将学习如何生成随机障碍并重新开始游戏..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：如何创建一个简单的游戏" />
+<meta property="og:description" content="在这个虚幻引擎4教程中，你将创建一个第一人称无止尽的游戏。您将学习如何生成随机障碍并重新开始游戏..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/5-how-to-create-a-simple-game/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-09T23:10:50+08:00" />
+<meta property="article:modified_time" content="2018-11-09T23:10:50+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：如何创建一个简单的游戏</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-09
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4教程中，你将创建一个第一人称无止尽的游戏。您将学习如何生成随机障碍并重新开始游戏。</p>
+<p>如果你刚开始游戏开发，一个常见的建议便是创造一款基本游戏。这是因为它教会你如何创造简单的机制以及物体之间的相互作用。</p>
+<p>在本教程中，你将创造一款可以无限延续的第一人称游戏。你将学习如何：</p>
+<ul>
+<li>让玩家不断前进。</li>
+<li>生成玩家必须避开的障碍。</li>
+<li>随机设置障碍以创造变化。</li>
+<li>创建一个重启按钮，当玩家碰到障碍时显示。</li>
+</ul>
+<p>最后，你的游戏会是这样的：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-1.gif" alt=""></p>
+<p>请注意，您将在本教程中使用蓝图和UMG。如果您需要复习，请查看我们的 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">蓝图</a> 和 <a href="https://yunmin97.github.io/posts/ue4/ui/">UI</a> 教程。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载本教程 <a href="https://koenig-media.raywenderlich.com/uploads/2017/08/InfiniteMatrixStarterProject.zip">工程文件</a> 并解压。前往项目文件夹下并双击InfiniteMatrix.uproject打开项目。</p>
+<p>注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。</p>
+<p>按Play按钮测试移动控制。您可以通过移动鼠标来垂直和水平移动： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-2.gif" alt=""></p>
+<p>你要做的第一件事就是让玩家不断前进。</p>
+<p>  </p>
+<p><strong>2、向前移动玩家：</strong><br>
+导航到blueprint文件夹并打开BP_Player。</p>
+<p>为了让玩家向前移动，你将在每一帧的玩家位置上添加一个偏移量。</p>
+<p>首先，你需要创造一个决定玩家前进速度的变量。创建一个名为ForwardSpeed的Float类型变量，并将其默认值设置为2000：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-1.jpg" alt=""></p>
+<p>接下来，确保您在事件图中，然后找到事件Tick节点。创建以下设置：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-2.jpg" alt=""></p>
+<p>通过将“ForwardSpeed”与“Delta Seconds”相乘，您将得到与帧速率无关的结果。</p>
+<p>注意：如果你不熟悉帧速率独立性，请阅读我们的 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">蓝图</a> 教程。我们在帧速率独立性部分讨论了它。</p>
+<p>接下来，您将使用这个值沿单个轴移动玩家。</p>
+<p>  </p>
+<p><strong>3、沿轴移动：</strong><br>
+要移动玩家角色，创建一个AddActorWorldOffset节点。勾选其复选框，将Sweep设置为true： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-3.jpg" alt=""></p>
+<p>如果你尝试将Float的结果值连接到“Delta Location”输入引脚上，虚幻将自动将其转换为Vector：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-4.jpg" alt=""></p>
+<p>但是，这将把Float值放到Vector的X、Y和Z组件中。对于这款游戏，向前移动只能沿着x轴。幸运的是，可以将Vector分成三个Float组件。</p>
+<p>确保AddActorWorldOffset节点的“Delta Location”引脚没有任何连接。右键单击“Delta Location”引脚并选择“Split Struct Pin”进行引脚结构拆分：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-3.gif" alt=""></p>
+<p>最后，像下面一样连接它们：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-5.jpg" alt=""></p>
+<p>让我们来总结一下：   <br>
+  a、在每一帧中，游戏都会将“ForwardSpeed”和“Delta Seconds”相乘以获得帧率无关的结果值。<br>
+  b、AddActorWorldOffset节点将使用结果值来沿x轴移动玩家。
+  c、因为“Sweep”是启用的，如果有任何阻碍玩家将停止前进。</p>
+<p>单击Compile，然后返回到主编辑器。如果你按“Play”键，你将在隧道中移动：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-4.gif" alt=""></p>
+<p>你可以创建一个自动生成隧道的蓝图，而不是手动放置隧道。</p>
+<p>  </p>
+<p><strong>4、创建隧道生成器：</strong><br>
+转到“内容浏览器”，并确保您在blueprint文件夹中。创建一个新的Blueprint类，将Actor作为其父类。命名为BP_TunnelSpawner，然后打开它。</p>
+<p>因为游戏将不断生成隧道，所以创建一个生成函数是个好主意。转到“我的蓝图”面板，创建一个名为SpawnTunnel的新函数。这个函数的目的是在给定的位置生成一个隧道。</p>
+<p>要向函数传递位置，函数需要一个输入参数。当调用函数时，这些将作为输入引脚出现：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-6.jpg" alt=""></p>
+<p>它们也将作为函数的Entry节点上的输出引脚出现：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-7.jpg" alt=""></p>
+<p>让我们继续创建一个输入参数。确保你在SpawnTunnel函数的图表中。选择Entry节点，然后转到“细节”面板。单击在Inputs部分旁边的+符号：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-8.jpg" alt=""></p>
+<p>将输入参数重命名为SpawnLocation，并将其类型更改为Vector：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-9.jpg" alt=""></p>
+<p>要生成隧道，请添加一“Spawn Actor From Class”节点。单击Class引脚右侧的下拉列表并选择BP_Tunnel：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-10.jpg" alt=""></p>
+<p>要设置生成位置，右键单击“spawn Transform”引脚，选择“Split Struct pin”。然后，将从“Spawn Actor From Class”节点链接到Entry节点，如下所示：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-11.jpg" alt=""></p>
+<p>现在，无论何时调用SpawnTunnel函数，它都会在提供的位置生成一个BP_Tunnel的实例。</p>
+<p>让我们测试一下！</p>
+<p>  </p>
+<p><strong>5、测试隧道生成器：</strong><br>
+切换到事件图表中，并找到“Event BeginPlay”节点。添加一个SpawnTunnel节点并将其连接到“Event BeginPlay”节点。</p>
+<p>在SpawnTunnel节点上，设置Spawn Location为(2000,0,500)：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-12.jpg" alt=""></p>
+<p>现在，当游戏开始时，它将在玩家远上方处产生一个隧道。单击Compile，然后返回到主编辑器。</p>
+<p>首先，从关卡中删除BP_Tunnel。通过左击“世界大纲”面板中的BP_Tunnel来实现。然后，按下删除键将其从关卡中删除。</p>
+<p>接下来，转到“内容浏览器”界面。左击并将BP_TunnelSpawner拖到视口。这将为该关卡添加一个BP_TunnelSpawner的实例。</p>
+<p>如果你按下播放键，游戏将在玩家远上方生成一个隧道： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-5.gif" alt=""></p>
+<p>完成测试后，返回BP_TunnelSpawner。重置SpawnTunnel节点的spawnlocation为(0,0,0)。</p>
+<p>然后，单击Compile按钮进行编译，然后返回到主编辑器。</p>
+<p>在下一节中，您将为BP_Tunnel设定功能。</p>
+<p>  </p>
+<p><strong>6、构建隧道蓝图：</strong><br>
+BP_Tunnel将负责两件事。</p>
+<p>第一件是检测游戏何时会产生一个新的隧道。为此，您将创建一个触发区。一旦触发，BP_Tunnel将告诉BP_TunnelSpawner生成一个新的隧道。通过这样做，你可以创造一个无尽隧道的幻觉： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-6.gif" alt=""></p>
+<p>第二件事是定义生成点。BP_TunnelSpawner将使用此点作为下一个生成位置。</p>
+<p>让我们从创建触发区开始。</p>
+<p>  </p>
+<p><strong>7、创建触发区：</strong>  <br>
+打开BP_Tunnel，然后转到Components面板。添加“Box Collision”组件并将其命名为TriggerZone。</p>
+<p>目前碰撞区域很小。转到Details面板并找到Shape部分。将“Box Extent”属性设置为(32,500,500)：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-13.jpg" alt=""></p>
+<p>接下来，设置Location属性为(2532,0,0)。这将把TriggerZone放置在隧道网格的末端。这意味着只有当玩家到达隧道的尽头时，新隧道才会出现：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-14.jpg" alt=""></p>
+<p>现在，是时候创建生成点了。</p>
+<p>  </p>
+<p><strong>8、创建生成点：</strong><br>
+要定义生成点的位置，可以使用场景组件。这些组件非常适合定义位置，因为它们只包含Transform。它们也可以在视口中看到，所以你可以看到你的生成点在哪里。</p>
+<p>转到“组件”面板，确保没有选中任何内容。添加一个场景组件，并将其重命名为“SpawnPoint”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-15.jpg" alt=""></p>
+<p>隧道网格在x轴上有2500个单位长，因此这个点就应该是连接点的位置。转到Details面板，并将Location属性设置为(2500,0,0)： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-16.jpg" alt=""></p>
+<p>接下来要做的是创建一个函数，在SpawnPoint点上生成一个隧道。</p>
+<p>  </p>
+<p><strong>9、在生成点上生成隧道：</strong><br>
+单击Compile按钮，然后切换到BP_TunnelSpawner。</p>
+<p>下一个BP_Tunnel应该在最远处隧道的生成点生成。通过这样做，隧道将永远继续下去：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-7.gif" alt=""></p>
+<p>因为最远的隧道总是最后生成的隧道，所以您可以很容易地获得它的引用。</p>
+<p>打开SpawnTunnel的图表。右键单击“Spawn Actor From Class”节点的返回值引脚。选择“Promote to Variable”将其提升为变量，并将变量重命名为“NewestTunnel”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-17.jpg" alt=""></p>
+<p>现在，你总是有一个最远隧道的引用。</p>
+<p>接下来，创建一个新函数并将其命名为SpawnTunnelAtSpawnPoint。创建下图: <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-18.jpg" alt=""></p>
+<p>这个设置将获得最新的隧道和它的SpawnPoint组件的位置。然后它会在这个位置生成一个新的隧道。</p>
+<p>为了让BP_Tunnel与BP_TunnelSpawner通信，它需要一个引用。没有通信，BP_TunnelSpawner将不知道何时生成下一个隧道。</p>
+<p>  </p>
+<p><strong>10、创建一个Tunnel Spawner的引用：</strong><br>
+点击Compile按钮编译，然后关闭SpawnTunnelAtSpawnPoint视图。切换到BP_Tunnel。</p>
+<p>添加一个新变量，并命名为TunnelSpawner。将其变量类型设置为“BP_TunnelSpawner\Object Reference”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-19.jpg" alt=""></p>
+<p>单击Compile按钮编译，然后切换回BP_TunnelSpawner。</p>
+<p>打开SpawnTunnel的蓝图视图并添加指定的节点：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-20.jpg" alt=""></p>
+<p>现在，每个隧道将有一个BP_TunnelSpawner的引用。</p>
+<p>接下来，当玩家进入TriggerZone时，你将告诉BP_TunnelSpawner生成下一个隧道。</p>
+<p>  </p>
+<p><strong>11、编写TriggerZone脚本：</strong><br>
+单击Compile，然后切换到BP_Tunnel。</p>
+<p>转到Components面板并右键单击TriggerZone。选择“Add Event\Add OnComponentBeginOverlap”添加事件。这将在事件图表中添加以下节点：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-21.jpg" alt=""></p>
+<p>每当另一个Actor与TriggerZone重叠时，该节点将执行。</p>
+<p>首先，你应该检查与TriggerZone重叠的Actor是否是玩家。</p>
+<p>左击并拖动OnComponentBeginOverlap的“Other Actor”引脚。在任意空白区域上释放左键并从弹出的菜单列表中选择“Cast to BP_Player”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-22.jpg" alt=""></p>
+<p>注意：因为新的隧道在另一个隧道的尽头生成，它将会触发隧道的TriggerZone。如果“Other Actor”是一个隧道，“Cast to BP_Player”节点将阻止任何进一步的执行。</p>
+<p>接下来，将指定的节点添加到“Cast to BP_Player”节点:   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-23.jpg" alt=""></p>
+<p>让我们一步步通过一遍： <br>
+  a、当一个Actor与TriggerZone重叠时，将执行“On Component Begin Overlap (TriggerZone)”节点。  <br>
+  b、“Cast to BP_Player”节点检查重叠的Actor是否是玩家角色。<br>
+  c、如果它是玩家角色，那么BP_TunnelSpawner将生成一个新的隧道。它的位置将是最后一个生成的隧道的SpawnPoint组件。  <br>
+  d、因为旧的隧道已经没有更多的用途，游戏使用DestroyActor节点删除它。</p>
+<p>单击Compile按钮，返回到主编辑器，然后按下Play按钮。一旦你到达隧道的尽头，游戏将生成一个新的隧道：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-8.gif" alt=""></p>
+<p>尽管游戏中不断生成隧道，但它看起来并不是无尽的。你可以通过设置一些可见的隧道来缓解这个问题。之后，当你将此与障碍物结合时，玩家将无法看到隧道的生成。</p>
+<p>  </p>
+<p><strong>12、生成更多隧道：</strong><br>
+首先要做的是创建一个生成一定数量隧道的函数。</p>
+<p>打开BP_TunnelSpawner并创建一个名为SpawnInitialTunnels的新函数。</p>
+<p>要生成指定数量的隧道，可以使用ForLoop节点。此节点将执行指定数量的连接节点。添加一个ForLoop节点并将其连接到Entry节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-24.jpg" alt=""></p>
+<p>要使ForLoop节点执行n次，需要将其“Last Index”引脚值设置为“n - 1”。</p>
+<p>在本教程中，您将生成三个隧道。若要执行三次循环，请将“Last Index”值设置为2：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-25.jpg" alt=""></p>
+<p>注意：如果不设置“First Index”或“Last Index”字段，它们将默认为0。</p>
+<p>当游戏开始时，玩家角色应该总是从隧道开始。为了做到这一点，你可以在玩家所在位置生成第一个隧道。</p>
+<p>  </p>
+<p><strong>13、生成第一个隧道：</strong><br>
+要确定第一个隧道是否已经生成，可以检查是否设置了NewestTunnel。如果没有设置，则意味着没有生成第一个隧道。这是因为NewestTunnel只有在游戏生成隧道后才会进行设置。</p>
+<p>要执行此检查，请在ForLoop节点之后添加一个IsValid节点(带有问号图标的节点)。</p>
+<p>接下来，获取对NewestTunnel的引用，并将其连接到IsValid节点的“Input Object”引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-26.jpg" alt=""></p>
+<p>如果没有设置NewestTunnel，将执行“is not Valid”引脚，反之亦然。</p>
+<p>添加以下内容，并将其连接到IsValid节点的“Is Not Valid”引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-27.jpg" alt=""></p>
+<p>这个设置将在玩家Pawn的位置生成一个隧道。</p>
+<p>接下来，您将生成后续的隧道。</p>
+<p>  </p>
+<p><strong>14、生成后续的隧道：</strong><br>
+添加一个SpawnTunnelAtSpawnPoint节点，并将其连接到IsValid节点的IsValid引脚上；<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-28.jpg" alt=""></p>
+<p>这是最终的图表： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-29.jpg" alt=""></p>
+<p>总结：<br>
+  a、ForLoop节点将总共执行三次。
+  b、在第一个循环中，它将在玩家所在位置生成一个隧道。 <br>
+  c、在随后的循环中，它将在最新隧道的生成点生成一个隧道。</p>
+<p>接下来，转到“事件图表”中并删除SpawnTunnel节点。然后，在“Event BeginPlay”节点后添加一个SpawnInitialTunnels节点：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-30.jpg" alt=""></p>
+<p>当游戏开始时，它会生成三个隧道。</p>
+<p>单击Compile按钮，返回到“主编辑器”界面，然后按下Play按钮。隧道现在变长了许多：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-9.gif" alt=""></p>
+<p>游戏目前并不具有挑战性，所以让我们添加一些障碍物。</p>
+<p>  </p>
+<p><strong>15、创建障碍物：</strong> <br>
+以下是你将用作障碍物的网格：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-31.jpg" alt=""></p>
+<p>打开BP_Tunnel并转到Components面板。添加一个静态网格组件并命名为WallMesh。</p>
+<p>转到其Details面板，将其“Static Mesh”属性更改为“SM_Hole_01”。</p>
+<p>接下来，设置它的Location属性为(2470,0,0)。这将把它放置在隧道的尽头： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-32.jpg" alt=""></p>
+<p>为了让游戏更有趣，墙壁需要会旋转。添加一个新的Float变量并命名为RotateSpeed。设置其默认值为30。</p>
+<p>切换到“事件图表”，找到“Event Tick”节点。创建以下设置：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-33.jpg" alt=""></p>
+<p>这将使WallMesh按提供的数量每一帧进行旋转。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”界面。按下“Play”按钮可以看到旋转的墙壁：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-10.gif" alt=""></p>
+<p>让我们给墙壁添加一些变化来增添情趣。</p>
+<p>  </p>
+<p><strong>16、创建变种墙体：</strong><br>
+你可以随机化WallMesh，而不是为每个变体创建一个新的蓝图。</p>
+<p>打开BP_Tunnel并创建一个名为RandomizeWall的新函数。然后，创建以下图表：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-34.jpg" alt=""></p>
+<p>顾名思义，“Set Static Mesh”节点将把WallMesh设置为提供的网格。</p>
+<p>要创建静态网格的列表，可以使用Select节点。</p>
+<p>左击并拖动“New Mesh”引脚。在空白区域上释放左键，然后添加一个Select节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-35.jpg" alt=""></p>
+<p>Select节点允许您设置选项列表。Index输入引脚决定Select节点输出哪个选项。</p>
+<p>因为有四个墙网格可用，你需要创建两个更多的选项引脚。您可以通过右键单击Select节点并选择“Add Option Pin”来做到这一点。继续这样做，直到你有四个选项引脚： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-36.jpg" alt=""></p>
+<p>现在，把每个选项按如下进行设置：</p>
+<ul>
+<li>Option 0: SM_Hole_01</li>
+<li>Option 1: SM_Hole_02</li>
+<li>Option 2: SM_Hole_03</li>
+<li>Option 3: SM_Hole_04</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a5-37.jpg" alt=""></p>
+<p>现在，让我们选择一个随机选项。</p>
+<p>  </p>
+<p><strong>17、随机化墙体：</strong> <br>
+您可以使用“Random Integer in Range”节点来获得一个随机数。该节点将返回 &gt;=Min 和 &lt;=Max 的值。</p>
+<p>添加一个“Random Integer in Range”节点，并将其连接到Select节点的Index引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-38.jpg" alt=""></p>
+<p>把Max设置为3。这将给你四个可能的数字:0、1、2和3：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-39.jpg" alt=""></p>
+<p>为了创建更多的随机化，让我们给WallMesh添加一个随机旋转。在“Set Static Mesh”节点后添加以下内容：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-40.jpg" alt=""></p>
+<p>这将为WallMesh添加一个 0 到 360 度的随机旋转。</p>
+<p>这是最终的图表： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-41.jpg" alt=""></p>
+<p>总结：<br>
+  a、Select节点提供了一个网格列表。<br>
+  b、使用“Random Integer in Range”节点获得一个随机网格。<br>
+  c、“Set Static Mesh”节点将WallMesh设置为所选的网格。
+  d、AddLocalRotation节点为WallMesh添加了一个随机的旋转偏移量。</p>
+<p>单击Compile按钮，然后关闭RandomizeWall图表。</p>
+<p>切换到BP_TunnelSpawner并打开SpawnTunnel图表。添加高亮显示的节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-42.jpg" alt=""></p>
+<p>现在，当一个隧道生成时，它会有一个随机的墙体网格。</p>
+<p>关闭SpawnTunnel图表，然后点击Compile按钮。回到“主编辑器”，按下Play按钮，看看所有变体墙： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-11.gif" alt=""></p>
+<p>如果你碰到一堵墙，你就会停止前进。然而，如果你移动并穿过一个洞，你将继续向前移动。</p>
+<p>下一步是当玩家与墙体碰撞时禁止向前移动。</p>
+<p>  </p>
+<p><strong>18、墙体碰撞处理：</strong><br>
+要启用或禁用向前移动，可以使用布尔变量。它们只有两种状态:真和假。</p>
+<p>打开BP_Player，然后创建一个名为IsDead的新布尔变量。</p>
+<p>接下来，转到“Event Tick”节点并创建一个Branch节点。</p>
+<p>然后，获取IsDead的引用，并将其连接到Branch节点的Condition引脚：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-43.jpg" alt=""></p>
+<p>连接“Event Tick”节点到Branch节点。然后，将Branch节点的False引脚连接到AddActorWorldOffset节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-44.jpg" alt=""></p>
+<p>现在，当IsDead被设置为true时，玩家就会停止前进。</p>
+<p>接下来，让我们在玩家撞到墙体时设置IsDead变量。</p>
+<p>  </p>
+<p><strong>19、设置IsDead变量：</strong> <br>
+单击Compile按钮，然后切换到BP_Tunnel。在Components面板中，右键单击WallMesh并选择“Add Event\Add OnComponentHit”来添加事件。这将在事件图表中添加以下节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-45.jpg" alt=""></p>
+<p>当另一个Actor与WallMesh发生碰撞时，该节点将被执行。</p>
+<p>首先，你需要检查与WallMesh相撞的Actor是否是玩家角色。</p>
+<p>左击并拖动“Other Actor”引脚。在一个空白区域上释放左键并从弹出的菜单中选择“Cast to BP_Player”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-46.jpg" alt=""></p>
+<p>接下来，左击并拖拽“Cast To BP_Player”节点的BP_Player引脚。在任意空白区域上释放，然后添加一个“Set Is Dead”节点。</p>
+<p>左击其复选框，将IsDead设置为true： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-47.jpg" alt=""></p>
+<p>单击Compile按钮，然后返回到“主编辑器”界面。按下Play按钮，试着撞到一堵墙体。如果你移动到一个洞，你将不会再继续穿过它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-12.gif" alt=""></p>
+<p>在下一节中，当玩家撞到墙时，你将显示一个重启按钮。</p>
+<p>  </p>
+<p><strong>20、显示重启按钮：</strong>   <br>
+您将要显示的小部件名为：WBP_Restart。你可以在UI文件夹中找到它。这是它看起来的样子：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-48.jpg" alt=""></p>
+<p>要显示或隐藏小部件，您需要对它进行引用。打开BP_Player，然后创建一个名为RestartWidget的新变量。将变量类型更改为“WBP_Restart\Object Reference”：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-49.jpg" alt=""></p>
+<p>接下来，转到“事件图表”并找到“Event BeginPlay”节点。</p>
+<p>添加一个“Create Widget”节点，并将其Class值设置为WBP_Restart。</p>
+<p>然后，添加一个“Set Restart Widget”节点，然后像下面这样连接所有内容：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-50.jpg" alt=""></p>
+<p>现在，当玩家生成时，它将会创建一个WBP_Restart实例。下一步是创建一个显示此实例的函数。</p>
+<p>  </p>
+<p><strong>21、创建显示函数：</strong>   <br>
+创建一个新函数并将其命名为DisplayRestart。一旦你这样做了，创建以下图表： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-51.jpg" alt=""></p>
+<p>总结：<br>
+  a、“Add to Viewport”节点将把RestartWidget显示到屏幕上。
+  b、“Set Input Mode UI Only”将限制玩家只能在UI上的互动。这是为了让玩家在死后不能四处移动。<br>
+  c、顾名思义，“Set Show Mouse Cursor”只显示鼠标光标。</p>
+<p>要显示“重启”按钮，你需要做的就是在玩家角色撞到墙体后调用DisplayRestart。</p>
+<p>  </p>
+<p><strong>22、调用显示函数：</strong>   <br>
+关闭DisplayRestart图形，然后单击Compile按钮。</p>
+<p>切换到BP_Tunnel，然后找到“On Component Hit (WallMesh)”节点。</p>
+<p>将DisplayRestart节点添加到节点链的末尾： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-52.jpg" alt=""></p>
+<p>单击Compile按钮，然后关闭BP_Tunnel。回到“主编辑器”界面并按下Play按钮。如果你撞到墙体，重启按钮就会出现：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-13.gif" alt=""></p>
+<p>最后一步是当玩家点击“重启”按钮时重新开始游戏。</p>
+<p>  </p>
+<p><strong>23、重新启动游戏：</strong><br>
+游戏重启时有两件事情需要做:  <br>
+  a、重置玩家。这包括从屏幕上删除重启按钮。<br>
+  b、重新生成隧道。这是为了让玩家从隧道的起点开始。</p>
+<p>让我们从“重置玩家”开始。</p>
+<p>  </p>
+<p><strong>24、重置玩家：</strong><br>
+打开BP_Player，然后创建一个名为RestartGame的新函数。创建下图：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-53.jpg" alt=""></p>
+<p>总结：<br>
+  a、“Set IsDead”节点把“IsDead”属性设置为false。这将重新激活向前移动功能。 <br>
+  b、“Remove From Parent”从屏幕上删除RestartWidget。<br>
+  c、“Set Input Mode Game Only”节点重新启用游戏输入，以便玩家可以四处移动。<br>
+  d、“Set Show Mouse Cursor”节点隐藏鼠标光标。</p>
+<p>接下来，让我们重新生成隧道。</p>
+<p>  </p>
+<p><strong>25、重新生成隧道：</strong><br>
+单击Compile按钮，然后关闭BP_Player。</p>
+<p>打开BP_TunnelSpawner并确保你在SpawnInitialTunnels图表中。</p>
+<p>首先，您需要在生成新的隧道之前移除现有的隧道。</p>
+<p>在Entry节点之后添加一个Sequence节点。连接“Then 1”引脚到ForLoop节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-54.jpg" alt=""></p>
+<p>注意：Sequence节点按顺序执行其输出引脚。这是一个很好的方式来在垂直方向上组织您的图形，特别是节点链很长的情况。</p>
+<p>接下来，创建以下节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-55.jpg" alt=""></p>
+<p>这个设置将获得所有现有的隧道，并从游戏中删除它们。</p>
+<p>最后，将Sequence节点的“Then 0”引脚连接到“Get All Actors of Class”节点。这将确保隧道在重新生成过程之前被移除。</p>
+<p>这是最终的图表： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-56.jpg" alt=""></p>
+<p>最后要做的是处理按钮点击事件。</p>
+<p>  </p>
+<p><strong>26、按钮点击事件处理：</strong>   <br>
+单击Compile按钮，然后关闭BP_TunnelSpawner。</p>
+<p>转到“内容浏览器”面板并导航到UI文件夹。双击WBP_Restart打开它。</p>
+<p>选择RestartButton，然后转到其Details面板。找到Events部分，单击OnClicked旁边的“+”按钮：        <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-57.jpg" alt=""></p>
+<p>这将创建一个名为“On Clicked (RestartButton)”的节点。该节点将在玩家点击RestartButton时执行。</p>
+<p>创建以下：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-58.jpg" alt=""></p>
+<p>总结：<br>
+  a、“Get Owning Player Pawn”返回玩家当前控制的Pawn。<br>
+  b、“Cast to BP_Player”检查Pawn是否属于BP_Player类。
+  c、如果是，它将调用RestartGame函数。这个函数重置玩家并隐藏重启按钮。<br>
+  d、“Get All Actors of Class”节点和“Get”节点返回BP_TunnelSpawner，然后调用SpawnInitialTunnels。这个函数将移除现有的隧道并生成新的隧道。</p>
+<p>注意：你可能想知道为什么我使用“Get All Actors Of Class”节点而不是使用对BP_TunnelSpawner的引用的方式。主要原因是BP_Tunnel与WBP_Restart没有关系。对于这样一个简单的游戏，使用上述方法比找出在哪里存储引用要容易得多。</p>
+<p>单击Compile按钮，然后关闭蓝图编辑器。按Play按钮播放并测试重启按钮：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a5-14.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/08/InfiniteMatrixCompleteProject.zip">这里</a> 下载完整的项目。</p>
+<p>现在你已经拥有了一款简单的游戏，你便可以基于它去创造游戏了。尝试着添加一个分数计数器，并在玩家避开墙体时增加它。</p>
+<p>你还应该尝试创建像《Pong》和《俄罗斯方块》等经典游戏。这些游戏的机制很简单，但实现起来却很有挑战性。</p>
+<p>如果你想学习如何制作特定类型的游戏，请在下方留言!</p>
+<p>如果你想继续学习，请查看本系列的 <a href="https://yunmin97.github.io/posts/ue4/animation/">下一篇文章</a>，在那里我将向你展示如何使用蓝图在你的游戏中制作角色动画。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/454-how-to-create-a-simple-game-in-unreal-engine-4">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/6-animation/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：动画</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/4-ui/">
+                  <span class="button__text">虚幻引擎4：UI</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

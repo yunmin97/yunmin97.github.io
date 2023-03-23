@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Node调用C&#43;&#43; ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="此前，在我开发的一个SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C&#43;&#43;来实现，以充分利用多核CPU的计算优势，于此记录一下Node调用C&#43;&#43;模块实现过程中遇到的一些问题。
+Node想要调用C&#43;&#43;的模块，就必须把C&#43;&#43;写的模块编译成Node能够使用的动态链接共享对象（C&#43;&#43;插件）。再在Node中使用require对插件进行加载为普通的Node模块进行使用。阅读官方文档可知有三种实现方式（N-API, nan, or direct use of internal V8, libuv and Node.js libraries），其中nan是用起来比较顺手的，但后面官方出了node-addon-api这个库（它简化了Node.js在使用C&#43;&#43;时提供的基于C的N-API的使用等）更易用。
+1、不要太小看Node内置的函数性能，动不动就使用C&#43;&#43;来实现，先贴出一份对sort的性能测试报告：
+环境： window 10 专业版（1909）64位，操作系统版本：18363.900 酷睿 i7-9700K 3.6Ghz 八核 node：v12.19.0 node-addon-api: v3.0.2 数据： a、100长度的数组： 原生C&#43;&#43;耗时（平均）: c&#43;&#43; std::sort: 0.000ms JS=&amp;gt;C&#43;&#43;耗时（平均）: c&#43;&#43; std::sort: 0.486ms 原生JS耗时（平均）: js Array.sort: 0.044ms b、10000长度的数组： 原生C&#43;&#43;耗时（平均）: c&#43;&#43; std::sort: 1.000ms JS=&amp;gt;C&#43;&#43;耗时（平均）: c&#43;&#43; std::sort: 2.246ms 原生JS耗时（平均）: js Array.sort: 2.155ms c、1000000长度的数组： 原生C&#43;&#43;耗时（平均）: c&#43;&#43; std::sort: 59.000ms JS=&amp;gt;C&#43;&#43;耗时（平均）: c&#43;&#43; std::sort: 232.848ms 原生JS耗时（平均）: js Array.sort: 281.213ms 从测试报告可看出，无论如何原生C&#43;&#43;性能是无容置疑的，同时我们发现当数组量级较小时Node调C&#43;&#43;不但没有性能优势，反而和原生JS的sort相差甚远（node还是优化了很多内置的函数性能）；当数量级达到百万级别时，调C&#43;&#43;插件的性能略微超过原生JS但优势不大，折中性能和开发维护难度，对于sort等来讲大可没必要使用C&#43;&#43;插件（何况项目中数组量级一般没这么大）。这是之前做项目时的一个误点（后面移除了此插件）。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/nodejs/node-2-cpp/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Node调用C&#43;&#43;"/>
+<meta name="twitter:description" content="此前，在我开发的一个SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C&#43;&#43;来实现，以充分利用多核CPU的计算优势..."/>
+
+
+
+<meta property="og:title" content="Node调用C&#43;&#43;" />
+<meta property="og:description" content="此前，在我开发的一个SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C&#43;&#43;来实现，以充分利用多核CPU的计算优势..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/nodejs/node-2-cpp/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-12-02T10:35:34+08:00" />
+<meta property="article:modified_time" content="2018-12-02T10:35:34+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Node调用C++</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-12-02
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>  此前，在我开发的一个SLG游戏项目中，为了解决服务端的性能问题，不得不把一些比较消耗性能的模块（密集型计算）使用C++来实现，以充分利用多核CPU的计算优势，于此记录一下Node调用C++模块实现过程中遇到的一些问题。<br>
+  Node想要调用C++的模块，就必须把C++写的模块编译成Node能够使用的动态链接共享对象（C++插件）。再在Node中使用require对插件进行加载为普通的Node模块进行使用。阅读官方文档可知有三种实现方式（N-API, nan, or direct use of internal V8, libuv and Node.js libraries），其中nan是用起来比较顺手的，但后面官方出了node-addon-api这个库（它简化了Node.js在使用C++时提供的基于C的N-API的使用等）更易用。</p>
+<p>1、不要太小看Node内置的函数性能，动不动就使用C++来实现，先贴出一份对sort的性能测试报告：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">环境</span><span style="color:#960050;background-color:#1e0010">：</span>  
+</span></span><span style="display:flex;"><span>window <span style="color:#ae81ff">10</span> <span style="color:#a6e22e">专业版</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#ae81ff">1909</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#ae81ff">64</span><span style="color:#a6e22e">位</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#a6e22e">操作系统版本</span><span style="color:#960050;background-color:#1e0010">：</span><span style="color:#ae81ff">18363.900</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">酷睿</span> <span style="color:#a6e22e">i7</span><span style="color:#f92672">-</span><span style="color:#ae81ff">9700</span><span style="color:#a6e22e">K</span> <span style="color:#ae81ff">3.6</span><span style="color:#a6e22e">Ghz</span> <span style="color:#a6e22e">八核</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">node</span><span style="color:#960050;background-color:#1e0010">：</span><span style="color:#a6e22e">v12</span>.<span style="color:#ae81ff">19.0</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">node</span><span style="color:#f92672">-</span><span style="color:#a6e22e">addon</span><span style="color:#f92672">-</span><span style="color:#a6e22e">api</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">v3</span>.<span style="color:#ae81ff">0.2</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">数据</span><span style="color:#960050;background-color:#1e0010">：</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">a</span><span style="color:#960050;background-color:#1e0010">、</span><span style="color:#ae81ff">100</span><span style="color:#a6e22e">长度的数组</span><span style="color:#960050;background-color:#1e0010">：</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">原生C</span><span style="color:#f92672">++</span><span style="color:#a6e22e">耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">c</span><span style="color:#f92672">++</span> <span style="color:#a6e22e">std</span><span style="color:#f92672">::</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0.000</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">JS</span>=&gt;<span style="color:#a6e22e">C</span><span style="color:#f92672">++</span><span style="color:#a6e22e">耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">c</span><span style="color:#f92672">++</span> <span style="color:#a6e22e">std</span><span style="color:#f92672">::</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0.486</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">原生JS耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">js</span> Array.<span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0.044</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">b</span><span style="color:#960050;background-color:#1e0010">、</span><span style="color:#ae81ff">10000</span><span style="color:#a6e22e">长度的数组</span><span style="color:#960050;background-color:#1e0010">：</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">原生C</span><span style="color:#f92672">++</span><span style="color:#a6e22e">耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">c</span><span style="color:#f92672">++</span> <span style="color:#a6e22e">std</span><span style="color:#f92672">::</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1.000</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">JS</span>=&gt;<span style="color:#a6e22e">C</span><span style="color:#f92672">++</span><span style="color:#a6e22e">耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">c</span><span style="color:#f92672">++</span> <span style="color:#a6e22e">std</span><span style="color:#f92672">::</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2.246</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">原生JS耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">js</span> Array.<span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2.155</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">c</span><span style="color:#960050;background-color:#1e0010">、</span><span style="color:#ae81ff">1000000</span><span style="color:#a6e22e">长度的数组</span><span style="color:#960050;background-color:#1e0010">：</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">原生C</span><span style="color:#f92672">++</span><span style="color:#a6e22e">耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">c</span><span style="color:#f92672">++</span> <span style="color:#a6e22e">std</span><span style="color:#f92672">::</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">59.000</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">JS</span>=&gt;<span style="color:#a6e22e">C</span><span style="color:#f92672">++</span><span style="color:#a6e22e">耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">c</span><span style="color:#f92672">++</span> <span style="color:#a6e22e">std</span><span style="color:#f92672">::</span><span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">232.848</span><span style="color:#a6e22e">ms</span>  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">原生JS耗时</span><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#a6e22e">平均</span><span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">js</span> Array.<span style="color:#a6e22e">sort</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">281.213</span><span style="color:#a6e22e">ms</span>
+</span></span></code></pre></div><p>从测试报告可看出，无论如何原生C++性能是无容置疑的，同时我们发现当数组量级较小时Node调C++不但没有性能优势，反而和原生JS的sort相差甚远（node还是优化了很多内置的函数性能）；当数量级达到百万级别时，调C++插件的性能略微超过原生JS但优势不大，折中性能和开发维护难度，对于sort等来讲大可没必要使用C++插件（何况项目中数组量级一般没这么大）。这是之前做项目时的一个误点（后面移除了此插件）。</p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/3-part-tutorial-by-tommytran/1-painting-with-render-targets/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：使用渲染目标绘画</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/10-how-to-create-a-simple-fps/">
+                  <span class="button__text">虚幻引擎4：如何创建一个简单的FPS游戏</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

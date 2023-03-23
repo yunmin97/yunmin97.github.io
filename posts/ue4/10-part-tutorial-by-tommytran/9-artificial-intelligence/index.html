@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：人工智能 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4教程中，您将学习如何使用行为树和AI感知创建一个简单的AI角色，漫游和攻击敌人。
+在电子游戏中，AI（Artificial Intelligence）通常指的是非玩家角色做出决定的方式。这可能很简单，比如敌人看到玩家，然后发起攻击。也可以是更复杂的内容，如AI控制的玩家在实时的做策略。
+在虚幻引擎中，你可以使用“行为树”来创建AI。行为树是用于决定AI应该执行何种行为的系统。例如，你可能会有争斗和逃跑行为。你可以创造行为树，让AI在生命值超过50%时进行战斗。如果低于50%，它就会跑掉。
+在本教程中，您将学习如何：
+创造一个可以控制Pawn的AI实体。 创建并使用行为树和黑板。 使用AI感知给Pawn视觉。 创造行为，使Pawn漫游和攻击敌人。 1、准备开始：
+下载 工程文件 并解压它。前往“项目文件夹”并通过打开MuffinWar.uproject来打开项目。
+按下Play播放键开始游戏。在围栏区域内左键点击生成松饼：
+在本教程中，您将创建一个将四处游荡的AI。当敌人类型的松饼进入AI的视野范围时，AI将移动到敌人旁边并攻击它。
+要创造一个AI角色，你需要具备三样东西： a、身体：这是角色的身体表现。在本教程中，松饼就是身体。
+b、灵魂：灵魂是控制角色的实体。这可能是玩家或AI。
+c、大脑：大脑是AI做出决定的方式。您可以以不同的方式创建它，如c&#43;&#43;代码、蓝图或行为树。
+既然你已经拥有了肉体，你所需要的就是灵魂和大脑。首先，您将创建一个控制器，它将是灵魂。
+2、什么是控制器： 控制器是一种可以占有Pawn的非物理对象。Possession使控制器能够（你猜测）控制Pawn。但是在这里“控制”是什么意思呢？
+对于玩家来说，这意味着按下一个按钮并让卒子做一些事情。控制器接收来自玩家的输入，然后它可以将输入发送给棋子。控制器也可以处理输入，然后告诉Pawn执行一个动作： 在AI的例子中，Pawn可以从控制器或大脑接收信息(取决于你如何编程)。
+要用AI控制松饼，你需要创建一种特殊类型的控制器，称为AI控制器(AI controller)。
+3、创建AI控制器： 导航到“Characters\Muffin\AI”，并创建一个新的蓝图类。选择AIController作为父类，命名为AIC_Muffin：
+默认情况下，Details面板应该显示Blueprint的默认设置。如果没有，单击工具栏中的“Class Defaults”： 进入细节面板，找到“Pawn”部分。设置“AI Controller Class”为AIC_Muffin。这将在Muffin生成时生成一个控制器实例： 因为你正在产卵松饼，你也需要设置自动占有AI产卵。这将确保AIC_Muffin在派生时自动拥有BP_Muffin： 单击Compile按钮，然后关闭BP_Muffin。
+现在，你要创建一个逻辑来驱动松饼的行为。为此，您可以使用行为树。
+4、创建行为树：
+导航到“Characters\Muffin\AI”，选择“Add New\Artificial Intelligence\Behavior Tree”。命名为BT_Muffin，然后打开它：
+5、行为树编辑器：
+行为树编辑器包含两个新的面板： a、您将在此图表中创建节点来创建行为树。
+b、您选择的节点将在这里显示其属性。 c、这个面板将显示Blackboard键(稍后详细介绍)和它们的值。只会在游戏运行时显示。
+与蓝图一样，行为树也由节点组成。行为树中有四种类型的节点。前两个是任务（Task）和组合(Composite)。
+6、任务和组合是什么：
+顾名思义，任务是“执行”某项任务的节点。它可以是一些复杂的事情，如执行组合。也可以是一些简单的事情，比如等待： 要执行任务，您需要使用组合。行为树由许多分支(行为)组成。在每个分支的根部是一个组合。不同类型的组合有不同的方式来执行它们的子节点。
+例如，你有以下动作序列： 要在序列中执行每个动作，您将要使用序列组合（Sequence）。这是因为序列从左到右执行子序列。它看起来是这样的： 注意：从组合开始的一切东西都可以称为子树。一般来说，这些是你的行为。在这个例子中，“Sequence”、“Move To Enemy”、“Rotate”、“Towards Enemy”和“Attack”都可以被视为“攻击敌人”行为。
+如果任何一个子序列执行失败，序列将停止执行。
+例如，如果Pawn不能移动到敌人，“Move To Enemy”将失败。这意味着“Rotate Towards Enemy”和“Attack”将不会执行。然而，如果Pawn成功移动到敌人那里，他们就会执行。
+稍后，您还将了解Selector组合。现在，你将使用一个Sequence让Pawn移动到一个随机的位置，然后等待。
+7、移动到一个随机位置： 创建一个“Sequence”，并将其连接到根。
+接下来，你需要移动Pawn。创建一个MoveTo并将其连接到Sequence。这个节点将把Pawn移动到指定的位置或角色： 然后，创建一个Wait并将其连接到Sequence。确保你把它放在MoveTo的右边。这里的顺序很重要，因为子进程将从左到右执行： 注意：您可以通过查看每个节点右上方的数字来检查执行顺序。编号较低的节点优先于编号较高的节点执行。
+祝贺您，您已经创建了您的第一个行为！它将把Pawn移动到指定的位置，然后等待5秒。
+要移动Pawn，你需要指定一个位置。但是，MoveTo只接受通过Blackboard提供的值，所以您需要创建一个。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/9-artificial-intelligence/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：人工智能"/>
+<meta name="twitter:description" content="在这个虚幻引擎4教程中，您将学习如何使用行为树和AI感知创建一个简单的AI角色，漫游和攻击敌人..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：人工智能" />
+<meta property="og:description" content="在这个虚幻引擎4教程中，您将学习如何使用行为树和AI感知创建一个简单的AI角色，漫游和攻击敌人..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/9-artificial-intelligence/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-13T23:01:02+08:00" />
+<meta property="article:modified_time" content="2018-11-13T23:01:02+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：人工智能</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-13
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4教程中，您将学习如何使用行为树和AI感知创建一个简单的AI角色，漫游和攻击敌人。</p>
+<p>在电子游戏中，AI（Artificial Intelligence）通常指的是非玩家角色做出决定的方式。这可能很简单，比如敌人看到玩家，然后发起攻击。也可以是更复杂的内容，如AI控制的玩家在实时的做策略。</p>
+<p>在虚幻引擎中，你可以使用“行为树”来创建AI。行为树是用于决定AI应该执行何种行为的系统。例如，你可能会有争斗和逃跑行为。你可以创造行为树，让AI在生命值超过50%时进行战斗。如果低于50%，它就会跑掉。</p>
+<p>在本教程中，您将学习如何：</p>
+<ul>
+<li>创造一个可以控制Pawn的AI实体。</li>
+<li>创建并使用行为树和黑板。</li>
+<li>使用AI感知给Pawn视觉。</li>
+<li>创造行为，使Pawn漫游和攻击敌人。</li>
+</ul>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载 <a href="https://koenig-media.raywenderlich.com/uploads/2017/12/MuffinWarStarter.zip">工程文件</a> 并解压它。前往“项目文件夹”并通过打开MuffinWar.uproject来打开项目。</p>
+<p>按下Play播放键开始游戏。在围栏区域内左键点击生成松饼：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-1.gif" alt=""></p>
+<p>在本教程中，您将创建一个将四处游荡的AI。当敌人类型的松饼进入AI的视野范围时，AI将移动到敌人旁边并攻击它。</p>
+<p>要创造一个AI角色，你需要具备三样东西：   <br>
+  a、身体：这是角色的身体表现。在本教程中，松饼就是身体。<br>
+  b、灵魂：灵魂是控制角色的实体。这可能是玩家或AI。<br>
+  c、大脑：大脑是AI做出决定的方式。您可以以不同的方式创建它，如c++代码、蓝图或行为树。</p>
+<p>既然你已经拥有了肉体，你所需要的就是灵魂和大脑。首先，您将创建一个控制器，它将是灵魂。</p>
+<p>  </p>
+<p><strong>2、什么是控制器：</strong>    <br>
+控制器是一种可以占有Pawn的非物理对象。Possession使控制器能够（你猜测）控制Pawn。但是在这里“控制”是什么意思呢？</p>
+<p>对于玩家来说，这意味着按下一个按钮并让卒子做一些事情。控制器接收来自玩家的输入，然后它可以将输入发送给棋子。控制器也可以处理输入，然后告诉Pawn执行一个动作：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-1.jpg" alt=""></p>
+<p>在AI的例子中，Pawn可以从控制器或大脑接收信息(取决于你如何编程)。</p>
+<p>要用AI控制松饼，你需要创建一种特殊类型的控制器，称为AI控制器(AI controller)。</p>
+<p>  </p>
+<p><strong>3、创建AI控制器：</strong> <br>
+导航到“Characters\Muffin\AI”，并创建一个新的蓝图类。选择AIController作为父类，命名为AIC_Muffin：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-2.jpg" alt=""></p>
+<p>默认情况下，Details面板应该显示Blueprint的默认设置。如果没有，单击工具栏中的“Class Defaults”：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-3.jpg" alt=""></p>
+<p>进入细节面板，找到“Pawn”部分。设置“AI Controller Class”为AIC_Muffin。这将在Muffin生成时生成一个控制器实例：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-4.jpg" alt=""></p>
+<p>因为你正在产卵松饼，你也需要设置自动占有AI产卵。这将确保AIC_Muffin在派生时自动拥有BP_Muffin：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-5.jpg" alt=""></p>
+<p>单击Compile按钮，然后关闭BP_Muffin。</p>
+<p>现在，你要创建一个逻辑来驱动松饼的行为。为此，您可以使用行为树。</p>
+<p>  </p>
+<p><strong>4、创建行为树：</strong><br>
+导航到“Characters\Muffin\AI”，选择“Add New\Artificial Intelligence\Behavior Tree”。命名为BT_Muffin，然后打开它：</p>
+<p>  </p>
+<p><strong>5、行为树编辑器：</strong><br>
+行为树编辑器包含两个新的面板：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-6.jpg" alt="">  <br>
+  a、您将在此图表中创建节点来创建行为树。<br>
+  b、您选择的节点将在这里显示其属性。
+  c、这个面板将显示Blackboard键(稍后详细介绍)和它们的值。只会在游戏运行时显示。</p>
+<p>与蓝图一样，行为树也由节点组成。行为树中有四种类型的节点。前两个是任务（Task）和组合(Composite)。</p>
+<p>  </p>
+<p><strong>6、任务和组合是什么：</strong><br>
+顾名思义，任务是“执行”某项任务的节点。它可以是一些复杂的事情，如执行组合。也可以是一些简单的事情，比如等待：      <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-7.jpg" alt=""></p>
+<p>要执行任务，您需要使用组合。行为树由许多分支(行为)组成。在每个分支的根部是一个组合。不同类型的组合有不同的方式来执行它们的子节点。</p>
+<p>例如，你有以下动作序列： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-8.jpg" alt=""></p>
+<p>要在序列中执行每个动作，您将要使用序列组合（Sequence）。这是因为序列从左到右执行子序列。它看起来是这样的：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-9.jpg" alt=""></p>
+<p>注意：从组合开始的一切东西都可以称为子树。一般来说，这些是你的行为。在这个例子中，“Sequence”、“Move To Enemy”、“Rotate”、“Towards Enemy”和“Attack”都可以被视为“攻击敌人”行为。</p>
+<p>如果任何一个子序列执行失败，序列将停止执行。</p>
+<p>例如，如果Pawn不能移动到敌人，“Move To Enemy”将失败。这意味着“Rotate Towards Enemy”和“Attack”将不会执行。然而，如果Pawn成功移动到敌人那里，他们就会执行。</p>
+<p>稍后，您还将了解Selector组合。现在，你将使用一个Sequence让Pawn移动到一个随机的位置，然后等待。</p>
+<p>  </p>
+<p><strong>7、移动到一个随机位置：</strong>  <br>
+创建一个“Sequence”，并将其连接到根。<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-2.gif" alt=""></p>
+<p>接下来，你需要移动Pawn。创建一个MoveTo并将其连接到Sequence。这个节点将把Pawn移动到指定的位置或角色：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-10.jpg" alt=""></p>
+<p>然后，创建一个Wait并将其连接到Sequence。确保你把它放在MoveTo的右边。这里的顺序很重要，因为子进程将从左到右执行： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-11.jpg" alt=""></p>
+<p>注意：您可以通过查看每个节点右上方的数字来检查执行顺序。编号较低的节点优先于编号较高的节点执行。</p>
+<p>祝贺您，您已经创建了您的第一个行为！它将把Pawn移动到指定的位置，然后等待5秒。</p>
+<p>要移动Pawn，你需要指定一个位置。但是，MoveTo只接受通过Blackboard提供的值，所以您需要创建一个。</p>
+<p>  </p>
+<p><strong>8、创建Blackboard：</strong>  <br>
+Blackboard是一种资产，它唯一的功能是保存变量(称为键)。你可以把它想象成AI的记忆。</p>
+<p>虽然您不需要使用它们，但Blackboard为读取和存储数据提供了一种方便的方式。它很方便，因为行为树中的许多节点只接受Blackboard的键值。</p>
+<p>要创建一个，返回到“内容浏览器”并选择“Add New\Artificial Intelligence\Blackboard”。命名为BB_Muffin，然后打开它。</p>
+<p>  </p>
+<p><strong>9、Blackboard编辑器：</strong><br>
+Blackboard编辑器由两个面板组成：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-12.jpg" alt=""></p>
+<p>  a、Blackboard：该面板将显示您的键值列表。    <br>
+  b、Blackboard Details：该面板将显示所选键的属性。</p>
+<p>现在，您需要创建一个保存目标位置的键。</p>
+<p>  </p>
+<p><strong>10、创建目标位置键：</strong> <br>
+因为要在3D空间中存储一个位置，所以需要将其存储为矢量。单击“New Key”并选择Vector。将其命名为TargetLocation：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-13.jpg" alt=""></p>
+<p>接下来，您需要一种方法来生成一个随机位置并将其存储在Blackboard中。为此，您可以使用第三种类型的行为树节点：Service。</p>
+<p>  </p>
+<p><strong>11、什么是服务：</strong><br>
+服务就像任务，你用它们来做一些事情。但是，不是让Pawn执行一个动作，而是使用服务来执行检查或更新Blackboard。</p>
+<p>服务不是单独的节点。相反，它们附加在任务或组合上。这将导致更有组织的行为树，因为需要处理的节点更少。下面是使用任务时的样子： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-14.jpg" alt=""></p>
+<p>下面是它使用服务时的样子：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-15.jpg" alt=""></p>
+<p>现在，是时候创建一个生成随机位置的服务了。</p>
+<p>  </p>
+<p><strong>12、创建服务：</strong><br>
+返回到BT_Muffin并单击“New Service”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-16.jpg" alt=""></p>
+<p>这将创建一个新服务并自动打开它。把它命名为BTService_SetRandomLocation。您需要回到“Content Browser”来重命名它。</p>
+<p>这个服务只需要在Pawn想要移动的时候执行。为此，需要将其附加到MoveTo上。</p>
+<p>打开BT_Muffin，然后右键单击MoveTo。选择“Add Service\BTService Set Random Location”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-3.gif" alt=""></p>
+<p>现在，当MoveTo激活时，BTService_SetRandomLocation将被激活。</p>
+<p>接下来，您需要生成一个随机的目标位置。</p>
+<p>  </p>
+<p><strong>13、生成随机位置：</strong>   <br>
+打开BTService_SetRandomLocation。</p>
+<p>要知道服务何时激活，请创建一个“Event Receive Activation AI”节点。这将在其服务的父节点(它所连接的节点)激活时执行：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-17.jpg" alt=""></p>
+<p>注意：还有另一个做同样的事件的节点叫做“Event Receive Activation”。这两个事件的区别在于，“Event Receive Activation AI”还提供了一个“Controlled Pawn”参数。</p>
+<p>要生成随机位置，请添加高亮显示的节点。确保将Radius设置为500：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-18.jpg" alt=""></p>
+<p>这将给你一个随机的导航位置在Pawn附近的500单位内。</p>
+<p>注意：GetRandomPointInNavigableRadius使用导航数据(称为NavMesh)来确定一个点是否可导航。在本教程中，我已经为你创建了NavMesh。你可以通过进入Viewport视口并选择“Show\Navigation”来可视化它： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-19.jpg" alt=""></p>
+<p>如果你想创建自己的NavMesh，创建一个“NavMesh Bounds Volume”。缩放使它覆盖你想要导航的区域。</p>
+<p>接下来，您需要将位置存储到Blackboard中。有两种方法可以指定使用哪个键： <br>
+  a、您可以在“Make Literal name”节点中使用键的名称来指定键。<br>
+  b、您可以向行为树暴露一个变量。这将允许您从下拉列表中选择键。</p>
+<p>您将使用第二种方法。创建一个类型为“Blackboard Key Selector”的变量。命名为BlackboardKey并启用“Instance Editable”。这将允许在您在行为树中选择服务时显示该变量：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-20.jpg" alt=""></p>
+<p>然后，创建突出显示的节点：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-21.jpg" alt=""></p>
+<p>总结：   <br>
+  a、“Event Receive Activation AI”在它的父节点(在本例中是MoveTo)激活时执行。  <br>
+  b、GetRandomPointInNavigableRadius返回被控制的Muffin的500个单位内的随机可导航位置。  <br>
+  c、“Set Blackboard Value as Vector”设置Blackboard键(由BlackboardKey提供)的值为随机位置。</p>
+<p>单击Compile按钮，然后关闭BTService_SetRandomLocation。</p>
+<p>接下来，您需要告诉行为树使用您的黑板。</p>
+<p>  </p>
+<p><strong>14、选择Blackboard：</strong>   <br>
+打开BT_Muffin，确保你没有选择任何东西。转到Details面板。在“行为树”下，设置“Blackboard Asset”为“BB_Muffin”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-22.jpg" alt=""></p>
+<p>然后，MoveTo和BTService_SetRandomLocation将自动使用第一个黑板键。在本例中，它是TargetLocation：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-23.jpg" alt=""></p>
+<p>最后，你需要让AI控制器运行行为树。</p>
+<p>  </p>
+<p><strong>15、运行行为树：</strong> <br>
+打开AIC_Muffin创建并连接“Run Behavior Tree”到“Event BeginPlay”节点。设置BTAsset为BT_Muffin：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-24.jpg" alt=""></p>
+<p>当AIC_Controller生成时，这将运行BT_Muffin。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”。按下Play播放键，生成一些松饼，看着它们四处游荡：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-4.gif" alt=""></p>
+<p>虽然有很多构建但你都成功了！接下来，你将设置AI控制器，以便它能够在自己的视野范围内发现敌人。要做到这一点，你可以使用“AI Perception”。</p>
+<p>  </p>
+<p><strong>16、建立AI Perception：</strong>  <br>
+“AI Perception”是一个你可以添加到Actor上的组件。使用它，你可以给你的AI一个感官(如视觉和听觉)。</p>
+<p>打开AIC_Muffin，然后添加一个AIPerception组件：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-25.jpg" alt=""></p>
+<p>接下来，你需要添加一个感官。因为你想要检测到另一个松饼进入视野，你需要增加“视觉”感官。</p>
+<p>选择AIPerception，然后转到其“细节”面板。在“AI Perception”下，添加一个新的元素到“Senses Config”中：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-26.jpg" alt=""></p>
+<p>主要有三种视野设置:  <br>
+  a、视线半径（Sight Radius）：松饼所能看到的最大距离。保持在3000。    <br>
+  b、视线消失半径（Lose Sight Radius）：如果松饼看到了敌人，这是在松饼看不到敌人之前敌人必须移动的距离。保持在3500。   <br>
+  c、周边视觉半角度（Peripheral Vision Half Angle Degrees）：松饼的视野有多宽。将其设置为45。这会让松饼有90度的视野。</p>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a9-27.jpg" alt=""></p>
+<p>默认情况下，“AI Perception”只检测敌人(分配到不同“团队”的角色)。然而，Actor在默认情况下并没有“团队”。当一个Actor没有团队时，“AI Perception”会认为它是“中立”的。</p>
+<p>截至本文撰写时，还没有使用蓝图分配“团队”的方法。相反，你可以让“AI perception”去检测中立角色。要做到这一点，请扩展“Detection by Affiliation”并启用“Detect Neutrals”：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-28.jpg" alt=""></p>
+<p>单击Compile按钮，然后返回到“主编辑器”。按下Play播放，生成一些松饼。按“&rsquo;”键显示AI调试画面。按数字键盘上的“4”来可视化“AI Perception”。当松饼进入视野时，一个绿色的球体就会出现：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-5.gif" alt=""></p>
+<p>接下来，你要把松饼移向敌人。为了做到这一点，行为树需要“了解”敌人。你可以通过在Blackboard中存储对敌人的引用来做到这一点。</p>
+<p>  </p>
+<p><strong>17、创建Enemy键：</strong>  <br>
+打开BB_Muffin，然后添加一个“Object”类型的键。改名为Enemy：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-29.jpg" alt=""></p>
+<p>现在，你不能在MoveTo中使用Enemy键。因为它是一个Object对象类型，但MoveTo只接受Vector或Actor类型的键。</p>
+<p>为了解决这个问题，选择Enemy键，然后展开“Key Type”。将“Base Class”设置为Actor。这将允许行为树将Enemy识别为Actor：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-30.jpg" alt=""></p>
+<p>BB_Muffin关闭。现在，你需要创造一种向敌人移动的行为。</p>
+<p>  </p>
+<p><strong>18、向敌人移动：</strong><br>
+打开BT_Muffin，然后断开Sequence和Root节点。您可以通过按住Alt键的同时点击连接它们的连接线来做到这一点。暂时把“漫游树”放到一边。</p>
+<p>接下来，创建高亮显示的节点，并将其“Blackboard Key”设置为Enemy：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-31.jpg" alt=""></p>
+<p>这将把Pawn移向敌人。在某些情况下，Pawn将不会完全面对目标，所以你还要使用“Rotate to face BB entry”节点来进行调整。</p>
+<p>现在，当AI感知检测到另一个松饼时，你需要设置Enemy的值。</p>
+<p>  </p>
+<p><strong>19、设置Enemy的值：</strong>  <br>
+打开AIC_Muffin，然后选择AIPerception组件。添加“On Perception Updated”事件：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-32.jpg" alt=""></p>
+<p>每当sense更新时，此事件将执行。在这种情况下，当AI看到或看不到某些东西的时候。此事件还提供了它当前感知的Actor列表。</p>
+<p>添加高亮显示的节点。确保你将“Make Literal Name”设置为Enemy（获取BlackBoard中的Enemy键）：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-33.jpg" alt=""></p>
+<p>这将检查AI是否已经有一个“敌人”。如果没有，你需要给它一个。为此，添加高亮显示的节点：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-34.jpg" alt=""></p>
+<p>总结：   <br>
+  a、IsValid将检查是否设置了Enemy键。
+  b、如果未设置，则循环遍历当前感知到的所有Actor。<br>
+  c、“Cast To BP_Muffin”将检查Actor是否为松饼。<br>
+  d、如果是松饼，检查它是否已经死了。
+  e、如果IsDead返回false，将松饼设置为新的敌人，然后打破循环。</p>
+<p>单击Compile按钮，然后关闭AIC_Muffin。按下Play播放，然后生成两个松饼，使一个是在另一个的前面。后面的松饼会自动走向另一个松饼：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-6.gif" alt=""></p>
+<p>接下来，您将创建一个定制任务，使松饼执行攻击。</p>
+<p>  </p>
+<p><strong>20、创建攻击任务：</strong>   <br>
+您可以在“内容浏览器”中创建任务，而不是在行为树编辑器中。创建一个新的Blueprint类，并选择BTTask_BlueprintBase作为父类： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-35.jpg" alt=""></p>
+<p>命名为BTTask_Attack，然后打开它。添加“Event Receive Execute AI”节点。该节点将在行为树执行BTTask_Attack时执行：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-36.jpg" alt=""></p>
+<p>首先，你要做松饼攻击动作。BP_Muffin包含一个IsAttacking变量。当设置此变量时，它会发动攻击。为此，添加高亮显示的节点：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-37.jpg" alt=""></p>
+<p>如果您在当前状态下使用任务，执行将会被卡住。这是因为行为树不知道任务是否已经执行完毕。要修复此问题，请在链的末端添加“Finish Execute”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-38.jpg" alt=""></p>
+<p>接下来，勾选Success。由于您正在使用Sequence序列，这将允许BTTask_Attack之后的节点执行：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-39.jpg" alt=""></p>
+<p>这是你的图表应该是这样的： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-40.jpg" alt=""></p>
+<p>总结：   <br>
+  a、当行为树运行BTTask_Attack时，“Event Receive Execute AI”将执行。<br>
+  b、“Cast To BP_Muffin”会检查“Controlled Pawn”是否是BP_Muffin类型。
+  c、如果是，则设置其IsAttacking变量。 <br>
+  e、“Finish Execute”将让行为树知道任务已经成功完成。</p>
+<p>现在，需要将BTTask_Attack添加到行为树中。</p>
+<p>  </p>
+<p><strong>21、把攻击任务添加到行为树中：</strong>   <br>
+BT_Muffin开放。然后，在序列的末尾添加一个BTTask_Attack：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-41.jpg" alt=""></p>
+<p>接下来，在序列的末尾添加一个Wait任务。设置其等待时间为2。这将确保松饼不会不断攻击：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-42.jpg" alt=""></p>
+<p>回到“主编辑器”并按下Play播放键。像上次一样生了两个松饼。松饼会向敌人移动和旋转。之后，它会攻击并等待两秒钟。如果它看到另一个敌人，它将再次执行整个序列：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-7.gif" alt=""></p>
+<p>在最后一节中，您将把攻击子树和漫游子树组合在一起。</p>
+<p>  </p>
+<p><strong>22、结合子树：</strong>   <br>
+要组合子树，可以使用Selector组合。和序列一样，它们也从左到右执行。但是，当子树执行成功时（而不是失败时）Selector将停止。通过使用此行为，您可以确保行为树只执行一个子树。</p>
+<p>打开BT_Muffin，然后在根节点之后创建一个Selector。然后，像这样连接子树：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-43.jpg" alt=""></p>
+<p>此设置将一次只允许运行一个子树。下面是每个子树的运行方式：</p>
+<ul>
+<li>Attack：Selector将首先运行攻击子树。如果所有任务都成功，序列也将成功。Selector将检测到这一点然后停止执行。这将阻止漫游子树运行。</li>
+<li>Roam：Selector将首先尝试运行攻击子树。如果Enemy没有设置，MoveTo将失败。这也会导致Sequence失败。由于攻击子树失败，Selector将执行它的下一个子树，即漫游子树。</li>
+</ul>
+<p>回到“主编辑器”，按Play按钮播放。生成一些松饼来测试一下： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-8.gif" alt="">
+等等，为什么松饼不马上攻击另一个？</p>
+<p>在传统的行为树中，每次更新都从根节点开始执行。这意味着每次更新，它都会先尝试执行攻击子树，然后再尝试漫游子树。这意味着如果BlackBoard中Enemy的值改变了，行为树也会立即改变子树。</p>
+<p>然而，虚幻中的行为树并不以同样的方式工作。在虚幻中，执行器从最后执行的节点开始。因为“AI Perception”不能立即感知其他Actor，所以漫游子树开始运行。现在，行为树必须等待漫游子树完成，才能重新计算攻击子树。</p>
+<p>要解决这个问题，可以使用最后一种节点类型：decorator。</p>
+<p>  </p>
+<p><strong>23、创建装饰器（Decorator）：</strong> <br>
+与“服务”一样，“装饰器”也要附加到任务或组合上。通常，您使用“装饰器”来执行一个检查。如果结果为真，装饰器也将返回真，反之亦然。通过使用它，您可以控制“装饰器”的父组件是否可以执行。</p>
+<p>“装饰器”还可以中止子树。这意味着一旦Enemy值被设置你就可以停止漫游子树。这将允许松饼一旦发现则立即攻击敌人。</p>
+<p>要使用中止，可以使用Blackboard装饰器。检查是否设置了Blackboard键很简单。打开BT_Muffin，然后右键单击攻击子树Sequence。选择“Add Decorator\Blackboard”。这将把Blackboard装饰器附加到序列：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-44.jpg" alt=""></p>
+<p>接下来，选择Blackboard装饰器，然后转到Details面板。设置“Blackboard Key”为Enemy：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-45.jpg" alt=""></p>
+<p>这将检查Enemy值是否设置。如果没有设置，装饰器将失败，并导致序列失败。这将允许漫游子树运行。</p>
+<p>为了中止漫游子树，你需要使用“观察者中止”设置。</p>
+<p>  </p>
+<p><strong>24、使用观察者中止（Observer Aborts）：</strong> <br>
+“观察者中止”将中止子树，如果选择的Blackboard键值已经改变。中止有两种类型： <br>
+  a、Self：这个设置将允许攻击子树在敌人失效时中止自己。这可能发生在敌人在攻击子树完成之前死亡。    <br>
+  b、Lower Priority：这个设置将在Enemy被设置后中止低优先级树。由于漫游子树处于攻击子树之后，所以它的优先级较低。</p>
+<p>将“Observer Aborts”设置为Both。这将启用这两种中止类型：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-46.jpg" alt=""></p>
+<p>现在，攻击子树可以立即进入漫游子树如果不再有敌人在其视觉范围内。而且，一旦发现敌人，漫游子树可以立即进入攻击子树。</p>
+<p>以下是完整的行为树：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-47.jpg" alt=""></p>
+<p>攻击子树总结：<br>
+  a、如果设置了Enemy，选择器将运行攻击子树。<br>
+  b、如果它被设置，Pawn将移动并转向敌人。  <br>
+  c、然后，它将执行攻击。  <br>
+  d、最后，Pawn会等待两秒钟。</p>
+<p>漫游子树概述：   <br>
+  a、如果攻击子树失败，选择器将运行漫游子树。在这种情况下，如果敌人没有设置，它就会失败。  <br>
+  b、BTService_SetRandomLocation将生成一个随机位置。   <br>
+  c、Pawn会移动到生成的位置。<br>
+  d、之后，它将等待5秒钟。</p>
+<p>关闭BT_Muffin，然后按下Play播放。生成一些松饼和准备最致命的皇家战斗: <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a9-9.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2018/01/MuffinWarComplete.zip">这里</a> 下载完成的项目。</p>
+<p>正如你所看到的，创造一个简单的AI角色是很容易的。如果你想创建更高级的AI，请查看 <a href="https://docs.unrealengine.com/4.26/en-US/InteractiveExperiences/ArtificialIntelligence/EQS/">Environment Query System</a> 这篇文章。这个系统将允许你的AI收集关于环境的数据并做出反应。</p>
+<p>如果你想继续学习，看看这个系列的 <a href="https://yunmin97.github.io/posts/ue4/how-to-create-a-simple-fps/">下一篇文章</a>，在那里我将告诉你如何创建一个简单的第一人称射击游戏。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/238-unreal-engine-4-tutorial-artificial-intelligence">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/10-how-to-create-a-simple-fps/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：如何创建一个简单的FPS游戏</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/8-particle-systems/">
+                  <span class="button__text">虚幻引擎4：粒子系统</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

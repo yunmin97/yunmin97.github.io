@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：UI ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4 UI教程中，您将学习如何创建，显示和更新HUD。
+在电子游戏中，开发者使用图像和文本向玩家显示相关信息，如生命值或分数。这就是所谓的用户界面(UI)。
+你可以在虚幻引擎4使用虚幻运动图形(UMG)创建一个UI。UMG允许您通过拖放UI元素(如按钮和文本标签)来轻松构建UI。
+在这个教程中，你将学习如何：
+创建一个头戴显示器(HUD)，显示一个计数器和计时器。 显示HUD。 更新计数器和计时器以显示变量值。 请注意，您将在本教程中使用蓝图。如果您需要复习，请查看我们的 蓝图教程 。
+1、准备开始：
+下载本教程 工程文件 并解压。前往项目文件夹下并双击GeometryCatcher.uproject打开项目。
+注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。
+按下Play播放然后控制一个白色的立方体，并试图抓住下落的形状。您可以通过移动鼠标来水平移动捕获器。10秒后，图形将停止生成： 首先你要做的是创建一个HUD来显示两个东西：
+追踪玩家收集了多少形状的计数器。 显示形状停止生成前还剩多少秒的计时器。 要创建所有这些，您需要使用widgets小部件。
+2、关于Widgets： Widget是为UI提供某种视觉功能的UI元素。例如，Button这样的Widget提供了一个用户可以看到并单击的对象： Widget本身不需要是可见的。例如，Grid Panel这样的Widget在其内容之间均匀地分配空间。用户不能看到Grid Panel本身，但可以看到它的效果： 一个Widget还可以包含其他Widget。下面是一个自定义Widget的示例，它包含一个文本Widget(Name标签)和一个文本框Widget： 您甚至可以将一个Widget构造成一个完整的界面，比如一个菜单屏幕。下面是一个Widget的示例，它看起来像一个标题屏幕。所有UI元素也是Widget，并且包含在标题屏幕Widget中： 现在您知道了什么是Widget，是时候为HUD创建一个Widget小部件了。
+3、创建Widget： 前往“内容浏览器”面板并进入UI文件夹中，点击“添加/导入”按钮并选择“User Interface\Widget Blueprint”。把创建好的资产命名为“WBP_HUD”：
+双击WBP_HUD在UMG UI设计器中打开它。
+4、UMG UI设计器： UMG UI设计器由七个主要元素组成： a、Designer：此区域包含widget的可视表示形式。通过按住右键并移动鼠标来平移。通过滚动鼠标滚轮来缩放。 b、Details：您选择的任何widget都将在这里显示其属性。 c、Palette：您可以使用的所有widget的列表。任何用户创建的widget也将出现在这里。
+d、Hierarchy：您当前正在使用的所有widget的列表。 e、Animations：widget可以有特定的动画属性，比如位置和大小。这个面板列出了所有的动画。
+f、Timeline：当你选择一个动画，这个面板将显示动画属性和关键帧。 g、Editor Mode：在这里，您可以在Designer和Graph模式之间切换。Graph模式几乎等同于蓝图的事件图表。
+5、创建文本widget：
+文本widget非常适合显示数字信息，比如计数器和计时器。
+转到Palette面板并搜索Text小部件。按住左键并将其拖放到Designer面板中来添加小部件：
+现在不要担心文本内容，您稍后将替换它。
+将小部件重命名为CounterText。您可以通过选择Text小部件并转到Details面板来实现这一点。在顶部的文本框中输入“CounterText”： 可以通过在Designer中按住左键并拖动小部件来移动它：
+您还可以通过左击和拖动手柄来调整小部件的大小。调整大小允许您设置小部件的边界。虚幻不会渲染边界以外的任何东西：
+或者，您可以通过修改Details面板中的值来设置位置和大小。为CounterText设置以下属性和值：
+目前，文本只占方框的一小部分：
+您可以通过转到Details面板并导航到Appearance部分来增加字体大小。在字体属性的最右边，有一个文本框用于设置字体的大小：
+把字体大小设置为68： 让我们通过在其旁边添加一个图标来使它看起来更好一点。
+6、创建图片widget：
+图像小部件是在UI中显示图形(如图标)的一种简单方法。
+创建一个图像小部件并命名为CounterIcon。设置其位置X为75，位置Y为50。并将它放在CounterText旁边：
+要设置图像，请转到Details面板并转到Appearance部分。展开“Brush”属性，然后单击图像的下拉菜单。选择T_Counter： 图像看起来会被拉伸，因为小部件与图像的大小不同： 您可以使用Size To Content选项，而不是调整小部件的大小。此选项将自动调整小部件的大小以适应其内容。
+仍然在“细节”面板，前往“Slot”(Canvas Panel Slot)部分。勾选“Size To Content”旁边的复选框： 小部件将调整自身大小以适应图像： 当在不同屏幕尺寸大小下播放游戏时，UI需要相应地移动它的小部件。为了保持你的UI布局，您可以使用anchors锚点。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/4-ui/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：UI"/>
+<meta name="twitter:description" content="在这个虚幻引擎4 UI教程中，您将学习如何创建，显示和更新HUD..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：UI" />
+<meta property="og:description" content="在这个虚幻引擎4 UI教程中，您将学习如何创建，显示和更新HUD..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/4-ui/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-08T22:12:54+08:00" />
+<meta property="article:modified_time" content="2018-11-08T22:12:54+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：UI</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-08
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4 UI教程中，您将学习如何创建，显示和更新HUD。</p>
+<p>在电子游戏中，开发者使用图像和文本向玩家显示相关信息，如生命值或分数。这就是所谓的用户界面(UI)。</p>
+<p>你可以在虚幻引擎4使用虚幻运动图形(UMG)创建一个UI。UMG允许您通过拖放UI元素(如按钮和文本标签)来轻松构建UI。</p>
+<p>在这个教程中，你将学习如何：</p>
+<ul>
+<li>创建一个头戴显示器(HUD)，显示一个计数器和计时器。</li>
+<li>显示HUD。</li>
+<li>更新计数器和计时器以显示变量值。</li>
+</ul>
+<p>请注意，您将在本教程中使用蓝图。如果您需要复习，请查看我们的 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">蓝图教程</a> 。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载本教程 <a href="https://koenig-media.raywenderlich.com/uploads/2017/08/GeometryCatcherStarter.zip">工程文件</a> 并解压。前往项目文件夹下并双击GeometryCatcher.uproject打开项目。</p>
+<p>注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。</p>
+<p>按下Play播放然后控制一个白色的立方体，并试图抓住下落的形状。您可以通过移动鼠标来水平移动捕获器。10秒后，图形将停止生成： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-1.gif" alt=""></p>
+<p>首先你要做的是创建一个HUD来显示两个东西：</p>
+<ul>
+<li>追踪玩家收集了多少形状的计数器。</li>
+<li>显示形状停止生成前还剩多少秒的计时器。</li>
+</ul>
+<p>要创建所有这些，您需要使用widgets小部件。</p>
+<p>  </p>
+<p><strong>2、关于Widgets：</strong> <br>
+Widget是为UI提供某种视觉功能的UI元素。例如，Button这样的Widget提供了一个用户可以看到并单击的对象： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-2.gif" alt=""></p>
+<p>Widget本身不需要是可见的。例如，Grid Panel这样的Widget在其内容之间均匀地分配空间。用户不能看到Grid Panel本身，但可以看到它的效果：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-1.jpg" alt=""></p>
+<p>一个Widget还可以包含其他Widget。下面是一个自定义Widget的示例，它包含一个文本Widget(Name标签)和一个文本框Widget：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-2.jpg" alt=""></p>
+<p>您甚至可以将一个Widget构造成一个完整的界面，比如一个菜单屏幕。下面是一个Widget的示例，它看起来像一个标题屏幕。所有UI元素也是Widget，并且包含在标题屏幕Widget中： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-3.jpg" alt=""></p>
+<p>现在您知道了什么是Widget，是时候为HUD创建一个Widget小部件了。</p>
+<p>  </p>
+<p><strong>3、创建Widget：</strong>
+前往“内容浏览器”面板并进入UI文件夹中，点击“添加/导入”按钮并选择“User Interface\Widget Blueprint”。把创建好的资产命名为“WBP_HUD”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-4.jpg" alt=""></p>
+<p>双击WBP_HUD在UMG UI设计器中打开它。</p>
+<p>  </p>
+<p><strong>4、UMG UI设计器：</strong>  <br>
+UMG UI设计器由七个主要元素组成： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-5.jpg" alt="">
+  a、Designer：此区域包含widget的可视表示形式。通过按住右键并移动鼠标来平移。通过滚动鼠标滚轮来缩放。  <br>
+  b、Details：您选择的任何widget都将在这里显示其属性。 <br>
+  c、Palette：您可以使用的所有widget的列表。任何用户创建的widget也将出现在这里。<br>
+  d、Hierarchy：您当前正在使用的所有widget的列表。 <br>
+  e、Animations：widget可以有特定的动画属性，比如位置和大小。这个面板列出了所有的动画。<br>
+  f、Timeline：当你选择一个动画，这个面板将显示动画属性和关键帧。  <br>
+  g、Editor Mode：在这里，您可以在Designer和Graph模式之间切换。Graph模式几乎等同于蓝图的事件图表。</p>
+<p>  </p>
+<p><strong>5、创建文本widget：</strong><br>
+文本widget非常适合显示数字信息，比如计数器和计时器。</p>
+<p>转到Palette面板并搜索Text小部件。按住左键并将其拖放到Designer面板中来添加小部件：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-3.gif" alt=""></p>
+<p>现在不要担心文本内容，您稍后将替换它。</p>
+<p>将小部件重命名为CounterText。您可以通过选择Text小部件并转到Details面板来实现这一点。在顶部的文本框中输入“CounterText”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-6.jpg" alt=""></p>
+<p>可以通过在Designer中按住左键并拖动小部件来移动它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-4.gif" alt=""></p>
+<p>您还可以通过左击和拖动手柄来调整小部件的大小。调整大小允许您设置小部件的边界。虚幻不会渲染边界以外的任何东西：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-5.gif" alt=""></p>
+<p>或者，您可以通过修改Details面板中的值来设置位置和大小。为CounterText设置以下属性和值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-7.jpg" alt=""></p>
+<p>目前，文本只占方框的一小部分：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-8.jpg" alt=""></p>
+<p>您可以通过转到Details面板并导航到Appearance部分来增加字体大小。在字体属性的最右边，有一个文本框用于设置字体的大小：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-9.jpg" alt=""></p>
+<p>把字体大小设置为68： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-10.jpg" alt=""></p>
+<p>让我们通过在其旁边添加一个图标来使它看起来更好一点。</p>
+<p>  </p>
+<p><strong>6、创建图片widget：</strong><br>
+图像小部件是在UI中显示图形(如图标)的一种简单方法。</p>
+<p>创建一个图像小部件并命名为CounterIcon。设置其位置X为75，位置Y为50。并将它放在CounterText旁边：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-11.jpg" alt=""></p>
+<p>要设置图像，请转到Details面板并转到Appearance部分。展开“Brush”属性，然后单击图像的下拉菜单。选择T_Counter： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-12.jpg" alt=""></p>
+<p>图像看起来会被拉伸，因为小部件与图像的大小不同： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-13.jpg" alt=""></p>
+<p>您可以使用Size To Content选项，而不是调整小部件的大小。此选项将自动调整小部件的大小以适应其内容。</p>
+<p>仍然在“细节”面板，前往“Slot”(Canvas Panel Slot)部分。勾选“Size To Content”旁边的复选框： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-14.jpg" alt=""></p>
+<p>小部件将调整自身大小以适应图像： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-15.jpg" alt=""></p>
+<p>当在不同屏幕尺寸大小下播放游戏时，UI需要相应地移动它的小部件。为了保持你的UI布局，您可以使用anchors锚点。</p>
+<p>  </p>
+<p><strong>7、锚点：</strong><br>
+锚点定义了小部件的相对位置。默认情况下，小部件的锚点设置在其父部件的左上角。当你设置小部件的位置时，你实际上是设置它相对于那个锚点的位置。</p>
+<p>在下面的例子中，每个图像的锚都被定到一个单点(最近角落点)：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-6.gif" alt=""></p>
+<p>注意每个图像是如何保持其相对于锚点的位置的。使用锚点，你可以确保你的UI在不同的屏幕尺寸上有相同的布局。</p>
+<p>您还可以使用锚来自动调整小部件的大小。当锚定到两个或多个点时，小部件将调整自身的大小以保持其相对大小。</p>
+<p>在下面的示例中，工具条被固定在左上角和右上角： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-7.gif" alt="">
+垂直方向，工具条发生移动但不会调整自身大小。这是因为它在y轴上只有一个锚点(顶部)。但是，工具条在水平方向上调整了其自身的大小，因为它在x轴上有两个锚点。</p>
+<p>锚点图章代表你锚点的位置。当您选择一个小部件时，它就会出现：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-16.jpg" alt=""></p>
+<p>CounterText和CounterIcon的锚点都已经在正确的位置上，所以你不需要设置它们。</p>
+<p>接下来，您将为计时器创建另一个Text和Image小部件。不过，这次你要把它们放在右边。</p>
+<p>  </p>
+<p><strong>8、创建计时器：</strong>  <br>
+创建一个Text小部件并将其命名为TimerText。然后设置为其以下属性：</p>
+<ul>
+<li>Position X: 1225</li>
+<li>Position Y: 50</li>
+<li>Size X: 500</li>
+<li>Size Y: 100</li>
+<li>Font Size: 68</li>
+<li>Justification: Align Text Right (这将使文本对齐到小部件的右侧)     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-17.jpg" alt=""></li>
+</ul>
+<p>接下来，您要把锚点设置在右上方。您可以通过左键单击并拖动锚点图章上的圆圈来实现这一点。移动锚点图章到右上角：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-8.gif" alt=""></p>
+<p>注意其相对于锚点的位置是如何改变的： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-18.jpg" alt=""></p>
+<p>创建一个Image小部件并将其命名为TimerIcon。为其设置以下属性：</p>
+<ul>
+<li>Position X: 1750</li>
+<li>Position Y: 50</li>
+<li>Size To Content: Checked</li>
+<li>Brush\Image: T_Timer   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-19.jpg" alt=""></li>
+</ul>
+<p>您可以使用预设，而不是使用anchor Medallion来设置锚点。转到Details面板，单击Anchors旁边的下拉菜单来显示预设。选择第三个预设(其右上方有个正方形的那个)： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-20.jpg" alt=""></p>
+<p>现在完成了UI的布局。您可以通过模拟不同的屏幕尺寸来查看锚点的运转。转到Designer面板并单击Screen Size的下拉菜单：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-21.jpg" alt=""></p>
+<p>选择一个选项将改变WBP_HUD的大小以匹配该选项。下图是HUD在iPad Air上的显示效果。注意这些小部件是如何靠得更近的：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-22.jpg" alt=""></p>
+<p>在下一节中，您将学习如何显示WBP_HUD小部件。</p>
+<p>  </p>
+<p><strong>9、显示HUD：</strong><br>
+点击“编译”按钮然后返回到主编辑器界面中。前往“Blueprints”文件夹并双击“BP_GameManager”来打开它。</p>
+<p>HUD应该在游戏开始时就显现出来。你可以使用“Event BeginPlay”节点来实现这一点。</p>
+<p>找到“Event BeginPlay”节点，然后在节点链的末端添加一个“Create Widget”节点。此节点将创建指定小部件的实例：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-23.jpg" alt=""></p>
+<p>点击在“Class”旁边的下拉菜单然后选择WBP_HUD： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-24.jpg" alt=""></p>
+<p>要显示HUD，您需要使用“Add to Viewport”节点。左键单击并拖动“Create Widget”节点的“Return Value”引脚。在空白处释放“左键”以调出上下文菜单。添加一个“Add to Viewport”节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-25.jpg" alt=""></p>
+<p>让我们回顾一下事件的顺序：<br>
+  a、一旦虚幻生成BP_GameManager, “Restart”和“SetUpCamera”函数将被执行。这些函数设置了一些变量和摄像机。如果你不知道函数是什么，不用担心。本教程稍后将介绍这些内容。<br>
+  b、“Create Widget”节点创建WBP_HUD的实例。<br>
+  c、“Add to Viewport”节点把WBP_HUD显示出来。</p>
+<p>单击Compile按钮，然后返回到主编辑器。按下Play播放键，使用新的HUD进行游戏：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-9.gif" alt=""></p>
+<p>要显示计数器和计时器的值，您将需要一个保存该信息的变量。您可以在BP_GameManager中找到这些变量：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-26.jpg" alt=""></p>
+<p>要使用这些变量，您需要一种从WBP_HUD访问BP_GameManager的方法。您可以通过在一个变量中存储对BP_GameManager的引用来做到这一点。</p>
+<p>  </p>
+<p><strong>10、保存引用：</strong><br>
+存储引用很有用，因为这意味着您可以轻松地访问特定的实例。</p>
+<p>假设你有一个盒子，里面有一个球。如果你想找到球并检查它，这很简单，因为只有一个盒子： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-27.jpg" alt=""></p>
+<p>现在，假设你有100个盒子，但只有一个里面装着一个球。你必须检查每一个盒子，直到你找到装球的盒子：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-28.jpg" alt=""></p>
+<p>无论何时你想检查球，你都必须执行这个操作。这将很快导致性能问题。</p>
+<p>使用引用，你可以跟踪装有球的那个盒子。这样，你就不用检查每一个盒子了：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-29.jpg" alt=""></p>
+<p>  </p>
+<p><strong>11、创建变量：</strong><br>
+打开WBP_HUD并通过进入编辑器模式并选择Graph切换到Graph模式：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-30.jpg" alt=""></p>
+<p>前往“My Blueprint”选项卡并创建一个名为“GameManager”的新变量。</p>
+<p>转到“Details”面板，单击“变量类型”旁边的下拉菜单。搜索“BP_GameManager”并选择“BP GameManager \Object Reference”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-31.jpg" alt=""></p>
+<p>  </p>
+<p><strong>12、设置引用：</strong><br>
+点击“编译”按钮然后打开“BP_GameManager”。</p>
+<p>找到“Create Widget”节点，然后左键单击并拖动Return Value引脚。在空白处释放左键点击，然后从菜单中选择“Set Game Manager”。</p>
+<p>然后，将“Add to Viewport”节点链接到“Set Game Manager”节点：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-32.jpg" alt=""></p>
+<p>注意：您可以通过在线上双击创建一个“Reroute”节点来重新布线。左键单击并拖动“Reroute”节点以重新布局线路。</p>
+<p>接下来，创建一个“Self”节点并将其连接到“Set Game Manager”节点的左引脚。Self节点将以“Get a reference to self”被列出：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-33.jpg" alt=""></p>
+<p>现在，当“WBP_HUD”被创建后，它将有一个对BP_GameManager的引用。</p>
+<p>在下一节中，您将了解如何在函数的帮助下更新小部件。</p>
+<p>  </p>
+<p><strong>13、函数：</strong>
+在蓝图中，函数是类似于事件图表中的图形。与事件图表不同，您可以使用节点调用函数。但你为什么要这么做？  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-34.jpg" alt=""></p>
+<p>  </p>
+<p><strong>14、组织：</strong><br>
+使用函数的原因之一是组织。通过使用函数，可以将多个节点包装为单个节点。</p>
+<p>看看BP_GameManager的“Event BeginPlay”部分。有两个函数：“Restart”和“SetUpCamera”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-35.jpg" alt=""></p>
+<p>下面是没有使用函数，以上功能部分的样子：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-36.jpg" alt="">
+正如您所看到的，使用函数看起来干净多了。</p>
+<p>  </p>
+<p><strong>15、可重用性：</strong><br>
+使用函数的另一个原因是可重用性。例如，如果希望重置计数器和计时器，可以通过使用Restart函数轻松完成：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-37.jpg" alt=""></p>
+<p>这为您节省了每次需要重置这些变量时重新创建节点的工作。</p>
+<p>现在您知道什么是函数了，您将使用一个函数来更新CounterText小部件。</p>
+<p>  </p>
+<p><strong>16、更新Widget：</strong><br>
+默认情况，从蓝图中是无法Text小部件。这意味着你没有办法去改变Text的属性。庆幸的是，这个问题很容易修复。</p>
+<p>单击“Compile”按钮进行编译，然后打开WBP_HUD。切换到设计器模式。</p>
+<p>选择CounterText，然后转到其“详细”面板。选中位于最上面的“ Is Variable checkbox”复选框：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-38.jpg" alt=""></p>
+<p>现在，您将能够去更新CounterText了。下一步是创建一个函数来更新文本。</p>
+<p>  </p>
+<p><strong>17、创建更新函数：</strong><br>
+切换回图形模式，然后转到“我的蓝图”选项卡。单击Functions部分右侧的+号： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-39.jpg" alt=""></p>
+<p>这将创建一个新的函数，并进入到它的图像窗口。将函数重命名为“UpdateCounterText”。</p>
+<p>默认情况下，图形将包含一个Entry节点。当函数执行时，它将从这里开始：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-40.jpg" alt=""></p>
+<p>要让CounterText显示ShapesCollected变量的值，您需要将它们链接起来。</p>
+<p>将GameManager变量拖到图表中。左键点击并拖动它的引脚，然后在空白区域释放左键点击。从菜单中选择“Get Shapes Collected”：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-41.jpg" alt=""></p>
+<p>要设置文本，您将要使用“SetText (text)”节点。将CounterText变量拖到图表中。左键点击并拖动它的引脚，然后在空白区域释放左键点击。从菜单中添加“SetText (Text)”节点：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-42.jpg" alt=""></p>
+<p>“SetText (Text)”只接受文本类型的输入。但是，ShapesCollected变量的类型是Integer。幸运的是，当你尝试将Integer值连接到类型为Text的输入时，Unreal会自动进行转换。</p>
+<p>将ShapesCollected变量连接到“Set Text (Text)”节点的“In Text”引脚。虚幻会自动为你创建一个“ToText (int)”节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-10.gif" alt=""></p>
+<p>要完成此函数，请将Entry节点连接到“Set Text (Text)”节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-43.jpg" alt=""></p>
+<p>事件的执行顺序： <br>
+  a、当你调用UpdateCounterText函数时，它会从BP_GameManager获取ShapesCollected变量。<br>
+  b、“ToText (int)”节点将ShapesCollected的值转换为Text类型。<br>
+  c、“SetText (Text)”将CounterText的文本设置为“ToText (int)”的值。</p>
+<p>接下来要做的是在玩家收集到形状时调用UpdateCounterText函数。</p>
+<p>  </p>
+<p><strong>18、调用更新函数：</strong>
+调用UpdateCounterText的最佳位置是在游戏递增ShapesCollected之后。我已经创建了一个名为IncrementShapesCollected的函数，它会为你增加计数器。当它们与玩家重叠时，形状就会调用这个函数：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-44.jpg" alt=""></p>
+<p>点击“编译”按钮然后回到BP_GameManager。</p>
+<p>在调用UpdateCounterText函数之前，需要引用WBP_HUD。看看您是否可以自己存储一个引用：</p>
+<ul>
+<li>找到您创建并显示WBP_HUD的地方。</li>
+<li>左键单击并拖动“Create Widget”节点的“Return Value”引脚。</li>
+<li>在空白处单击左键，然后从菜单中选择“Promote to variable”。</li>
+<li>将新节点添加到节点链的末端。</li>
+</ul>
+<p>创建变量后，将其重命名为HUDWidget：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-45.jpg" alt=""></p>
+<p>接下来，单击拖动“Set HUDWidget”节点的右引脚，并在空白位置上释放。添加UpdateCounterText节点。这将确保CounterText在游戏开始时显示ShapesCollected的值（初始化）：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-46.jpg" alt=""></p>
+<p>然后，导航到“My Blueprint”面板并转到Functions部分。双击IncrementShapesCollected打开其图表界面：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-47.jpg" alt=""></p>
+<p>将HUDWidget变量拖到图表中。左击拖拽它的引脚，并在空白区域释放。添加一个UpdateCounterText节点，并像这样连接它：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-48.jpg" alt=""></p>
+<p>现在，无论IncrementShapesCollected何时被执行，它都会递增ShapesCollected的值，然后调用UpdateCounterText函数。然后，这个函数将把CounterText更新为ShapesCollected的值。</p>
+<p>点击Compile按钮，然后关闭BP_GameManager。按下Play按钮并收集一些形状以查看CounterText小部件的更新：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-11.gif" alt=""></p>
+<p>接下来，您将使用另一种称为“绑定”的方法更新TimerText小部件。</p>
+<p>  </p>
+<p><strong>19、绑定：</strong><br>
+绑定允许您自动更新某些小部件属性。要绑定，属性必须具有Bind的下拉列表：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-49.jpg" alt=""></p>
+<p>您可以将属性绑定到小部件中包含的函数或变量。这种绑定将不断地从函数或变量中获得一个值。并将绑定属性设置为该值：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-50.jpg" alt=""></p>
+<p>您可能想知道为什么不应该一直使用绑定。绑定效率很低，因为它们在不断更新。这意味着即使没有任何新信息，游戏也会浪费时间去更新属性。将其与前一个方法进行比较，在前一个方法中，小部件只在需要时进行更新。</p>
+<p>也就是说，绑定对于频繁更改的元素(如计时器)非常有用。让我们继续为TimerText创建一个绑定。</p>
+<p>  </p>
+<p><strong>20、创建绑定：</strong><br>
+打开WBP_HUD并切换到设计模式。</p>
+<p>选择TimerText，然后转到其“细节”面板中的Content部分。您将看到Text属性是可绑定的。单击“绑定”的下拉菜单，选择“Create Binding”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-51.jpg" alt=""></p>
+<p>这将为你创建一个新函数并进入到它的图表中。将函数重命名为UpdateTimerText。</p>
+<p>该函数有一个返回节点（包含一个Text类型的返回值引脚）。TimerText将显示插入此引脚的任何文本：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-52.jpg" alt=""></p>
+<p>将GameManager拖到图表中，然后从中获得timerremaining变量。</p>
+<p>将timerremaining变量连接到Return节点的Return Value引脚上。像上次一样，虚幻会自动为你添加一个转换节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-53.jpg" alt=""></p>
+<p>总结：</p>
+<ul>
+<li>绑定操作将不断调用UpdateTimerText函数。</li>
+<li>UpdateTimerText函数将会从BP_GameManager获取TimeRemaining变量。</li>
+<li>“ToText (float)”节点将把timerremaining的值转换为Text类型。</li>
+<li>然后将转换后的值输出到Return节点。</li>
+</ul>
+<p>HUD终于完成了。单击Compile按钮编译，然后关闭WBP_HUD。按下Play按钮以查看最终结果：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a4-12.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong><br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/08/GeometryCatcherComplete.zip">这里</a> 下载完整的工程。</p>
+<p>既然您已经了解了UMG的基础知识，那么构建更复杂的界面就相对容易了。尝试去使用其他小部件和面板小部件。</p>
+<p>如果你想了解其他小部件的功能，请转到 <a href="https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/WidgetTypeReference/index.html">虚幻引擎文档</a> 中的小部件类型参考页面。</p>
+<p>如果你想继续学习，请查看本系列的 <a href="https://yunmin97.github.io/posts/ue4/how-to-create-a-simple-game/">下一篇文章</a>，在那里我将向你展示如何将所有内容结合起来创建一个简单的游戏！</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/480-unreal-engine-4-ui-tutorial">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/5-how-to-create-a-simple-game/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：如何创建一个简单的游戏</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/3-materials/">
+                  <span class="button__text">虚幻引擎4：材质</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

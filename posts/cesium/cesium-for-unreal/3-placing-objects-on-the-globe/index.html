@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Cesium for Unreal：在地球上放置对象 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="我们已经创建过关卡并导入了一些像Cesium World Terrain地形和城市的倾斜摄影模型的现实世界的资产，接下来你可能想要做的事情是从标准的Unreal Engine引擎工具箱中添加一些其他的对象，如：网格体、植被、角色还有很多很多。幸运地，Cesium for Unreal和你熟悉的 Unreal Engine引擎工作流很友好地集成了。 在这个教程你将学到：
+添加一些简单Unreal Engine引擎对象到关卡中。 学习更多有关Cesium for Unreal插件如何整合到Unreal Engine引擎的细节，这将帮助你在创建关卡时避免意外。 前提要求
+你已经使用Cesium for Unreal创建了一个世界，也许是根据Quickstart教程或者Adding Photogrammetry教程创建的。现在你要添加一些更多的Unreal Engine的对象进去。 添加静态网格到Cesium for Unreal关卡中： 在CesiumGeorereference的原点附近添加对象与在其他Unreal Engine引擎的关卡中添加对象是相同的。
+1、如果编辑相机已经不在CesiumGeoreference附近(在几公里之内)，点击“世界视图大纲”中的CesiumGeoreference对象，在其细节面板中找到“Place Georeference Origin Here”按钮并点击。你可能要重置FloatingPawn的位置到（0，0，0）去，这样游戏模式就从相同的位置开始。 2、点击“窗口=&amp;gt;放置Actor”打开“放置Actor”面板。
+3、拖一个静态网格对象，如“圆锥体”，进入关卡视口中。
+4、使用关卡编辑视口移动、旋转和缩放静态网格体以达预期。
+使用通常的方式可以把任何普通的Unreal Engine对象添加到关卡中。然而，了解更多的其他一些细节将会很有用，下面将对他们进行讨论。
+世界原点重建： 原点重建是一个Unreal Engine引擎的特色，可以在非常大的世界中保存顶点的精度。其工作原理是通过单独保存OriginLocation的一组整数(而不是浮点)坐标值。当OriginLocation发生改变时，关卡中每个对象的浮点坐标值都会被更新，这样相对于对象之间，所有对象就会处于与之前相同的位置，但是现在新指定的OriginLocation是游戏世界的中心(0,0,0)点。
+默认情况下，当观看者在世界中移动时，CesiumGeorereference自动重新建立世界原点，使其靠近观看者。这样确保靠近观察者的对象拥有较小的坐标值，这样可以被很精确的呈现出来。这反过来，可避免“抖动”的渲染现象。相机和相机附近的另一个物体的大坐标值的舍入误差会导致物体随着相机或物体的移动而“跳跃”。 在这幅图像中，相机被放大到一个离原点很远的圆锥体附近。圆锥体和轴表现出“抖动”，四处跳跃，有时甚至随着小摄像机的运动而消失。
+即使世界原点被重建，遥远的物体也有很大的坐标值，可以不那么精确地表示。但这种不精确并不成问题，因为对于遥远的物体来说，顶点位置映射的小错误远小于一个像素。
+世界原点重建实现了一个重要的目的，但它有两个缺点: a、当OriginLocation改变时，不断的去更新每个对象的位置需要花费一些性能开销的代价。 b、一些引擎对象并不支持世界原点重建。当原点重建后，一些对象将会产生位置错误，或者呈现出其他的现象。
+如果你期望观察者呆在你应用的原点附近，或者至少在远离原点的时候不看近距离的物体，这样禁用世界原点重建是安全的。只需要取消Cesiumgeorereference中的“Keep World Origin Near Camera”属性: 你看不见的就是你得不到的： Cesium for Unreal的Cesium3DTileset对象的把大量数据集以视觉相关的方式输送到你的应用程序中。它们执行两个功能，这对于呈现可以很容易地以TB或更大单位度量的数据集是必不可少的:细节级别和剔除。
+细节级别：意味着完整的贴图集被分解成一个多分辨率的金字塔状的独立块，称为贴图。广泛的说，Cesium for Unreal为接近观察者的模型那部分选择高分辨率Tiles，远离的那部分选择低分辨率的Tiles。
+剔除：意味着我们不会加载或渲染看不见的模型那部分。剔除的一种关键形式是视图截锥剔除，它排除了在查看器后面或在其视场之外的贴图。剔除这些Tiles意味着更少的数据下载和更少的在引擎中加载渲染Tileset图集，提高运行时性能和效率。
+然而，剔除也伴随着一个重要的警告:如果你看不到，那它就不存在。被剔除的Tiles贴图根本不会发送到虚幻引擎，这意味着: a、它不会投射阴影。 b、它不会引起任何物理迭代消耗。
+想象在你前面的一个角色，站在Cesium World Terrain地形表面。引擎的重力模拟使角色牢固在地形表面上。现在你转身使你背对着角色。角色所站的位置的Tile贴图将不再可见，所以它将会被剔除掉。突然，角色在虚空中盘旋，他们开始走向灭亡!
+同样地，当你背向一座高楼时，它也不会再投下阴影，因为它在虚幻引擎世界中真的不存在了。
+为了避免这些问题，我们可以对Tilesets贴图集禁用视图截锥剔除，这些对物理、阴影和其他目的都很重要。点击“世界大纲视图”中的Cesium3DTileset对象，在“细节”面板中找到Cesium-&amp;gt;Tile Culling部分，并取消选中“Enable Frustum Culling”： 正如前面提到的，禁用截锥剔除确实会带来性能损失，但对于某些用例来说，这是必不可少的。
+地球是个椭圆形的： 由于地球的曲率，我们离cesiumgeorereference原点越远，引擎-Z方向就越不准确地表示本地的“下”方。准确地说，我们从原点每移动一公里，向下的方向就会发生0."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/cesium/cesium-for-unreal/3-placing-objects-on-the-globe/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Cesium for Unreal：在地球上放置对象"/>
+<meta name="twitter:description" content="我们已经创建过关卡并导入了一些像Cesium World Terrain地形和城市..."/>
+
+
+
+<meta property="og:title" content="Cesium for Unreal：在地球上放置对象" />
+<meta property="og:description" content="我们已经创建过关卡并导入了一些像Cesium World Terrain地形和城市..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/cesium/cesium-for-unreal/3-placing-objects-on-the-globe/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-10T09:51:43+08:00" />
+<meta property="article:modified_time" content="2021-07-10T09:51:43+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Cesium for Unreal：在地球上放置对象</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2021-07-10
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>我们已经创建过关卡并导入了一些像Cesium World Terrain地形和城市的倾斜摄影模型的现实世界的资产，接下来你可能想要做的事情是从标准的Unreal Engine引擎工具箱中添加一些其他的对象，如：网格体、植被、角色还有很多很多。幸运地，Cesium for Unreal和你熟悉的 Unreal Engine引擎工作流很友好地集成了。 <br>
+<img src="/img/cesium/cesium-for-unreal/a30.jpg" alt=""></p>
+<p><strong>在这个教程你将学到：</strong></p>
+<ul>
+<li>添加一些简单Unreal Engine引擎对象到关卡中。</li>
+<li>学习更多有关Cesium for Unreal插件如何整合到Unreal Engine引擎的细节，这将帮助你在创建关卡时避免意外。</li>
+</ul>
+<p><strong>前提要求</strong></p>
+<ul>
+<li>你已经使用Cesium for Unreal创建了一个世界，也许是根据<a href="">Quickstart</a>教程或者<a href="">Adding Photogrammetry</a>教程创建的。现在你要添加一些更多的Unreal Engine的对象进去。</li>
+</ul>
+<p>  </p>
+<p><strong>添加静态网格到Cesium for Unreal关卡中：</strong>  <br>
+在CesiumGeorereference的原点附近添加对象与在其他Unreal Engine引擎的关卡中添加对象是相同的。</p>
+<p>  1、如果编辑相机已经不在CesiumGeoreference附近(在几公里之内)，点击“世界视图大纲”中的CesiumGeoreference对象，在其细节面板中找到“Place Georeference Origin Here”按钮并点击。你可能要重置FloatingPawn的位置到（0，0，0）去，这样游戏模式就从相同的位置开始。 <br>
+  2、点击“窗口=&gt;放置Actor”打开“放置Actor”面板。<br>
+  3、拖一个静态网格对象，如“圆锥体”，进入关卡视口中。<br>
+  4、使用关卡编辑视口移动、旋转和缩放静态网格体以达预期。</p>
+<p>使用通常的方式可以把任何普通的Unreal Engine对象添加到关卡中。然而，了解更多的其他一些细节将会很有用，下面将对他们进行讨论。</p>
+<p>  </p>
+<p><strong>世界原点重建：</strong>     <br>
+原点重建是一个Unreal Engine引擎的特色，可以在非常大的世界中保存顶点的精度。其工作原理是通过单独保存OriginLocation的一组整数(而不是浮点)坐标值。当OriginLocation发生改变时，关卡中每个对象的浮点坐标值都会被更新，这样相对于对象之间，所有对象就会处于与之前相同的位置，但是现在新指定的OriginLocation是游戏世界的中心(0,0,0)点。</p>
+<p>默认情况下，当观看者在世界中移动时，CesiumGeorereference自动重新建立世界原点，使其靠近观看者。这样确保靠近观察者的对象拥有较小的坐标值，这样可以被很精确的呈现出来。这反过来，可避免“抖动”的渲染现象。相机和相机附近的另一个物体的大坐标值的舍入误差会导致物体随着相机或物体的移动而“跳跃”。   <br>
+<img src="/img/cesium/cesium-for-unreal/a1.gif" alt="">
+  在这幅图像中，相机被放大到一个离原点很远的圆锥体附近。圆锥体和轴表现出“抖动”，四处跳跃，有时甚至随着小摄像机的运动而消失。</p>
+<p>即使世界原点被重建，遥远的物体也有很大的坐标值，可以不那么精确地表示。但这种不精确并不成问题，因为对于遥远的物体来说，顶点位置映射的小错误远小于一个像素。</p>
+<p>世界原点重建实现了一个重要的目的，但它有两个缺点:  <br>
+  a、当OriginLocation改变时，不断的去更新每个对象的位置需要花费一些性能开销的代价。  <br>
+  b、一些引擎对象并不支持世界原点重建。当原点重建后，一些对象将会产生位置错误，或者呈现出其他的现象。</p>
+<p>如果你期望观察者呆在你应用的原点附近，或者至少在远离原点的时候不看近距离的物体，这样禁用世界原点重建是安全的。只需要取消Cesiumgeorereference中的“Keep World Origin Near Camera”属性: <br>
+<img src="/img/cesium/cesium-for-unreal/a14.jfif" alt=""></p>
+<p>  </p>
+<p><strong>你看不见的就是你得不到的：</strong>    <br>
+Cesium for Unreal的Cesium3DTileset对象的把大量数据集以视觉相关的方式输送到你的应用程序中。它们执行两个功能，这对于呈现可以很容易地以TB或更大单位度量的数据集是必不可少的:细节级别和剔除。</p>
+<p>细节级别：意味着完整的贴图集被分解成一个多分辨率的金字塔状的独立块，称为贴图。广泛的说，Cesium for Unreal为接近观察者的模型那部分选择高分辨率Tiles，远离的那部分选择低分辨率的Tiles。</p>
+<p>剔除：意味着我们不会加载或渲染看不见的模型那部分。剔除的一种关键形式是视图截锥剔除，它排除了在查看器后面或在其视场之外的贴图。剔除这些Tiles意味着更少的数据下载和更少的在引擎中加载渲染Tileset图集，提高运行时性能和效率。</p>
+<p>然而，剔除也伴随着一个重要的警告:如果你看不到，那它就不存在。被剔除的Tiles贴图根本不会发送到虚幻引擎，这意味着:    <br>
+  a、它不会投射阴影。  <br>
+  b、它不会引起任何物理迭代消耗。</p>
+<p>想象在你前面的一个角色，站在Cesium World Terrain地形表面。引擎的重力模拟使角色牢固在地形表面上。现在你转身使你背对着角色。角色所站的位置的Tile贴图将不再可见，所以它将会被剔除掉。突然，角色在虚空中盘旋，他们开始走向灭亡!</p>
+<p>同样地，当你背向一座高楼时，它也不会再投下阴影，因为它在虚幻引擎世界中真的不存在了。</p>
+<p>为了避免这些问题，我们可以对Tilesets贴图集禁用视图截锥剔除，这些对物理、阴影和其他目的都很重要。点击“世界大纲视图”中的Cesium3DTileset对象，在“细节”面板中找到Cesium-&gt;Tile Culling部分，并取消选中“Enable Frustum Culling”：  <br>
+<img src="/img/cesium/cesium-for-unreal/a15.jfif" alt=""></p>
+<p>正如前面提到的，禁用截锥剔除确实会带来性能损失，但对于某些用例来说，这是必不可少的。</p>
+<p>  </p>
+<p><strong>地球是个椭圆形的：</strong>    <br>
+由于地球的曲率，我们离cesiumgeorereference原点越远，引擎-Z方向就越不准确地表示本地的“下”方。准确地说，我们从原点每移动一公里，向下的方向就会发生0.01度的变化。在距离原点100公里的地方，重力方向会“错”约1度。这对于大多数应用来说可能不是很糟糕，但当我们到达地球的另一边时，重力方向是我们期望的180度。物体放置在地球的另一边，并配置服从虚幻引擎重力将“落入”太空!</p>
+<p>地球的圆度也会影响其他虚幻引擎的行为，不仅仅是物理。相机通常保持直立方向，但“直立”的概念对圆形行星是不正确的。Cesium的“FloatingPawn”会自动承担这个任务，但其他的“Pawn”不会。</p>
+<p>要解决地球是圆的这一不幸现实，需要使用以下技术之一，按最简单到最复杂的顺序排列:  <br>
+  1、待在一个相对较小的区域内，大概100公里左右。<br>
+  2、设置独立的子关卡，每个都有自己的CesiumGeorereference，在地球上每个需要的部分。这个技巧在 <a href="">Building Global Scenes with Sublevels</a> 教程中描述。<br>
+  3、使用“CesiumGeorereferenceComponent”组件添加有限的“globe-awareness”到任何虚幻的Acotr对象中（查阅下面“我们可以将动态对象转换为Georeferenced对象”一节）  <br>
+  4、手动扩展你的游戏对象，使其能充分感知地球的圆度。</p>
+<p>  </p>
+<p><strong>普通的引擎对象游戏世界是固定不变的，而真实世界中不是：</strong>       <br>
+当我们放置引擎标准的对象，如上面我们添加“Cone”锥体一样，我们会在游戏世界中给它一个特质的坐标。到目前为止，是没有任何可惊讶的。   <br>
+然而，游戏世界的坐标系统和真实世界之间的关系是不固定的。它是由CesiumGeoreference对象的原点属性定义，并且是可以更改的。值得注意的是，当CesiumGeoreference的原点发生改变时，整个引擎世界将会移动到地球上的一个新的位置，包括其上面的任何对象。</p>
+<p>如果我们把一个物体放在丹佛（地名）附近的山上，然后改变CesiumGeoreference的原点，我们看的是意大利北部的山，这个物体会移动到意大利北部。因此，在你开始构建关卡后，不要移动cesiumgeorereference原点是很重要的。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a31.jpg" alt="">
+  位于丹佛附近山区的一个圆锥体。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a32.jpg" alt="">
+  当我们改变CesiumGeoreference的值移动到意大利北部时，圆锥体也会移动。</p>
+<p>  </p>
+<p><strong>Georeferenced对象遵循不同的规则：</strong>     <br>
+以上内容适用于Unreal Engine引擎中的几乎所有对象，但也有一些对象遵循不同的规则集。我们称这些对象为Georeferenced对象。</p>
+<p>不像固定在游戏世界中的标准物体，Georeferenced对象时固定在地球上的。它有一个用双精度表示的位置，地球中心，地球固定(ECEF)坐标，或-等价地-经度，纬度和高度。如果这些坐标放在费城市政厅上面的威廉·佩恩雕像的旁边,例如,它会停留在那里,直到我们移动它,我们的关卡现在澳大利亚悉尼歌剧院的中心，即使我们调整CesiumGeoreference的原点坐标。<br>
+Cesium的FloatingPawn就是一个典型的Georeferenced对象。这就是为什么在[Quickstart]（）一文中描述的那样，
+对CesiumGeoreference的改变不会改变地球上的“Pawn”的位置。另外一个重要的Georeferenced对象是Cesium3DTileset。Tilesets贴图集知道他们应该在地球上的哪个位置，他们就呆在那里。</p>
+<p>  </p>
+<p><strong>我们可以将动态对象转换为Georereference对象：</strong>  <br>
+通过绑定一个CesiumGeoreferenceComponent组件，我们可以把普通的引擎Actor对象转为Georeferenced对象：</p>
+<p>1、点击“世界大纲”中的Actor对象，然后更改Actor的“移动性”属性为“可移动”。下面将解释这样改的原因：
+<img src="/img/cesium/cesium-for-unreal/a16.jfif" alt=""></p>
+<p>2、在其“详细”面板中点击“添加组件”按钮：<br>
+<img src="/img/cesium/cesium-for-unreal/a17.jfif" alt=""></p>
+<p>3、找到或搜索CesiumGeoreference组件，然后点击添加到Actor对象上： <br>
+<img src="/img/cesium/cesium-for-unreal/a18.jfif" alt=""></p>
+<p>仅仅通过添加一个CesiumGeoreference组件，我们就已经把一个普通的Actor对象转为了Georeferenced对象。现在，我们改变CesiumGeoreference对象的原点（特别注意，不要混淆了CesiumGeoreference组件和CesiumGeoreference对象），刚刚的Actor对象仍然呆在地球上其先前所在的位置。我们也可以在CesiumGeoreference组件上直接指定经度、维度、高度或者地球中心、地球固定的坐标，达到以精确的坐标值放置对象的目的。</p>
+<p>然而，有两个限制值得注意。</p>
+<p>第一个在上面提到过：我们只可以添加一个CesiumGeoreference组件到可移动的Actor对象上。即使这个对象相对于地球永远不会移动，但对CesiumGeoreference对象原点的修改将会改变它在游戏世界的位置。因此，对于引擎来说，它是可移动的。</p>
+<p>第二限制是给Actor指定相对于地球精确和一致的位置不会自动解决所有的问题。特别是，引擎的重力仍然会将Georeferenced对象拉向错误的方向，当它们远离原点时。</p>
+<p>如果你想在世界上不同的地方拥有多个区域，并且所有区域都具有有效的物理机制，并且能够从静态对象的使用中获得优化，那么这就是子关卡的工作。</p>
+<p>  </p>
+<p><strong>下一步：</strong><br>
+继续 <a href="https://yunmin97.github.io/posts/cesium/cesium-for-unreal-building-global-scenes-with-georeferenced-sublevels/">使用子关卡构建地球场景</a> 的教程。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://cesium.com/learn/unreal/unreal-placing-objects/">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/cesium/cesium-for-unreal/4-building-global-scenes-with-georeferenced-sublevels/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">Cesium for Unreal：使用地理引用子关卡构建地球场景</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/cesium/cesium-for-unreal/2-adding-datasets/">
+                  <span class="button__text">Cesium for Unreal：添加Datasets数据集</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：如何创建一个简单的FPS游戏 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4教程中，你将创建一个简单的第一人称射击游戏。您将学习如何创建一个可以开枪的第一人称角色，以及如何伤害其他玩家。
+第一人称射击游戏(FPS)是一种玩家使用枪支并通过角色的眼睛体验游戏的游戏类型。FPS游戏非常受欢迎，如《使命召唤》和《战地》等系列游戏。
+虚幻引擎最初是用于创造FPS游戏的，所以只有用它来创建一个才有意义。在本教程中，您将学习如何：
+创建可以移动和四处观看的第一人称Pawn。 创建一个枪并把它绑定到玩家Pawn。 使用Line追踪发射子弹（射线投射）。 把伤害应用到Actor。 1、准备开始： 下载 工程文件 并解压它。前往“项目文件夹”并通过打开BlockBreaker.uproject来打开项目。你将看到下面的场景： 上面的绿色墙体是由许多目标组成的。当它们受到伤害时，它们会变红。一旦它们的血量值到0，它们将会消失。红色按钮将会重置所有目标。
+首先，你将会创建玩家Pawn。
+2、创建玩家Pawn：
+导航到“蓝图”文件夹中并创建一个蓝图类，选择Character父类并重命名为“BP_Player”： Character是带有额外功能的Pawn类型（例如：CharacterMovement组件）：
+这个组件自动处理了像行走、跳跃的运动。你只需要简单的调用合适的函数即可使Pawn移动。你也可以在组件上设置如行走、跳跃速度的变量。
+在你使Pawn移动之前，它需要知道玩家何时按下运动键。为了达到这，你需要把运动映射到W, A, S 和 D键上。
+注意：如果你不熟悉映射，你可以在 蓝图 教程中学习它们。按键映射是你如何定义按键执行的动作。
+3、创建运动映射：
+选择“Edit\Project Settings”并打开“Input”设置。
+创建名字分别为MoveForward和MoveRight的两个轴映射（Axis Mappings）。MoveForward将处理向前和向后移动。MoveRight将处理向左和向右运动： 对于MoveForward，把键名改为W，然后创建另一个键并设置为S，把S键的Scale属性改为-1：
+注意：如果你想学习关于Scale属性的知识，阅读 https://yunmin97.github.io/posts/ue4/blueprints/ 教程。轴值和输入缩放（Axis Value and Input Scale）章节对其进行了描述和使用介绍。
+然后，你将把Scale值和Pawn的向前向量相乘。这将给你一个指向“前面”的向量（如果Scale为正值）。如果Scale为负值，向量将指向“后面”。通过使用得到的向量，你可以使你的Pawn向前或者向后移动： 接下来，你需要为向左和向右做同样的事情。把MoveRight的键改为D，然后新建一个键并设置为A。把A键的Scale改为-1.0： 现在映射已经完成，你需要使用它们来进行移动了。
+4、实现移动：
+打开BP_Player并打开“事件图表”。添加MoveForward事件（在“Axis Events”下面列出来的那个）。这个事件将会每帧执行，即使你不按下任何按键： 它同时还有一个“ Axis Value”的输出值（刚刚设置的Scale值）。如果按下W它将输出1，按下S输出-1。如果你不按下任何按键，它将输出0。
+接下来，你需要让Pawn移动起来。添加“Add Movement Input”并像这样连接： “Add Movement Input”接收一个向量并把它和Scale值相乘。这将把它转换成合适的方向。因为你使用Character，CharacterMovement组件将会朝那个方向移动Pawn。
+现在，你需要指定朝那个方向移动。因为你想要向前移动，你可以使用“Get Actor Forward Vector”节点。它将会返回一个朝前的向量。创建一个并像下面这样连接： 总结： a、MoveForward将会每帧运行并返回“Axis Value”值。如果按下W键这个值将会是1，按下S键为-1。如果没按下任何按键，将会是0。 b、“Add Movement Input”将Pawn的前向向量与Scale值相乘。这将得到指向向前或向后的向量，这取决于您按的是哪个键。如果你不按任何键，矢量就没有方向，这意味着Pawn不会移动。 c、组件将从&amp;quot;Add Movement Input&amp;quot;获得结果。然后它会把Pawn往那个方向移动。
+对MoveRight重复此过程，但将“Get Actor Forward Vector”替换为“Get Actor Right Vector”："
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/10-how-to-create-a-simple-fps/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：如何创建一个简单的FPS游戏"/>
+<meta name="twitter:description" content="在这个虚幻引擎4教程中，你将创建一个简单的第一人称射击游戏。您将学习如何创建一个可以开枪的第一人称角色，以及如何伤害其他玩家..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：如何创建一个简单的FPS游戏" />
+<meta property="og:description" content="在这个虚幻引擎4教程中，你将创建一个简单的第一人称射击游戏。您将学习如何创建一个可以开枪的第一人称角色，以及如何伤害其他玩家..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/10-how-to-create-a-simple-fps/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-14T21:30:02+08:00" />
+<meta property="article:modified_time" content="2018-11-14T21:30:02+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：如何创建一个简单的FPS游戏</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-14
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4教程中，你将创建一个简单的第一人称射击游戏。您将学习如何创建一个可以开枪的第一人称角色，以及如何伤害其他玩家。</p>
+<p>第一人称射击游戏(FPS)是一种玩家使用枪支并通过角色的眼睛体验游戏的游戏类型。FPS游戏非常受欢迎，如《使命召唤》和《战地》等系列游戏。</p>
+<p>虚幻引擎最初是用于创造FPS游戏的，所以只有用它来创建一个才有意义。在本教程中，您将学习如何：</p>
+<ul>
+<li>创建可以移动和四处观看的第一人称Pawn。</li>
+<li>创建一个枪并把它绑定到玩家Pawn。</li>
+<li>使用Line追踪发射子弹（射线投射）。</li>
+<li>把伤害应用到Actor。</li>
+</ul>
+<p>  </p>
+<p><strong>1、准备开始：</strong>    <br>
+下载 <a href="https://koenig-media.raywenderlich.com/uploads/2018/01/BlockBreakerStarter.zip">工程文件</a> 并解压它。前往“项目文件夹”并通过打开BlockBreaker.uproject来打开项目。你将看到下面的场景：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-1.jpg" alt=""></p>
+<p>上面的绿色墙体是由许多目标组成的。当它们受到伤害时，它们会变红。一旦它们的血量值到0，它们将会消失。红色按钮将会重置所有目标。</p>
+<p>首先，你将会创建玩家Pawn。</p>
+<p>  </p>
+<p><strong>2、创建玩家Pawn：</strong><br>
+导航到“蓝图”文件夹中并创建一个蓝图类，选择Character父类并重命名为“BP_Player”：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-2.jpg" alt=""></p>
+<p>Character是带有额外功能的Pawn类型（例如：CharacterMovement组件）：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-3.jpg" alt=""></p>
+<p>这个组件自动处理了像行走、跳跃的运动。你只需要简单的调用合适的函数即可使Pawn移动。你也可以在组件上设置如行走、跳跃速度的变量。</p>
+<p>在你使Pawn移动之前，它需要知道玩家何时按下运动键。为了达到这，你需要把运动映射到W, A, S 和 D键上。</p>
+<p>注意：如果你不熟悉映射，你可以在 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">蓝图</a> 教程中学习它们。按键映射是你如何定义按键执行的动作。</p>
+<p>  </p>
+<p><strong>3、创建运动映射：</strong><br>
+选择“Edit\Project Settings”并打开“Input”设置。</p>
+<p>创建名字分别为MoveForward和MoveRight的两个轴映射（Axis Mappings）。MoveForward将处理向前和向后移动。MoveRight将处理向左和向右运动：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-4.jpg" alt=""></p>
+<p>对于MoveForward，把键名改为W，然后创建另一个键并设置为S，把S键的Scale属性改为-1：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-5.jpg" alt=""></p>
+<p>注意：如果你想学习关于Scale属性的知识，阅读 <a href="">https://yunmin97.github.io/posts/ue4/blueprints/</a> 教程。轴值和输入缩放（Axis Value and Input Scale）章节对其进行了描述和使用介绍。</p>
+<p>然后，你将把Scale值和Pawn的向前向量相乘。这将给你一个指向“前面”的向量（如果Scale为正值）。如果Scale为负值，向量将指向“后面”。通过使用得到的向量，你可以使你的Pawn向前或者向后移动：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-6.jpg" alt=""></p>
+<p>接下来，你需要为向左和向右做同样的事情。把MoveRight的键改为D，然后新建一个键并设置为A。把A键的Scale改为-1.0：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-7.jpg" alt=""></p>
+<p>现在映射已经完成，你需要使用它们来进行移动了。</p>
+<p>  </p>
+<p><strong>4、实现移动：</strong><br>
+打开BP_Player并打开“事件图表”。添加MoveForward事件（在“Axis Events”下面列出来的那个）。这个事件将会每帧执行，即使你不按下任何按键：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-8.jpg" alt=""></p>
+<p>它同时还有一个“ Axis Value”的输出值（刚刚设置的Scale值）。如果按下W它将输出1，按下S输出-1。如果你不按下任何按键，它将输出0。</p>
+<p>接下来，你需要让Pawn移动起来。添加“Add Movement Input”并像这样连接： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-9.jpg" alt=""></p>
+<p>“Add Movement Input”接收一个向量并把它和Scale值相乘。这将把它转换成合适的方向。因为你使用Character，CharacterMovement组件将会朝那个方向移动Pawn。</p>
+<p>现在，你需要指定朝那个方向移动。因为你想要向前移动，你可以使用“Get Actor Forward Vector”节点。它将会返回一个朝前的向量。创建一个并像下面这样连接：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-10.jpg" alt=""></p>
+<p>总结：
+  a、MoveForward将会每帧运行并返回“Axis Value”值。如果按下W键这个值将会是1，按下S键为-1。如果没按下任何按键，将会是0。     <br>
+  b、“Add Movement Input”将Pawn的前向向量与Scale值相乘。这将得到指向向前或向后的向量，这取决于您按的是哪个键。如果你不按任何键，矢量就没有方向，这意味着Pawn不会移动。  <br>
+  c、组件将从&quot;Add Movement Input&quot;获得结果。然后它会把Pawn往那个方向移动。</p>
+<p>对MoveRight重复此过程，但将“Get Actor Forward Vector”替换为“Get Actor Right Vector”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-11.jpg" alt=""></p>
+<p>在你可以测试移动之前，你需要在游戏模式中设置默认的Pawn。</p>
+<p>  </p>
+<p><strong>5、设置默认的Pawn：</strong><br>
+单击Compile按钮，然后返回到“主编辑器”。打开“World Settings”面板，找到“Game Mode”部分。更改默认Pawn类为BP_Player：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-12.jpg" alt=""></p>
+<p>注意：如果你没有“World Settings”面板，去工具栏，选择“Settings\World Settings”。</p>
+<p>现在，当游戏开始时，您将自动使用BP_Player。按Play播放和使用W, A, S和D键移动：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-1.gif" alt=""></p>
+<p>接下来，您将创建用于环顾四周的映射。</p>
+<p>  </p>
+<p><strong>6、创建观看映射：</strong><br>
+打开“项目设置”。创建另外两个轴映射，分别名为LookHorizontal和LookVertical：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-13.jpg" alt=""></p>
+<p>将LookHorizontal的键更改为“Mouse X”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-14.jpg" alt=""></p>
+<p>当您向右移动鼠标时，这个映射将输出一个正值，反之亦然。</p>
+<p>接下来，将LookVertical的键更改为“Mouse Y”。  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-15.jpg" alt=""></p>
+<p>当您向上移动鼠标时，这个映射将输出一个正值，反之亦然。</p>
+<p>现在，您需要创建用于查看的逻辑。</p>
+<p>  </p>
+<p><strong>7、实现观看：</strong><br>
+如果Pawn当没有相机组件，虚幻会自动为你创建一个相机。默认情况下，该相机将使用“控制器”的旋转。</p>
+<p>注意：如果你想了解更多关于“控制器”的知识，请查看我们的 <a href="https://yunmin97.github.io/posts/ue4/artificial-intelligence/">AI入门教程</a>。</p>
+<p>即使“控制器”是非物理的，它们仍然有自己的旋转。这意味着你可以让Pawn和摄像机面对不同的方向。例如，在第三人称游戏中，角色和摄像机并不总是面向同一个方向： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-2.gif" alt=""></p>
+<p>要在第一人称游戏中旋转摄像机，你需要做的就是改变“控制器”的旋转。</p>
+<p>打开BP_Player，然后创建一个LookHorizontal事件：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-16.jpg" alt=""></p>
+<p>为了让摄像机向左或向右观看，你需要调整“控制器”的“yaw”。创建一个“Add Controller Yaw Input”节点并像这样连接它： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-17.jpg" alt=""></p>
+<p>现在，当你水平移动鼠标时，控制器将向左或向右偏移。因为摄像机使用的是“控制器”的旋转，所以它也会偏移。</p>
+<p>为LookVertical重复以上过程，但将“Add Controller Yaw Input”替换为“Add Controller Pitch Input”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-18.jpg" alt=""></p>
+<p>如果你现在就开始测试游戏，你会发现垂直视角是颠倒的。这意味着当你向上移动鼠标时，相机将向下看。</p>
+<p>如果您喜欢非反向控制，请将轴值乘以-1。这将反转轴值和反转控制器俯仰：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-19.jpg" alt=""></p>
+<p>点击“编译”按钮，然后点击Play播放。用你的鼠标开始四周观看： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-3.gif" alt=""></p>
+<p>现在所有的移动和观看都完成了，是时候创建枪支了！</p>
+<p>  </p>
+<p><strong>8、创建枪支：</strong><br>
+你知道当你创建一个蓝图类，你可以选择一个父类吗？你也可以选择你自己的蓝图作为父蓝图。当您拥有共享公共功能或属性的不同类型的对象时，这很有用。</p>
+<p>假设你想拥有多种类型的汽车。您可以创建一个包含速度和颜色等变量的基类Car。然后可以创建使用基类Car作为父类的类(子类)。每个子类也将包含相同的变量。现在你有一个简单的方法来创建不同的速度和颜色值的汽车。 <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-20.jpg" alt=""></p>
+<p>你也可以使用同样的方法去创造枪支。为此，您首先需要创建一个基类。</p>
+<p>  </p>
+<p><strong>9、创建枪支基类：</strong>    <br>
+回到“主编辑器”并创建一个类型为Actor的蓝图类。命名为BP_BaseGun，然后打开它。</p>
+<p>接下来，您将创建一些变量来定义枪支的一些属性。创建以下float类型的变量：</p>
+<ul>
+<li>MaxBulletDistance: 每颗子弹能飞多远。</li>
+<li>Damage: 当子弹击中Actor时，会造成多大的伤害。</li>
+<li>FireRate: 多长时间(几秒)才能发射另一颗子弹。</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a10-21.jpg" alt=""></p>
+<p>每个变量的默认值都是0，这对于本教程来说是没问题的。但是，如果你想让新的枪支类有一个默认值，你可以在BP_BaseGun中设置它。</p>
+<p>现在，你需要枪的实物模型。添加一个“Static Mesh”组件，命名为GunMesh：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-22.jpg" alt=""></p>
+<p>现在不要担心选择静态网格。在下一节创建枪支子类时，您将这样做。</p>
+<p>  </p>
+<p><strong>10、创建枪支子类：</strong><br>
+单击Compile按钮，然后返回到“主编辑器”。要创建一个子类，右键单击BP_BaseGun并选择“Create Child Blueprint Class”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-4.gif" alt=""></p>
+<p>命名为BP_Rifle，然后打开它。打开“Class Defaults”并将每个变量设置为以下值：</p>
+<ul>
+<li>MaxBulletDistance: 5000</li>
+<li>Damage: 2</li>
+<li>FireRate: 0.1</li>
+</ul>
+<p>这意味着每颗子弹的最大飞行距离是5000。如果它击中Actor，将造成2点伤害。连续射击时，每次射击间隔至少为0.1秒。</p>
+<p>接下来，您需要指定枪应该使用哪个网格。选择GunMesh组件并将其“静态网格”设置为SM_Rifle：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-23.jpg" alt=""></p>
+<p>枪支现在完成了。单击Compile按钮，然后关闭BP_Rifle。</p>
+<p>接下来，您将创建自己的相机组件。这会让你更好地控制相机的位置。它还可以让你把枪连接到相机上，这将使枪保持在相机的前面。</p>
+<p>  </p>
+<p><strong>11、创建相机：</strong><br>
+打开BP_Player，然后创建一个Camera组件。将它命名为FpsCamera： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-24.jpg" alt=""></p>
+<p>默认位置太低了，可能会让玩家觉得自己很渺小。设置FpsCamera的位置为(0,0,90)：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-25.jpg" alt=""></p>
+<p>默认情况下，Camera组件不使用“控制器”的旋转。要解决这个问题，转到“细节”面板，启用“Camera Settings\Use Pawn Control Rotation”：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-26.jpg" alt=""></p>
+<p>接下来，你需要定义枪的位置。</p>
+<p>  </p>
+<p><strong>12、定义枪的位置：</strong><br>
+要创建枪的位置，你可以使用“场景”组件。这些组件非常适合定义位置，因为它们只包含Transform。确保你选择了fpcamera，然后创建一个“场景”组件。这将把它挂到相机组件上。为它命名GunLocation： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-27.jpg" alt=""></p>
+<p>通过将GunLocation挂到fpcamera上，枪将保持相对于摄像机的相同位置。这样就保证枪总是放在镜头前的。</p>
+<p>接下来，设置GunLocation的位置为(30，14，-12)。这将把它放在相机的前面和轻微的侧面：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-28.jpg" alt=""></p>
+<p>然后，将旋转设置为(0，0，-95)。当你绑定枪时，这将使它看起来像是瞄准屏幕中心： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-29.jpg" alt=""></p>
+<p>现在，你需要生成枪支并将其连接到GunLocation。</p>
+<p>  </p>
+<p><strong>13、生成和绑定枪子：</strong><br>
+定位“Event BeginPlay”，创建“Spawn Actor From Class”。将Class设置为BP_Rifle：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-30.jpg" alt=""></p>
+<p>因为以后还需要使用枪，所以应该将它存储在一个变量中。创建一个类型为BP_BaseGun的变量，命名为EquippedGun。</p>
+<p>重要的是，该变量不是BP_Rifle类型。这是因为玩家可以使用不同类型的枪支，而不仅仅是步枪。如果你生成了一种不同类型的枪，你将不能将它存储在类型为BP_Rifle的变量中。这就像试着把一个圆放进一个矩形洞里。</p>
+<p>通过创建类型为BP_BaseGun的变量，你就创建了一个可以接受多种形状的大洞。</p>
+<p>接下来，将EquippedGun设置为“Spawn Actor From Class”节点的返回值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-31.jpg" alt=""></p>
+<p>要附加枪支，可以使用AttachToComponent。创建一个，并设置“Location Rule”和“Rotation Rule”为“Snap to Target”。这将使枪和其父类有相同的位置和旋转：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-32.jpg" alt=""></p>
+<p>接下来，创建一个指向GunLocation的引用，并像这样连接所有内容：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-33.jpg" alt=""></p>
+<p>总结:<br>
+  a、当BP_Player生成时，它将生成一个BP_Rifle的实例。<br>
+  b、EquippedGun将保留对衍生的BP_Rifle的引用以供以后使用。 <br>
+  c、AttachToComponent将把枪附加到GunLocation上。</p>
+<p>点击“编译”，然后点击Play播放。现在你会有一把枪当你出生时！当你环顾四周时，枪总是在镜头前：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-5.gif" alt=""></p>
+<p>现在有趣的部分来了：射击子弹！要检查子弹是否击中了什么东西，你可以用“直线追踪”。</p>
+<p>  </p>
+<p><strong>14、发射子弹：</strong> <br>
+直线追踪是一个包含起始点和结束点(形成一条直线)的函数。然后它会检查线上的每个点(从开始到结束)，直到它碰到什么东西。在游戏中，这是检查子弹是否击中物体的最常见方法。</p>
+<p>因为射击是枪支的功能，所以它应该属于枪支类而不是玩家。打开BP_BaseGun并创建一个名为Shoot的函数。</p>
+<p>然后，创建两个Vector输入并将它们命名为StartLocation和EndLocation。这些将是直线追踪的起始点和结束点(您将从BP_Player传入)：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-34.jpg" alt=""></p>
+<p>您可以使用LineTraceByChannel执行直线追踪。这个节点将使用Visibility或者Camera碰撞通道检测击中点。创建一个并像这样连接它： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-35.jpg" alt=""></p>
+<p>接下来，您需要检查直线追踪是否碰到了任何东西。创建一个分支并像这样连接它： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-36.jpg" alt=""></p>
+<p>如果有命中，“返回值”将输出true，反之亦然。</p>
+<p>为了给玩家一些关于子弹击中位置的视觉反馈，你可以使用粒子效果。</p>
+<p>  </p>
+<p><strong>15、生成子弹撞击粒子：</strong><br>
+首先，您需要获得追踪命中的位置。单击拖动“Out Hit”引脚并在“图表”中释放。从弹出的菜单中选择“Break Hit Result”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-37.jpg" alt=""></p>
+<p>这将为您提供一个节点，该节点具有与直线追踪结果相关的各种引脚。</p>
+<p>创建&quot;Spawn Emitter at Location&quot;节点，并设置“Emitter Template”为PS_BullettImpact。然后，将其位置连接到“Break Hit Result”的位置:    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-38.jpg" alt=""></p>
+<p>下面是到目前为止的函数结构： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-39.jpg" alt=""></p>
+<p>总结：<br>
+  a、当Shoot函数被执行时，它将使用提供的起始点和结束点执行直线追踪。<br>
+  b、如果有一个击中，“Spawn Emitter at Location”将在击中位置生成PS_BulletImpact粒子。</p>
+<p>现在射击逻辑已经完成，您需要使用它。</p>
+<p>  </p>
+<p><strong>16、调用射击函数：</strong>   <br>
+首先，您需要为射击创建一个键映射。单击“编译”按钮，然后打开“项目设置”。创建一个名为Shoot的新的“Axis Mapping”。将其键设置为“Left Mouse Button”，然后关闭“项目设置”：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-40.jpg" alt=""></p>
+<p>然后，打开BP_Player并创建一个Shoot事件。</p>
+<p>为了检查玩家是否按下了Shoot键，你只需要检查“Axis Value”值是否等于1。创建高亮显示的节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-41.jpg" alt=""></p>
+<p>接下来，创建一个对EquippedGun的引用，然后调用它的Shoot函数： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-42.jpg" alt=""></p>
+<p>现在您需要计算直线追踪的起始点和结束点。</p>
+<p>  </p>
+<p><strong>17、计算直线追踪位置：</strong><br>
+在许多FPS游戏中，子弹是从相机镜头而不是枪开始的。这是因为相机已经与十字准星完美对齐了。所以如果你从相机位置射击，子弹一定会射到准星所在的地方。</p>
+<p>注意：有些游戏确实会从枪口射击。然而，射向准星还需要额外的计算。</p>
+<p>创建一个对FpsCamera的引用，然后将它连接到一个GetWorldLocation：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-43.jpg" alt=""></p>
+<p>现在需要结束位置。记住，枪支有一个MaxBulletDistance变量。这意味着终点位置是在摄像机前的MaxBulletDistance单位数量。为此，创建高亮显示的节点:<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-44.jpg" alt=""></p>
+<p>然后，像这样连接一切：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-45.jpg" alt=""></p>
+<p>总结：<br>
+  a、当玩家按下或按住左键时，枪将从摄像机那射出一颗子弹。 <br>
+  b、子弹将以MaxBulletDistance指定的距离向前移动。</p>
+<p>点击“编译”按钮，然后点击Play播放。按住左键开始射击：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-6.gif" alt=""></p>
+<p>目前，这把枪将会每一帧都射击。这有点太快了，所以下一步就是降低枪的射速。</p>
+<p>  </p>
+<p><strong>18、减少开火频率：</strong><br>
+首先，你需要一个变量来决定玩家是否能够射击。打开BP_Player并创建一个名为CanShoot的布尔变量。将其默认值设置为true。如果CanShoot等于true，玩家就可以射击，反之亦然。</p>
+<p>将“分支”部分更改如下：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-46.jpg" alt=""></p>
+<p>现在，玩家只能在按下“射击”键并且CanShoot等于true时才能射击：</p>
+<p>接下来，添加突出显示的节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-47.jpg" alt=""></p>
+<p>变更：
+  a、玩家只有按住左键点击和CanShoot等于true时才能射击。<br>
+  b、一旦玩家射出子弹，CanShoot将被设置为false。这将阻止玩家再次射击。 <br>
+  c、在持续FireRate时间后，CanShoot将被设置为true。</p>
+<p>单击Compile按钮，然后关闭BP_Player。按下“播放”键，测试新的射击率： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-7.gif" alt=""></p>
+<p>下一步，你将使目标和按钮对子弹进行响应。你可以通过对它们施加伤害来做到这一点。</p>
+<p>  </p>
+<p><strong>19、施加伤害：</strong>   <br>
+在虚幻中，每个Actor都有接受伤害的能力。然而，由您决定Actor如何回应它。</p>
+<p>例如，当受到伤害时，战斗游戏角色将会失去生命值。然而，像气球这样的东西不会有生命值。相反，你可以让气球在受到伤害时爆炸。</p>
+<p>在处理Actor如何接受损害之前，您首先需要应用损害。打开BP_BaseGun，并在Shoot函数的末尾添加一个“Apply Damage”:<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-48.jpg" alt=""></p>
+<p>接下来，您需要指定要破坏的Actor。在本例中，它是被射线击中的Actor。连接“Damaged Actor”到“Break Hit Result”的“Hit Actor”引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-49.jpg" alt=""></p>
+<p>最后，您需要指定要应用的伤害程度。获得Damage的引用，并将其与“Base Damage”引脚连接起来：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-50.jpg" alt=""></p>
+<p>现在，当你调用Shoot时，它会破坏任何被射线击中的Actor。单击Compile按钮，然后关闭BP_BaseGun。</p>
+<p>现在你需要处理每个Actor如何处理伤害。</p>
+<p>  </p>
+<p><strong>20、处理伤害：</strong>   <br>
+首先，你将处理目标如何受到伤害。打开BP_Target，然后创建“Event AnyDamage”事件。当Actor收到不为零的损害时，此事件将执行： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-51.jpg" alt=""></p>
+<p>然后，调用TakeDamage函数并连接Damage引脚。这将从目标的生命值变量中减去生命值并更新目标的颜色：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-52.jpg" alt=""></p>
+<p>现在，当目标受到伤害时，它将失去生命值。单击Compile按钮，然后关闭BP_Target。</p>
+<p>下来，您需要处理按钮如何受到损坏。打开BP_ResetButton并创建一个事件AnyDamage。之后，调用ResetTargets函数：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-53.jpg" alt=""></p>
+<p>当按钮受到伤害时，将重置所有目标。单击Compile按钮，然后关闭BP_ResetButton。</p>
+<p>按下Play播放并开始射击目标。如果你想重设目标，射击按钮：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a10-8.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2018/01/BlockBreakerComplete.zip">这里</a> 下载完成的项目。</p>
+<p>尽管你在本教程中创建的FPS很简单，但你可以轻松地扩展它。尝试创造更多具有不同射速和伤害类型的枪。也许还可以尝试添加“重载”功能!</p>
+<p>这就是我们的虚幻引擎入门系列教程。但是不要担心——我们希望在接下来的几个月里制作更多的教程。</p>
+<p>这就是你的切入点!明天，我们将开始招募我们新的虚幻引擎教程团队，以帮助创建更多伟大的虚幻引擎教程（就像为社区提供的这个系列）。我希望看到你们中的一些人申请!:]</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/228-how-to-create-a-simple-fps-in-unreal-engine-4">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/nodejs/node-2-cpp/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">Node调用C&#43;&#43;</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/9-artificial-intelligence/">
+                  <span class="button__text">虚幻引擎4：人工智能</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

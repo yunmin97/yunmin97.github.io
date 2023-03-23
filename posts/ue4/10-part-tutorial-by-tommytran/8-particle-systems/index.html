@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：粒子系统 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4教程中，您将学习如何创建粒子系统，并使用蓝图更新它们。
+粒子系统是视觉效果的关键组成部分。它们让美术师能够轻松创造出爆炸、烟雾和雨等效果。
+虚幻引擎4拥有一个健壮且易于使用的系统来创建粒子效果。它称为级联系统，这个系统允许你创建模块化的效果和轻松控制粒子的行为。
+在本教程中，您将学习如何：
+创建一个粒子系统。 设置粒子的速度和大小。 调整粒子生成速率。 根据曲线来调整粒子在其生命周期内的大小。 使用级联设置粒子颜色。 使用蓝图激活和停用粒子系统。 使用蓝图设置粒子颜色。 1、准备开始：
+下载 工程项目 并解压它。导航到项目文件夹，打开SpaceshipBattle.uproject。
+按下Play按钮开始游戏。按住左键射击，使用W, A, S和D控制移动： 在本教程中，您将创建两个粒子效果。一个是飞船推进器的，一个是飞船爆炸时的。为了创造这些，你将使用粒子系统。
+2、什么是粒子系统： 顾名思义，粒子系统是一个创建和管理粒子的系统。粒子基本上是空间中的一点。使用粒子系统，您可以控制粒子的外观和行为。
+粒子系统由一个或多个称为发射器的组件组成。它们负责生成粒子： 发射器也有称为模块的组件。模块控制由发射器产生的粒子的特定属性。例如，一个粒子的材质和初始速度。在下面的例子中，两个模块分别被用来给每个粒子一个红色的圆形材质和随机速度： 你也可以在粒子的生命周期中改变它的颜色。在这个例子中，粒子的颜色从红色变成了蓝色：
+现在你知道了什么是粒子系统了，是时候为飞船推进器创造一个了。
+3、创建粒子系统：
+导航到ParticleSystems文件夹，单击“Add New\Particle System”。将粒子系统重命名为PS_Thruster，然后打开它。
+4、级联：粒子系统编辑器： 级联由四个主要面板组成： a、Viewport: 这个面板将是你粒子系统的一个预览。您可以通过按住右键并移动鼠标来四处查看。按住右键并使用WASD键来移动。 b、Details：你选择的任何组件(发射器，模块等)都会在这里显示其属性。如果没有选择，它将显示粒子系统的属性。 c、Emitters：这个面板将从左到右显示发射器列表。每个发射器显示其模块列表。
+d、Curve Editor：曲线编辑器允许您可视化和调整一个模块的曲线值。不是所有模块都支持曲线。
+现在，粒子系统使用默认的粒子材质。 首先，您将用圆形材质替换粒子材质。
+5、将材质应用到粒子上：
+转到“发射器”面板并选择Required模块： Required模块包含必要的属性，如粒子材质和发射器持续时间。每个发射器必须有一个Required模块。
+要改变材质，去“细节”面板，并设置材质为M_Particle。这将改变粒子的外观为一个橙色的圆圈： 接下来，你将把粒子系统附加到玩家的飞船上。
+6、附加粒子系统： 返回到“主编辑器”并导航到blueprint文件夹。打开BP_Player，然后转到Components面板。
+要使用粒子系统，可以使用“粒子系统组件”。创建一个并将其重命名为ThrusterParticles。确保将其附加到Collision组件上： 要指定粒子系统，请转到Details面板并找到“Particles”部分。将Template”设置为“PS_Thruster”。
+下一步，把ThrusterParticles位置设置为(- 80,0,0)。这将把它放在船的后面： 最后，设置旋转为(0,90,0)。这将调整粒子系统的朝向，使粒子远离船舶喷射： 单击Compile按钮，然后返回到“主编辑器”。按下Play按钮来查看粒子系统的效果：
+粒子系统在运作，但是粒子移动得有点慢，而且非常小。你可以通过设置粒子的初始速度和大小来解决这个问题。
+7、设置粒子的速度和大小： 首先，你要设定粒子的初速度。打开PS_Thruster，然后选择“Initial Velocity”模块。然后展开“Start Velocity\Distribution”。
+默认情况下，粒子的初始速度范围从(-10，- 10,50)到(10,10,100)：
+为了让粒子以更快的速度离开飞船，你所需要做的就是提高Z速度。设置最小Z值为300，最大Z值为400： 这里是原始速度和新速度的比较： 接下来，您将设置粒子的初始大小。
+8、设置粒子的大小：
+选择“Initial Size”模块，然后转到Details面板。然后，展开“Start Size\Distribution”。
+像初始速度模块，初始大小模块也有最小和最大范围。但是，对于本教程，您将把大小设置为常量值。为此，将Distribution设置为Distribution Vector Constant： 注意：Distribution设置允许您指定一个范围内或曲线上的常量值。您还可以使用blueprint设置值。要了解更多信息，请访问虚幻引擎文档中的 Distributions 页面。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/8-particle-systems/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：粒子系统"/>
+<meta name="twitter:description" content="在这个虚幻引擎4教程中，您将学习如何创建粒子系统，并使用蓝图更新它们..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：粒子系统" />
+<meta property="og:description" content="在这个虚幻引擎4教程中，您将学习如何创建粒子系统，并使用蓝图更新它们..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/8-particle-systems/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-12T22:05:12+08:00" />
+<meta property="article:modified_time" content="2018-11-12T22:05:12+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：粒子系统</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-12
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4教程中，您将学习如何创建粒子系统，并使用蓝图更新它们。</p>
+<p>粒子系统是视觉效果的关键组成部分。它们让美术师能够轻松创造出爆炸、烟雾和雨等效果。</p>
+<p>虚幻引擎4拥有一个健壮且易于使用的系统来创建粒子效果。它称为级联系统，这个系统允许你创建模块化的效果和轻松控制粒子的行为。</p>
+<p>在本教程中，您将学习如何：</p>
+<ul>
+<li>创建一个粒子系统。</li>
+<li>设置粒子的速度和大小。</li>
+<li>调整粒子生成速率。</li>
+<li>根据曲线来调整粒子在其生命周期内的大小。</li>
+<li>使用级联设置粒子颜色。</li>
+<li>使用蓝图激活和停用粒子系统。</li>
+<li>使用蓝图设置粒子颜色。</li>
+</ul>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载 <a href="https://koenig-media.raywenderlich.com/uploads/2017/11/SpaceshipBattleStarter.zip">工程项目</a> 并解压它。导航到项目文件夹，打开SpaceshipBattle.uproject。</p>
+<p>按下Play按钮开始游戏。按住左键射击，使用W, A, S和D控制移动：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-1.gif" alt=""></p>
+<p>在本教程中，您将创建两个粒子效果。一个是飞船推进器的，一个是飞船爆炸时的。为了创造这些，你将使用粒子系统。</p>
+<p>  </p>
+<p><strong>2、什么是粒子系统：</strong>  <br>
+顾名思义，粒子系统是一个创建和管理粒子的系统。粒子基本上是空间中的一点。使用粒子系统，您可以控制粒子的外观和行为。</p>
+<p>粒子系统由一个或多个称为发射器的组件组成。它们负责生成粒子： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-2.gif" alt=""></p>
+<p>发射器也有称为模块的组件。模块控制由发射器产生的粒子的特定属性。例如，一个粒子的材质和初始速度。在下面的例子中，两个模块分别被用来给每个粒子一个红色的圆形材质和随机速度：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-3.gif" alt=""></p>
+<p>你也可以在粒子的生命周期中改变它的颜色。在这个例子中，粒子的颜色从红色变成了蓝色：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-4.gif" alt=""></p>
+<p>现在你知道了什么是粒子系统了，是时候为飞船推进器创造一个了。</p>
+<p>  </p>
+<p><strong>3、创建粒子系统：</strong><br>
+导航到ParticleSystems文件夹，单击“Add New\Particle System”。将粒子系统重命名为PS_Thruster，然后打开它。</p>
+<p>  </p>
+<p><strong>4、级联：粒子系统编辑器：</strong>    <br>
+级联由四个主要面板组成： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-1.jpg" alt=""></p>
+<p>  a、Viewport: 这个面板将是你粒子系统的一个预览。您可以通过按住右键并移动鼠标来四处查看。按住右键并使用WASD键来移动。  <br>
+  b、Details：你选择的任何组件(发射器，模块等)都会在这里显示其属性。如果没有选择，它将显示粒子系统的属性。 <br>
+  c、Emitters：这个面板将从左到右显示发射器列表。每个发射器显示其模块列表。<br>
+  d、Curve Editor：曲线编辑器允许您可视化和调整一个模块的曲线值。不是所有模块都支持曲线。</p>
+<p>现在，粒子系统使用默认的粒子材质。   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-5.gif" alt=""></p>
+<p>首先，您将用圆形材质替换粒子材质。</p>
+<p>  </p>
+<p><strong>5、将材质应用到粒子上：</strong><br>
+转到“发射器”面板并选择Required模块：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-2.jpg" alt=""></p>
+<p>Required模块包含必要的属性，如粒子材质和发射器持续时间。每个发射器必须有一个Required模块。</p>
+<p>要改变材质，去“细节”面板，并设置材质为M_Particle。这将改变粒子的外观为一个橙色的圆圈：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-6.gif" alt=""></p>
+<p>接下来，你将把粒子系统附加到玩家的飞船上。</p>
+<p>  </p>
+<p><strong>6、附加粒子系统：</strong>    <br>
+返回到“主编辑器”并导航到blueprint文件夹。打开BP_Player，然后转到Components面板。</p>
+<p>要使用粒子系统，可以使用“粒子系统组件”。创建一个并将其重命名为ThrusterParticles。确保将其附加到Collision组件上： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-3.jpg" alt=""></p>
+<p>要指定粒子系统，请转到Details面板并找到“Particles”部分。将Template”设置为“PS_Thruster”。</p>
+<p>下一步，把ThrusterParticles位置设置为(- 80,0,0)。这将把它放在船的后面：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-4.jpg" alt=""></p>
+<p>最后，设置旋转为(0,90,0)。这将调整粒子系统的朝向，使粒子远离船舶喷射：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-5.jpg" alt=""></p>
+<p>单击Compile按钮，然后返回到“主编辑器”。按下Play按钮来查看粒子系统的效果：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-7.gif" alt=""></p>
+<p>粒子系统在运作，但是粒子移动得有点慢，而且非常小。你可以通过设置粒子的初始速度和大小来解决这个问题。</p>
+<p>  </p>
+<p><strong>7、设置粒子的速度和大小：</strong>    <br>
+首先，你要设定粒子的初速度。打开PS_Thruster，然后选择“Initial Velocity”模块。然后展开“Start Velocity\Distribution”。</p>
+<p>默认情况下，粒子的初始速度范围从(-10，- 10,50)到(10,10,100)：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-6.jpg" alt=""></p>
+<p>为了让粒子以更快的速度离开飞船，你所需要做的就是提高Z速度。设置最小Z值为300，最大Z值为400：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-7.jpg" alt=""></p>
+<p>这里是原始速度和新速度的比较：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-8.gif" alt=""></p>
+<p>接下来，您将设置粒子的初始大小。</p>
+<p>  </p>
+<p><strong>8、设置粒子的大小：</strong><br>
+选择“Initial Size”模块，然后转到Details面板。然后，展开“Start Size\Distribution”。</p>
+<p>像初始速度模块，初始大小模块也有最小和最大范围。但是，对于本教程，您将把大小设置为常量值。为此，将Distribution设置为Distribution Vector Constant：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-8.jpg" alt=""></p>
+<p>注意：Distribution设置允许您指定一个范围内或曲线上的常量值。您还可以使用blueprint设置值。要了解更多信息，请访问虚幻引擎文档中的 <a href="https://docs.unrealengine.com/latest/INT/Engine/Basics/Distributions/">Distributions</a> 页面。</p>
+<p>然后，将“Constant”设置为(70,70,70)。这里有一个大小比较：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-9.gif" alt=""></p>
+<p>回到&quot;主编辑器&quot;并按下Play播放键:    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-10.gif" alt=""></p>
+<p>这些粒子看起来更好，但它们之间的距离仍然相当远。这是因为粒子之间的生成时间太长了。为了解决这个问题，你可以增加生成率。</p>
+<p>  </p>
+<p><strong>9、增加粒子生成率：</strong>  <br>
+要增加生成率，您需要使用生成模块。这个模块控制发射器产生粒子的速度。除了Required，每个发射器都必须有一个刷出模块。</p>
+<p>打开PS_Thruster，然后选择Spawn。转到“详细”面板，然后展开“Spawn\Rate”部分：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-9.jpg" alt=""></p>
+<p>把“Constant”设置为50。这将把生成率增加到50粒子每秒： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-10.jpg" alt=""></p>
+<p>回到&quot;主编辑器&quot;并按下Play播放键: <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-11.gif" alt=""></p>
+<p>如你所见，它现在看起来更像拖尾效果了。为了让这些粒子看起来更像推进器的火焰，你可以让它们随着时间的推移而缩小。</p>
+<p>  </p>
+<p><strong>10、随着时间缩小粒子：</strong> <br>
+打开PS_Thruster，然后转到“发射器”面板。</p>
+<p>为了缩小粒子，你可以使用“Size By Life”模块。这个模块将在粒子的生命周期内对其大小应用一个乘数。在发射器中右键单击空白区域并选择“Size\Size by Life”创建一个：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-12.gif" alt=""></p>
+<p>默认情况下，粒子的大小在视觉效果上并没有变化。这是因为乘数总是设置为1。要收缩粒子，您需要调整模块的曲线，使尺寸乘数随时间减小。但首先，什么是曲线？</p>
+<p>  </p>
+<p><strong>11、什么是曲线：</strong> <br>
+曲线是点的集合。每个点都有两个东西：位置和值。</p>
+<p>当你有两个或两个以上的点时，就形成一条直线。下面是一个基本线性曲线的例子。点A的位置和值都是0。点B的位置是2，值是1：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-11.jpg" alt=""></p>
+<p>如果你在任意位置采样一条线性曲线，它的作用就像一个线性插值。例如，如果您对上面位置为1的曲线进行采样，您将得到0.5的值：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-12.jpg" alt=""></p>
+<p>如果你创造一条下降的曲线，你得到的值会逐渐变小。这是你想要在“Size By Life”模块中使用的曲线类型：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-13.jpg" alt=""></p>
+<p>现在，您将在Cascade中创建上面的曲线。</p>
+<p>  </p>
+<p><strong>12、编辑模块曲线：</strong> <br>
+选择“Size By Life”，然后转到其“细节”面板。然后，展开“Life Multiplier\Distribution\Constant Curve\Points”。在这里，您将看到“Life Multiplier”曲线的点列表：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-14.jpg" alt=""></p>
+<p>“In Val”表示点在曲线上的位置。对于“Size By Life”，0值表示粒子生命的开始。1值表示粒子生命的结束。</p>
+<p>要随时间减小“大小乘数”，您需要减小第二个点的“Out Val”值。将“point 1”的“Out Val”设为(0,0,0)。这将使粒子的大小随着时间的推移减小到0：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-15.jpg" alt=""></p>
+<p>您可以使用“曲线编辑器”可视化“Life Multiplier”曲线。为此，单击“Size By Life”模块上的图形图标：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-16.jpg" alt=""></p>
+<p>这将在“曲线编辑器”中添加“Life Multiplier”。要将曲线拟合到视图中，请在“曲线编辑器”中单击“拟合”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-13.gif" alt=""></p>
+<p>正如你所看到的，在粒子的生命周期中，“尺寸倍增器”从1减少到0：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-17.jpg" alt=""></p>
+<p>回到&quot;主编辑器&quot;并按下Play播放键:<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-14.gif" alt=""></p>
+<p>粒子现在看起来更像火焰了！最后你要添加到这个粒子系统的是颜色变化。</p>
+<p>  </p>
+<p><strong>13、添加颜色变化：</strong> <br>
+要使用“级联”设置粒子的颜色，你需要正确的设置粒子材质。导航到“材质”文件夹并打开M_Particle：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-18.jpg" alt=""></p>
+<p>目前，颜色是在材质中设置的。要使用粒子系统中的颜色，您需要使用一个“ParticleColor”节点。</p>
+<p>首先，删除连接到“Emissive Color”的节点。接下来，添加一个ParticleColor节点，并像这样连接它：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-19.jpg" alt=""></p>
+<p>如果你也想控制粒子的不透明度，添加“Multiply”节点并像如下连接：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-20.jpg" alt=""></p>
+<p>点击“应用”按钮，然后关闭M_Particle。</p>
+<p>要设置粒子的颜色，可以使用“Initial color”模块。</p>
+<p>  </p>
+<p><strong>14、Initial color模块：</strong>  <br>
+打开PS_Thruster，然后添加一个“Initial Color”模块。你可以在“颜色”类别下找到它：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-21.jpg" alt=""></p>
+<p>要添加颜色变化，您需要指定颜色可以处于的范围。为此，您可以使用“distributions”。</p>
+<p>选择“Initial Color”模块，然后转到“细节”面板。展开“Start Color”部分，并将“Distribution”更改为“Distribution Vector Uniform”。这将允许你为每个颜色通道指定一个范围：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-22.jpg" alt=""></p>
+<p>在本教程中，颜色应该从橙色到红色。为此，设置Max为(1.0,0.0,0.0)和Min为(1.0,0.35,0.0)：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-23.jpg" alt=""></p>
+<p>如果你看视口，你会注意到颜色的行为很奇怪：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-15.gif" alt=""></p>
+<p>这是因为“Color Over Life”模块不断地将颜色更新为白色。要解决这个问题，选择“Color Over Life”并按Delete键。你的模块列表现在应该像这样：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-24.jpg" alt=""></p>
+<p>关闭PS_Thruster，然后在主编辑器中按“Play”播放。看那些推进器的火焰：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-16.gif" alt=""></p>
+<p>接下来，您将学习如何根据船是否在移动来切换粒子系统。</p>
+<p>  </p>
+<p><strong>15、切换粒子系统：</strong>       <br>
+为了检查飞船是否在移动，你可以检查玩家是否在按着任何移动键。</p>
+<p>打开BP_Player并找到“Event Tick”节点。将以下设置添加到节点链的末尾：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-25.jpg" alt=""></p>
+<p>让我们来看看这个设置是做什么的： <br>
+  a、这检查MoveUp和MoveRight轴映射。如果两者都返回0，这意味着玩家没有按下任何移动键。 <br>
+  b、如果Branch返回true(玩家没有按下任何移动键)，停用ThrusterParticles。 <br>
+  c、如果Branch返回false(玩家正在按移动键)，激活ThrusterParticles。</p>
+<p>单击Compile按钮，然后关闭BP_Player。按下Play按钮播放并在移动和不移动之间切换来查看切换功能：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-17.gif" alt=""></p>
+<p>现在是有趣的部分：创造一个爆炸粒子系统！</p>
+<p>  </p>
+<p><strong>16、创建一个爆炸特效：</strong> <br>
+你将复制“thruster particles”，而不是创建一个新的粒子系统。导航到ParticleSystems文件夹，右键单击PS_Thruster并选择Duplicate。重命名为PS_Explosion，然后打开它。</p>
+<p>对于爆炸来说，所有的粒子应该同时产生，而不是一个一个地产生。这就是所谓的爆发发射：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-18.gif" alt=""></p>
+<p>  </p>
+<p><strong>17、创建爆炸：</strong> <br>
+首先，你需要将“生成速率”设置为0，因为你不想使用默认的生成行为。选择“Spawn”模块，并将“Spawn\Rate\Distribution\Constant”设置为0：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-26.jpg" alt=""></p>
+<p>接下来，你需要告诉发射器你想要创建一个爆发。向下滚动到“Burst”部分，并在“ Burst List”中添加一个新条目。您可以通过单击+图标来完成此操作：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-19.gif" alt=""></p>
+<p>每个条目将包含三个字段：     <br>
+  a、Count：产生多少粒子。将其设置为20。   <br>
+  b、Count Low：如果大于或等于0，产生的粒子数量将从“Count Low”到“Count”。让它保持为-1。  <br>
+  c、Time：何时产生粒子。值为0表示发射器生命周期的开始。值为1表示发射器生命周期的结束。保持0.0。</p>
+<p>注意：您可以在Required模块中找到发射器的持续时间。它被列在“Duration”部分下的“Emitter Duration”。</p>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a8-27.jpg" alt=""></p>
+<p>这意味着发射器在生命周期的开始产生20个粒子：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-20.gif" alt=""></p>
+<p>为了让它看起来像爆炸，你需要设定速度，让粒子向外运动。</p>
+<p>  </p>
+<p><strong>18、向外移动粒子：</strong>   <br>
+因为这是一个俯视图视角的游戏，你只需要指定X和Y速度。选择“Initial Velocity”模块并展开“Start Velocity\Distribution”。设置“最大值”为(1000,1000,0)，“最小值”为(-1000，- 1000,0)： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-28.jpg" alt=""></p>
+<p>通过指定一个从负数到正数的范围值，粒子将从发射器向外移动：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-21.gif" alt=""></p>
+<p>接下来，你需要设置发射器的循环次数。</p>
+<p>  </p>
+<p><strong>19、设置发射器循环次数：</strong> <br>
+默认情况下，发射器将无限循环。这对于如火和烟这样的特效非常好，但对于爆发应该只播放一次。要解决这个问题，你需要告诉发射器只循环一次。</p>
+<p>选择Required模块，然后定位Duration部分。设置“Emitter Loops”为1：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-29.jpg" alt=""></p>
+<p>现在，是时候在敌人死亡时播放爆炸了!</p>
+<p>  </p>
+<p><strong>20、在敌人死亡时生成粒子：</strong>   <br>
+返回到“主编辑器”并导航到blueprint文件夹。打开BP_Enemy，然后定位到OnDeath事件。</p>
+<p>要生成一个粒子系统，你可以使用“Spawn Emitter at Location”节点。创建一个，并将其连接到“Destroy Actor”：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-30.jpg" alt=""></p>
+<p>下一步，设置“ Emitter Template”为PS_Explosion：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-31.jpg" alt=""></p>
+<p>最后，创建一个GetActorLocation并将其连接到Location引脚：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-32.jpg" alt=""></p>
+<p>现在，当一个敌人死亡时，它将在敌人的位置产生一个PS_Explosion实例。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”。按下Play按钮播放，开始射击坏蛋：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-22.gif" alt=""></p>
+<p>看看这些爆炸！接下来，你要给它们添加一些额外的香料，让它们和敌人的颜色一样。</p>
+<p>  </p>
+<p><strong>21、将爆炸颜色改为敌人颜色：</strong> <br>
+为了使用敌人的颜色，你需要一种从蓝图获取信息的方法。幸运的是，Cascade有一个允许这样做的“distribution”类型。</p>
+<p>打开PS_Explosion并选择“Initial Color”模块。设置“Start Color\Distribution”为“Distribution Vector Particle Parameter”：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-33.jpg" alt=""></p>
+<p>这将为您提供一个可以使用蓝图设置的参数。设置“Parameter Name”为“PrimaryColor”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-34.jpg" alt=""></p>
+<p>对于爆炸，你将使用敌人的两种颜色。要使用第二种颜色，你需要另一个发射器。右键单击发射器上的空白区域，选择“Emitter\Duplicate and Share Emitter”。这将复制发射器：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-35.jpg" alt=""></p>
+<p>您将注意到，现在每个模块旁边都有一个+号。通过使用“Duplicate and Share Emitter”而不是复制，你已经链接了模块而不是复制它们。您在一个模块中所做的任何更改也将在另一个发射器的同一个模块中发生。如果你想改变所有发射器的属性，比如大小，这是很有用的。</p>
+<p>您需要更改的唯一模块是“Initial Color”。但是，如果您进行了更改，两个发射器都将接收更改。在这种情况下，您不希望链接模块，因为它们需要单独的参数名。最简单的方法是删除复制的“Initial Color”模块并创建一个新的：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-23.gif" alt=""></p>
+<p>注意：在编写本文时，还没有内置的方法来解除模块的链接。</p>
+<p>选择新的“Initial Color”模块，并将“Start Color\Distribution”设置为“Distribution Vector Particle Parameter”。下一步，设置“Parameter Name”称为SecondaryColor： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-36.jpg" alt=""></p>
+<p>至此，粒子系统就完成了。关闭PS_Explosion。</p>
+<p>接下来，您需要使用blueprint设置参数。</p>
+<p>  </p>
+<p><strong>22、使用蓝图设置粒子参数：</strong> <br>
+打开BP_Enemy，然后在“Spawn Emitter at Location”后添加高亮的节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-37.jpg" alt=""></p>
+<p>这将允许您在PS_Explosion中设置两个参数。</p>
+<p>现在，您需要设置正确的参数名称。将第一个节点的“Color Parameter”设置为“PrimaryColor”。第二个“Color Parameter”为“SecondaryColor”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-38.jpg" alt=""></p>
+<p>最后，您需要提供颜色。为了简化操作，颜色已经存储在变量PrimaryColor和SecondaryColor中。将每个变量连接到它们各自的节点，如下所示：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-39.jpg" alt=""></p>
+<p>下面是你应该得到的结果：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-40.jpg" alt=""></p>
+<p>让我们回顾一下事件的顺序：       <br>
+  a、当一个敌人死亡时，它将在其所在位置产生一个PS_Explosion实例。  <br>
+  b、PS_Explosion的PrimaryColor参数将被设置。  <br>
+  c、PS_Explosion的SecondaryColor参数将被设置。</p>
+<p>点击Compile按钮，然后关闭BP_Enemy。按下Play播放键，开始射击敌人，看看爆炸的粒子效果：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a8-24.gif" alt=""></p>
+<p>看看这些多汁的粒子。看看你能否在玩家死亡时添加一个爆炸！</p>
+<p>  a、打开BP_Player并定位OnDeath事件。  <br>
+  b、添加一个“Spawn Emitter at Location”节点，然后连接到Sequence的“Then 1”引脚。设置“Emitter Template”为PS_Explosion。     <br>
+  c、创建一个GetActorLocation，并将其连接到“Spawn Emitter at Location”的Location引脚。  <br>
+  d、创建一个“Set Color Parameter”节点，并将其连接到“Spawn Emitter at Location”。将“Parameter Name”设置为PrimaryColor，并将PrimaryColor变量连接到Param引脚上。   <br>
+  e、创建另一个“Set Color Parameter”，并将其连接到第一个“Set Color Parameter”节点。设置“Parameter Name”为SecondaryColor，并将SecondaryColor变量连接到Param引脚上。</p>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a8-41.jpg" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/11/SpaceshipBattleComplete.zip">这里</a> 下载完成的项目。</p>
+<p>你相信你对Cascade知之甚少吗？您已经创建了一些整洁的效果，但仍有许多模块供您尝试。我建议学习更多关于TypeData模块的知识。使用它们，你可以创建如刀痕，闪电，甚至下雨的效果！</p>
+<p>如果你想继续学习，看看这个系列的 <a href="https://yunmin97.github.io/posts/ue4/artificial-intelligence/">下一篇文章</a>，在那里我将向你展示如何开始使用人工智能。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/270-unreal-engine-4-particle-systems-tutorial">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/9-artificial-intelligence/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：人工智能</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/7-audio/">
+                  <span class="button__text">虚幻引擎4：音频</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：新手入门 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎教程中，你将被指导通过安装引擎，导航界面和创建你的第一个游戏对象。
+虚幻引擎4是一个游戏开发工具的集合，能够制作从2D手机游戏到AAA主机游戏的一切游戏类型。它是《方舟：生存进化》、《铁拳7》和《王国之心3》等游戏的开发引擎。
+在虚幻引擎4开发对初学者来说是非常简单的。使用蓝图可视化系统，你可以创建一个完整的游戏，而无需写一行代码。结合一个易用的界面，你可以快速获得一个原型并运行起来。
+这套虚幻引擎4教程专注于帮助初学者快速入门。下面是这个教程将要介绍的要点：
+安装引擎。 导入资源。 创建材质。 使用蓝图创建一些基本功能的对象。 为了学习这些，您将要创建一个显示一个香蕉的旋转转盘。
+1、安装虚化引擎4： 虚幻引擎4使用“Epic Games Launcher”进行安装。转到 虚幻引擎网站，点击右上角的“获取虚幻”按钮: 在下载启动程序之前，您需要创建一个帐户。创建帐户后，为你的操作系统下载一个启动程序。 下载并安装启动程序后，请打开它。弹出如下窗口: 输入你用来下载启动器的电子邮件和密码，然后点击“登录”。一旦登录，这个窗口将显示： 在左上角，单击“Install Engine”按钮。启动程序将带您到一个界面，您可以在那里选择要安装的组件： 注意：Epic Games不断更新虚幻引擎，所以你的引擎版本可能与此略有不同。例如，自从我编写了本教程的第一稿以来，版本已经更新到4.14.3！只要您拥有至少4.14版本的引擎就可以进行本教程。
+默认的选择是Starter Content、Templates、Feature pack和Engine Source。保持这些处于勾选状态是个好主意。以下是它们有用的原因：
+Starter Content：这是一个你可以在你的项目中免费使用的资产集。它包括像模型和材质的内容。你可以将其作为占位资产或在最终游戏中使用。 Templates and Feature Packs：模板设置了与你选择的类型相关的基本功能。例如，选择“Side Scroller”模板将创建一个带有角色、基本运动和固定平面摄像机的项目。 Engine Source：Epic提供源代码访问，这意味着任何人都可以对引擎进行修改。例如，如果你想向编辑器添加自定义特性，可以通过更改源代码来完成。 向下滚动列表，可以看见有不同的平台可用。如果您不打算针对特定的平台进行开发，请随意禁用它。 选择组件后，单击Install。安装完成后，引擎将出现在库中。现在是时候创建项目了：
+2、创建项目：
+单击其中一个Launch按钮以打开Project Browser。打开后，单击New Project选项卡： 单击Blueprint选项卡。在这里，您可以使用其中一个模板。但是，因为您是从头开始，所以选择Blank模板。
+在下面，您将发现其他设置：
+以下是每个选项的作用：
+Target Hardware：选择“Mobile/Tablet”将禁用一些后期处理效果。它还可以使用鼠标作为触摸输入。设置为“Desktop/Console”。 Graphical Target：选择“Scalable 3D or 2D”将禁用一些后期处理效果。将此设置为“Maximum Quality”。 Starter Content：您可以启用此选项以包括“Starter Content”。为简单起见，将此设置为“No Starter Content”。 最后，有一个部分指定项目文件夹的位置和项目的名称：
+您可以通过单击folder字段末尾的三个点来更改项目文件夹的位置。
+项目名称并不代表游戏的名称，所以如果以后想更改名称，请不要担心。选择Name字段中的文本并输入BananaTurntable。
+最后，单击Create Project创建项目。
+3、导航界面：
+一旦您创建了项目，编辑器就会打开。编辑器被分成多个面板： a、Content Browser：这个面板显示您所有的项目文件。使用它来创建文件夹和组织文件。您可以使用搜索栏或使用过滤器来搜索您的文件。 b、Modes：这个面板可以让你在工具之间进行选择，比如地形工具和植被工具。放置工具是默认的工具。它允许你在关卡中放置许多不同类型的物体，如灯光和摄像机。 c、World Outliner：显示当前关卡中的所有对象。您可以通过将相关项放入同一个文件夹来组织列表结构。还可以根据类型进行搜索和过滤。
+d、Details：您选择的任何对象都将在这里显示其属性。使用此面板编辑对象的设置。所做的更改只会影响该对象的实例。例如，如果你有两个球体，改变其中一个的大小，只会影响被选择的对象。 e、Toolbar：包含多种不同的功能。你使用最多的是“Play”。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/1-getting-started/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：新手入门"/>
+<meta name="twitter:description" content="在这个虚幻引擎教程中，你将被指导通过安装引擎，导航界面和创建你的第一个游戏对象..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：新手入门" />
+<meta property="og:description" content="在这个虚幻引擎教程中，你将被指导通过安装引擎，导航界面和创建你的第一个游戏对象..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/1-getting-started/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-05T18:25:30+08:00" />
+<meta property="article:modified_time" content="2018-11-05T18:25:30+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：新手入门</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-05
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎教程中，你将被指导通过安装引擎，导航界面和创建你的第一个游戏对象。</p>
+<p>虚幻引擎4是一个游戏开发工具的集合，能够制作从2D手机游戏到AAA主机游戏的一切游戏类型。它是《方舟：生存进化》、《铁拳7》和《王国之心3》等游戏的开发引擎。</p>
+<p>在虚幻引擎4开发对初学者来说是非常简单的。使用蓝图可视化系统，你可以创建一个完整的游戏，而无需写一行代码。结合一个易用的界面，你可以快速获得一个原型并运行起来。</p>
+<p>这套虚幻引擎4教程专注于帮助初学者快速入门。下面是这个教程将要介绍的要点：</p>
+<ul>
+<li>安装引擎。</li>
+<li>导入资源。</li>
+<li>创建材质。</li>
+<li>使用蓝图创建一些基本功能的对象。</li>
+</ul>
+<p>为了学习这些，您将要创建一个显示一个香蕉的旋转转盘。</p>
+<p>  </p>
+<p><strong>1、安装虚化引擎4：</strong>    <br>
+虚幻引擎4使用“Epic Games Launcher”进行安装。转到 <a href="https://www.unrealengine.com/">虚幻引擎网站</a>，点击右上角的“获取虚幻”按钮:   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-1.png" alt=""></p>
+<p>在下载启动程序之前，您需要创建一个帐户。创建帐户后，为你的操作系统下载一个启动程序。     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-2.png" alt=""></p>
+<p>下载并安装启动程序后，请打开它。弹出如下窗口:    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-3.png" alt=""></p>
+<p>输入你用来下载启动器的电子邮件和密码，然后点击“登录”。一旦登录，这个窗口将显示：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-1.jpg" alt=""></p>
+<p>在左上角，单击“Install Engine”按钮。启动程序将带您到一个界面，您可以在那里选择要安装的组件：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-4.png" alt=""></p>
+<p>注意：Epic Games不断更新虚幻引擎，所以你的引擎版本可能与此略有不同。例如，自从我编写了本教程的第一稿以来，版本已经更新到4.14.3！只要您拥有至少4.14版本的引擎就可以进行本教程。</p>
+<p>默认的选择是Starter Content、Templates、Feature pack和Engine Source。保持这些处于勾选状态是个好主意。以下是它们有用的原因：</p>
+<ul>
+<li>Starter Content：这是一个你可以在你的项目中免费使用的资产集。它包括像模型和材质的内容。你可以将其作为占位资产或在最终游戏中使用。</li>
+<li>Templates and Feature Packs：模板设置了与你选择的类型相关的基本功能。例如，选择“Side Scroller”模板将创建一个带有角色、基本运动和固定平面摄像机的项目。</li>
+<li>Engine Source：Epic提供源代码访问，这意味着任何人都可以对引擎进行修改。例如，如果你想向编辑器添加自定义特性，可以通过更改源代码来完成。</li>
+</ul>
+<p>向下滚动列表，可以看见有不同的平台可用。如果您不打算针对特定的平台进行开发，请随意禁用它。 <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-5.png" alt=""></p>
+<p>选择组件后，单击Install。安装完成后，引擎将出现在库中。现在是时候创建项目了：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-6.png" alt=""></p>
+<p>  </p>
+<p><strong>2、创建项目：</strong><br>
+单击其中一个Launch按钮以打开Project Browser。打开后，单击New Project选项卡： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-7.png" alt=""></p>
+<p>单击Blueprint选项卡。在这里，您可以使用其中一个模板。但是，因为您是从头开始，所以选择Blank模板。</p>
+<p>在下面，您将发现其他设置：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-8.png" alt=""></p>
+<p>以下是每个选项的作用：</p>
+<ul>
+<li>Target Hardware：选择“Mobile/Tablet”将禁用一些后期处理效果。它还可以使用鼠标作为触摸输入。设置为“Desktop/Console”。</li>
+<li>Graphical Target：选择“Scalable 3D or 2D”将禁用一些后期处理效果。将此设置为“Maximum Quality”。</li>
+<li>Starter Content：您可以启用此选项以包括“Starter Content”。为简单起见，将此设置为“No Starter Content”。</li>
+</ul>
+<p>最后，有一个部分指定项目文件夹的位置和项目的名称：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-9.png" alt=""></p>
+<p>您可以通过单击folder字段末尾的三个点来更改项目文件夹的位置。</p>
+<p>项目名称并不代表游戏的名称，所以如果以后想更改名称，请不要担心。选择Name字段中的文本并输入BananaTurntable。</p>
+<p>最后，单击Create Project创建项目。</p>
+<p>  </p>
+<p><strong>3、导航界面：</strong><br>
+一旦您创建了项目，编辑器就会打开。编辑器被分成多个面板： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-2.jpg" alt=""><br>
+  a、Content Browser：这个面板显示您所有的项目文件。使用它来创建文件夹和组织文件。您可以使用搜索栏或使用过滤器来搜索您的文件。 <br>
+  b、Modes：这个面板可以让你在工具之间进行选择，比如地形工具和植被工具。放置工具是默认的工具。它允许你在关卡中放置许多不同类型的物体，如灯光和摄像机。 <br>
+  c、World Outliner：显示当前关卡中的所有对象。您可以通过将相关项放入同一个文件夹来组织列表结构。还可以根据类型进行搜索和过滤。<br>
+  d、Details：您选择的任何对象都将在这里显示其属性。使用此面板编辑对象的设置。所做的更改只会影响该对象的实例。例如，如果你有两个球体，改变其中一个的大小，只会影响被选择的对象。 <br>
+  e、Toolbar：包含多种不同的功能。你使用最多的是“Play”。<br>
+  f、Viewport：这是你关卡的视图。您可以通过按住右键并移动鼠标来四处查看。要移动，按住右键并使用WASD键。</p>
+<p>  </p>
+<p><strong>4、资源导入：</strong><br>
+有个什么都没有的转盘有什么意义？下载这个 <a href="https://koenig-media.raywenderlich.com/uploads/2017/01/UnrealBanana.zip">香蕉模型</a>。里面有两个文件： <br>
+Banana_Model.fbx 和 Banana_Texture.jpg。或者，你也可以用你自己的模型但是当你有了这个调皮的香蕉时，为什么还要用呢？</p>
+<p>在虚幻引擎可以使用任何文件之前，你需要导入它们。导航到“内容浏览器”面板并单击“Import”按钮：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-10.png" alt=""></p>
+<p>使用“文件浏览器”，找到Banana_Model.fbx和Banana_Texture.jpg所在的文件夹。拖动选择这两个文件并单击Open：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-11.png" alt=""></p>
+<p>虚幻会给你一些.fbx文件的导入选项。确保&quot;Import Materials&quot;未勾选，因为你将创建自己的材质。你可以不管其他设置：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-12.png" alt=""></p>
+<p>点击“导入”按钮。这两个文件现在将出现在“内容浏览器”中：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-13.png" alt=""></p>
+<p>当您导入文件时，除非您显式地保存，否则它不会实际保存到您的项目中。您可以通过右键单击文件并选择“保存”来保存文件。您也可以通过选择“File\ save all”一次性保存所有文件。确保你经常保存。</p>
+<p>注意，在虚幻中，模型被称为网格。现在你有了香蕉的网格，是时候把它放到关卡中了。</p>
+<p>  </p>
+<p><strong>5、在关卡中添加网格：</strong>
+关卡目前看起来相当空，所以让我们添加一些东西。</p>
+<p>要将一个网格添加到关卡中，左击并将Banana_Model从“内容浏览器”中拖到“Viewport”中。释放左键将放入网格：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-1.gif" alt=""></p>
+<p>关卡中的对象可以移动、旋转和缩放。它们的快捷键分别是W, E和R。然后你可以这样使用操作器：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-2.gif" alt=""></p>
+<p>  </p>
+<p><strong>6、关于材质：</strong>
+材料决定了物体表面的外观。在基本层面上，一种材料定义了四种东西：</p>
+<ul>
+<li>Base Color：表面的颜色或纹理，用于添加细节和颜色变化。</li>
+<li>Metallic：一个表面有多“像金属”。一般来说，纯金属的金属值最大，而织物的金属值为零。</li>
+<li>Specular：控制非金属表面的光泽。例如，陶瓷会有很高的高光值，但粘土不会。</li>
+<li>Roughness：最大粗糙度的表面不会有任何光泽。用于岩石和木头等表面。</li>
+</ul>
+<p>下面是三种不同材质的例子。它们有相同的颜色但不同的属性。每一种材质都有其各自属性的最高值。其他属性设置为零： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-3.jpg" alt=""></p>
+<p>  </p>
+<p><strong>7、创建材质：</strong><br>
+要创建一个材质，转到“内容浏览器”，点击绿色的“Add New”按钮。这时会出现一个菜单，里面有你可以创建的资产列表。点击材质： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-14.png" alt=""></p>
+<p>将材质命名为“Banana_Material”，然后双击该文件，在材质编辑器中打开它：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-15.png" alt=""></p>
+<p>  </p>
+<p><strong>8、材质编辑器：</strong><br>
+材质编辑器由四个主要面板组成：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-16.png" alt=""><br>
+  a、Graph：该面板将包含你所有的节点和“Result”节点。通过按住右键并移动鼠标来平移。通过滚动鼠标滚轮来缩放。<br>
+  b、Details：您选择的任何节点都将在这里显示其属性。如果一个节点都没有被选中，面板将会显示材质的属性。<br>
+  c、Viewport：包含一个预览网格，它将显示您的材质。通过按住左键并移动鼠标来旋转相机。通过滚动鼠标滚轮来缩放。
+  d、Palette：你的材质中所有可用节点的列表。</p>
+<p>  </p>
+<p><strong>9、节点是什么：</strong><br>
+在你开始制作你的材质之前，你需要知道用来制作它的对象：节点。</p>
+<p>节点构成了材质的大部分。有许多类型的节点可用，并提供不同的功能。</p>
+<p>节点可以有输入和输出，用一个带箭头的圆表示。输入在左边，输出在右边。</p>
+<p>下面是一个使用Multiply和Constant3Vector节点为纹理添加黄色的例子：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-17.png" alt=""></p>
+<p>Materials有一个称为Result节点的特殊节点，在本例Banana_Material中已经为你创建了。这是所有节点最终结束的地方。无论您插入这个节点，都将决定最终材料的外观： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-18.png" alt=""></p>
+<p>  </p>
+<p><strong>10、节点是什么：</strong><br>
+为了给模型添加颜色和细节，你需要纹理。纹理只是一个2D图像。通常情况下，它们被投影到3D模型上，以赋予它颜色和细节。</p>
+<p>要给香蕉纹理，你将要使用Banana_Texture.jpg。TextureSample节点允许你在材质中使用纹理。</p>
+<p>导航到Palette面板并搜索TextureSample。通过按住鼠标左键并将其拖动到图表中来添加节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-3.gif" alt=""></p>
+<p>要选择纹理，请确保选中TextureSample节点。导航到您的细节面板，并单击位于纹理右侧的下拉菜单：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-19.png" alt=""></p>
+<p>出现的菜单将列出项目中的所有纹理。选择Banana_Texture：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-20.png" alt=""></p>
+<p>要查看预览网格上的纹理，您需要将其插入Result节点。按住左键单击TextureSample节点的白色输出引脚。将其拖到Result节点的“Base Color”输入引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-4.gif" alt=""></p>
+<p>返回Viewport查看预览网格上的纹理。旋转它(按住鼠标左键并拖动)以查看其他细节： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-4.jpg" alt=""></p>
+<p>点击工具栏中的“应用”按钮来更新你的材质，然后关闭材质编辑器-你就完成了。</p>
+<p>  </p>
+<p><strong>11、使用材质：</strong><br>
+要在香蕉上使用材料，你需要分配给它。返回到“内容浏览器”面板，双击Banana_Model打开它。将出现以下编辑器:
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-5.jpg" alt=""></p>
+<p>进入“详细”面板，找到“Materials”部分。单击“Element 0”右侧的下拉菜单并选择Banana_Material：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-21.png" alt=""></p>
+<p>关闭网格编辑器，回到主编辑器并查看Viewport。你会看到香蕉现在有了材质。祝贺你，现在你拥有成为关卡设计师所需的一切：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-6.jpg" alt=""></p>
+<p>注意：如果光线太暗，你可以在“世界大纲”面板中点击“Light Source”来改变它。在其“详细”面板中，找到“Intensity”设置并将其设置为更高的值。</p>
+<p>  </p>
+<p><strong>12、关于蓝图：</strong><br>
+虽然香蕉看起来很神奇，但如果在转盘上旋转会更好看。使用蓝图创建一个很容易。</p>
+<p>在最简单的意义上，蓝图代表了一个“事物”。蓝图允许您为对象创建自定义行为。你的对象可以是物理的(如转盘)或抽象的(如健康系统)。</p>
+<p>想做一辆移动的汽车吗？做一个蓝图。会飞的猪怎么样？使用蓝图。那撞击后会爆炸的小猫呢？蓝图。</p>
+<p>就像材质一样，蓝图使用基于节点的系统。这意味着你需要做的就是创建节点并连接它们;不需要编写代码:   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-22.png" alt=""></p>
+<p>注意：如果你喜欢写代码，你可以用c++来代替。</p>
+<p>虽然蓝图很容易使用，但它们不像c++代码那样快。所以，如果你需要使用一些计算量很大的东西，比如一个复杂的算法，你应该考虑使用c++。</p>
+<p>即使您更喜欢使用c++，有时使用蓝图也是一个好主意。以下是blueprint的一些好处：</p>
+<ul>
+<li>通常，使用蓝图开发比使用c++更快。</li>
+<li>简单的组织。您可以将节点划分为不同的区域，如函数和图形。</li>
+<li>如果您与非程序员一起工作，修改蓝图很容易，因为它具有可视化和直观的特性。</li>
+</ul>
+<p>一个好的方法是使用蓝图创建对象。当您需要额外的性能时，将它们转换为c++。</p>
+<p>  </p>
+<p><strong>13、创建蓝图：</strong>   <br>
+转到“内容浏览器”界面并单击“Add New”按钮。从列表中选择“Blueprint Class”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-23.png" alt=""></p>
+<p>将弹出一个窗口，提示您选择父类。蓝图将继承所选父类中的所有变量、函数和组件。花点时间阅读每个类的功能：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-24.png" alt=""></p>
+<p>注意：因为你可以放置和生成Pawn和Character类型，其实他们也是Actor。</p>
+<p>因为转盘将停留在一个地方，Actor类是最合适的。选择Actor并将新文件命名为Banana_Blueprint:  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-25.png" alt=""></p>
+<p>最后，双击Banana_Blueprint打开它。如果出现如下窗口，单击“Open Full Blueprint Editor”:    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-26.png" alt=""></p>
+<p>  </p>
+<p><strong>14、蓝图编辑器：</strong>     <br>
+首先，确保在“蓝图编辑器”中选择了“Event Graph”选项卡。</p>
+<p>“蓝图编辑器”有四个主要面板： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-27.png" alt="">  <br>
+  a、Components：包含当前组件的列表。  <br>
+  b、My Blueprint：这个区域主要用于管理图形、函数和变量。  <br>
+  c、Details：这将显示当前选定项的属性。   <br>
+  d、Graph：这就是奇迹发生的地方。你所有的节点和逻辑都在这里。通过按住右键并移动鼠标来平移。通过滚动鼠标滚轮来缩放。   <br>
+  e、Viewport：任何具有可视元素的组件都将出现在这里。您可以在“主编辑器”中使用与Viewport相同的操作来移动和查看。</p>
+<p>  </p>
+<p><strong>15、创建转盘：</strong>   <br>
+为了创造转盘，你需要两个东西:一个底座和一个显示器。您可以通过使用组件来创建这两者。</p>
+<p>  </p>
+<p><strong>16、什么是组件：</strong><br>
+如果蓝图是一辆汽车，那么组件就是组成汽车的构建块。车门、车轮和引擎都是零部件的例子。</p>
+<p>然而，组件并不局限于物理对象。</p>
+<p>例如，要使汽车移动，您可以添加一个移动组件。你甚至可以通过添加一个飞行组件让汽车飞起来。</p>
+<p>  </p>
+<p><strong>17、添加组件：</strong><br>
+在您可以看到任何组件之前，您需要切换到Viewport视图。单击Viewport选项卡切换到它。这是它看起来的样子： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-7.jpg" alt=""></p>
+<p>注意：DefaultSceneRoot组件在播放时不会显示。它只会在编辑器中显示。</p>
+<p>转盘将使用两个组件：</p>
+<ul>
+<li>圆柱体：一个简单的白色圆柱体。这就是香蕉的底部。</li>
+<li>静态网格：该组件将显示香蕉网格。</li>
+</ul>
+<p>要添加底座，导航到Components面板。单击“Add Component”并选择Cylinder：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-28.png" alt=""></p>
+<p>把底座弄短一点是个好主意。按下R来激活缩放操作手，然后缩小它（确切的尺寸不重要，如果你想的话可以稍后调整它）：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-5.gif" alt=""></p>
+<p>是时候添加网格了。回到Components面板并左键单击一个空白区域以取消选择Cylinder组件。这将确保下一个添加的组件没有被添加到Cylinder组件上：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-6.gif" alt=""></p>
+<p>注意：如果不这样做，下一个组件将被添加到Cylinder组件上。这意味着它还将继承Cylinder组件的缩放。既然你把圆柱体缩小了，它也会被缩小：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-8.jpg" alt=""></p>
+<p>接下来，单击“Add Component”并从列表中选择Static Mesh： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-29.png" alt=""></p>
+<p>要显示香蕉，请选择“Static Mesh”组件，然后单击Details选项卡。单击静态网格右侧的下拉列表，并选择Banana_Model： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-30.png" alt=""></p>
+<p>如果香蕉不在正确的位置，就移动它。按W键激活移动操作手，把它向上移动：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-7.gif" alt=""></p>
+<p>  </p>
+<p><strong>18、关于蓝图节点：</strong>   <br>
+是时候让转盘旋转起来了。这就是Blueprint节点的由来。</p>
+<p>与它们的材质节点不同，Blueprint节点有特殊的引脚，称为执行引脚。左边的引脚是输入，右边的引脚是输出。所有节点都至少有其中一个。</p>
+<p>如果一个节点有一个输入引脚，那么它在执行之前必须有一个连接。如果一个节点未被连接，则后续的节点将不会执行。</p>
+<p>这里有一个例子： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-31.png" alt=""></p>
+<p>节点A和节点B将执行，因为它们的输入引脚有一个连接。节点C和节点D将永远不会执行，因为节点C的输入引脚没有连接。</p>
+<p>  </p>
+<p><strong>19、旋转转盘：</strong><br>
+要开始编写脚本，请切换回“事件图表”选项卡。</p>
+<p>使对象旋转非常简单，您只需要创建一个节点。右键单击图表上的空白区域，弹出可用节点的菜单。寻找AddLocalRotation。因为需要旋转基组件和香蕉组件，所以只需要旋转根组件即可。选择AddLocalRotation (DefaultSceneRoot)。</p>
+<p>注意：如果节点没有被列出，取消选中菜单右上方的“Context Sensitive”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-32.png" alt=""></p>
+<p>您的图表中现在将有一个新的AddLocalRotation节点。Target输入引脚将自动连接到您选择的组件。</p>
+<p>要设置旋转值，转到“Delta rotation”输入引脚，并将Z值更改为1.0。这将导致蓝图围绕它的z轴旋转。数值越大，转盘旋转得越快：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-33.png" alt=""></p>
+<p>要持续旋转转盘，你需要每帧调用AddLocalRotation节点。要在每一帧中执行一个节点，请使用“Event Tick”节点。它已经在你的图表中了。如果不是，您可以使用以前的方法创建一个。</p>
+<p>将“Event Tick”节点的输出引脚拖到AddLocalRotation节点的输入引脚：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-8.gif" alt=""></p>
+<p>注意：在这个实现中，旋转速率依赖于帧速率。这意味着转盘将在较慢的机器上以较慢的速度旋转，反之亦然。这对于本教程来说没有问题，因为我想让事情保持简单，但是我将在以后的教程中向您展示如何解决这个问题。</p>
+<p>最后，转到“工具栏”，单击Compile按钮编译蓝图，然后关闭蓝图编辑器：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-34.png" alt=""></p>
+<p>  </p>
+<p><strong>20、在关卡中添加蓝图：</strong><br>
+在添加Blueprint之前，返回到“主编辑器”中的Viewport并删除香蕉模型。为此，选择模型，然后选择“Edit\Delete”或按下键盘上的“Delete”键。</p>
+<p>添加Blueprint的过程与添加网格是相同的。按住左键单击文件，并将其拖到Viewport中。</p>
+<p>导航到“工具栏”，点击Play按钮播放，看看你所有的努力工作的成果： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a1-9.gif" alt=""></p>
+<p>注意：如果你没有删除原来的香蕉模型，你可能会得到一个警告，提示光照需要重建。如果您删除了模型，错误将不再出现。</p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/01/BananaTurntableCompleted.zip">这里</a> 下载完成的项目。</p>
+<p>你在本教程中学到了很多东西，但这只是虚幻的一小部分。如果你想继续学习更多内容，请查看本系列的 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">下一篇文章</a>，在那里我将介绍更多关于虚幻引擎蓝图的内容。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/771-unreal-engine-4-tutorial-for-beginners-getting-started">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/2-blueprints/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：蓝图</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/start-my-blog/">
+                  <span class="button__text">开启博客吧</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

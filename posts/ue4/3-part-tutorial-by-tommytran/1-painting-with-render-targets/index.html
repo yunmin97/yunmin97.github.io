@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：使用渲染目标绘画 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4教程中，您将学习如何使用材质和渲染目标在网格上绘制各种纹理。
+渲染目标（Render Target）基本上是一张你可以在运行时写入的纹理。在引擎方面，它们存储基本颜色、法线和环境光遮蔽等信息。
+在用户层面，渲染目标主要用作一种辅助摄像机。你可以将场景捕捉指向某些东西，并将其图像存储到渲染目标。然后，您可以在网格上显示渲染目标，以模拟安全摄像机之类的东西。
+随着4.13版本的发布，Epic引入了使用蓝图直接把材质绘制到渲染目标上的能力。这个特性使高级效果得以实现，如流体模拟和雪变形。听起来很令人兴奋，对吧？但在你进入这种高级效果之前，最好先从简单开始。还有什么比在渲染目标上作画更简单呢？
+在本教程中，您将学习如何：
+使用蓝图动态创建渲染目标。 在网格上显示渲染目标。 在渲染目标上绘制纹理。 在游戏中改变笔刷的大小和纹理。 注意：本教程假设你已经知道使用虚幻引擎的基本知识。如果你是新虚幻引擎，检查我们的10部分虚幻引擎 初学者教程系列。
+1、准备开始： 首先下载 本教程 的资料。解压它并导航到CanvasPainterStarter并打开CanvasPainter.uproject。如果按“播放”键，会看到以下内容： 中间的正方形(画布)就是你要在上面作画的地方。左边的UI元素将是你想要绘制的纹理及其大小。
+首先，让我们回顾一下用于绘画的方法。
+2、绘制方法： 你需要的第一件事是一个作为画布的渲染目标。为了确定绘制渲染目标的位置，你需要从相机向前绘制一条射线。如果射线击中画布，你可以在UV空间中获得击中位置。
+例如，如果画布是完美的UV映射，在中心点击中将返回值(0.5,0.5)。如果它到达右下角，你将得到一个值(1,1)。然后你可以使用一些简单的数学计算绘制位置： 但为什么要在UV空间中获取位置呢？为什么不使用实际的世界空间位置？在使用世界空间时，你首先需要计算撞击点相对于平面的位置。你还需要考虑到平面的旋转和缩放。
+使用UV空间，你不需要做任何这些计算。在一个完美的UV映射平面上，无论平面的位置和旋转如何，中间的命中总是会返回(0.5,0.5)。
+注意：本教程中的方法通常只适用于平面或类似平面的表面。对于其他类型的几何，需要一个更高级的方法，我将在未来的教程中介绍。
+首先，您将要创建一个显示渲染目标的材质。
+3、创建画布材质： 导航到Materials文件夹，然后打开M_Canvas。
+对于本教程，您将在蓝图中动态创建“渲染目标”。这意味着你需要设置一个纹理作为参数，这样你就可以传入“渲染目标”中。为此，创建一个TextureSampleParameter2D并将其命名为RenderTarget。然后，将它连接到BaseColor上： 不要担心在这里设置纹理-你将在下一步的蓝图中这样做。点击“应用”，然后关闭M_Canvas。
+下一步是创建“渲染目标”，然后在“画布材质”中使用它。
+4、创建渲染目标：
+有两种方法可以创建渲染目标。第一个是在编辑器中通过点击“Add New\Materials &amp;amp; Textures\Render Target”来创建它们。这将允许您轻松地跨多个Actor引用相同的“渲染目标”。然而，如果你想要有多个画布，你必须手动为每个画布创建一个“渲染目标”。
+更好的方法是使用蓝图创建“渲染目标”。这样做的好处是您只在需要时创建“渲染目标”，它们也不会使项目文件膨胀。
+首先，您需要创建渲染目标，并将其存储为变量以供以后使用。进入“Blueprints”文件夹并打开BP_Canvas。找到“Event BeginPlay”事件并添加高亮显示的节点：
+设置宽度和高度为1024。这将把渲染目标的分辨率设置为1024×1024。值越高图像质量越高，但以更多的显存为代价： 下一步是“Clear Render Target 2D”节点。您可以使用此节点来设置渲染目标的颜色。设置“Clear Color”为(0.07,0.13,0.06)。这将用绿色填充整个渲染目标：
+现在你需要在画布网格上显示渲染目标。
+5、显示渲染目标：
+目前，画布网格使用的是它的默认材质。为了显示渲染目标，你需要创建一个动态的M_Canvas实例并提供渲染目标。然后，你需要将动态材质实例应用到画布网格上。为此，添加高亮显示的节点：
+首先，转到“Create Dynamic Material Instance”节点，并将Parent设置为M_Canvas。这将创建一个M_Canvas的动态实例： 接下来，在“Set Texture Parameter Value”节点上，设置“Parameter Name”为RenderTarget。这将把渲染目标传递给你之前创建（材质中）的纹理参数：
+现在画布网格将显示渲染目标。单击Compile按钮，然后返回“主编辑器”。按Play查看画布的颜色变化：
+现在你有了你的画布，你需要创建一个材料作为你的笔刷。
+6、创建笔刷材质：
+导航到Materials文件夹。创建一个名为M_Brush的材质，然后打开它。首先，设置“Blend Mode”为Translucent。这将允许你使用透明纹理：
+就像画布材质一样，你也可以在蓝图中设置画笔的纹理。创建一个TextureSampleParameter2D并将其命名为BrushTexture。像这样连接它：
+点击“Apply”按钮，然后关闭M_Brush。
+接下来要做的是创建一个笔刷材质的动态实例，这样你就可以改变笔刷材质。打开BP_Canvas，然后添加高亮显示的节点： 接下来，去&amp;quot;Create Dynamic Material Instance&amp;quot;节点，并设置Parent为M_Brush： 笔刷材质完成后，你现在需要一个函数将笔刷绘制到渲染目标上。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/3-part-tutorial-by-tommytran/1-painting-with-render-targets/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：使用渲染目标绘画"/>
+<meta name="twitter:description" content="在这个虚幻引擎4教程中，您将学习如何使用材质和渲染目标在网格上绘制各种纹理..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：使用渲染目标绘画" />
+<meta property="og:description" content="在这个虚幻引擎4教程中，您将学习如何使用材质和渲染目标在网格上绘制各种纹理..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/3-part-tutorial-by-tommytran/1-painting-with-render-targets/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-05-22T22:11:02+08:00" />
+<meta property="article:modified_time" content="2019-05-22T22:11:02+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：使用渲染目标绘画</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2019-05-22
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4教程中，您将学习如何使用材质和渲染目标在网格上绘制各种纹理。</p>
+<p>渲染目标（Render Target）基本上是一张你可以在运行时写入的纹理。在引擎方面，它们存储基本颜色、法线和环境光遮蔽等信息。</p>
+<p>在用户层面，渲染目标主要用作一种辅助摄像机。你可以将场景捕捉指向某些东西，并将其图像存储到渲染目标。然后，您可以在网格上显示渲染目标，以模拟安全摄像机之类的东西。</p>
+<p>随着4.13版本的发布，Epic引入了使用蓝图直接把材质绘制到渲染目标上的能力。这个特性使高级效果得以实现，如流体模拟和雪变形。听起来很令人兴奋，对吧？但在你进入这种高级效果之前，最好先从简单开始。还有什么比在渲染目标上作画更简单呢？</p>
+<p>在本教程中，您将学习如何：</p>
+<ul>
+<li>使用蓝图动态创建渲染目标。</li>
+<li>在网格上显示渲染目标。</li>
+<li>在渲染目标上绘制纹理。</li>
+<li>在游戏中改变笔刷的大小和纹理。</li>
+</ul>
+<p>注意：本教程假设你已经知道使用虚幻引擎的基本知识。如果你是新虚幻引擎，检查我们的10部分虚幻引擎 <a href="https://yunmin97.github.io/posts/ue4/getting-started/">初学者教程系列</a>。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong>  <br>
+首先下载 <a href="https://koenig-media.raywenderlich.com/uploads/2018/05/CanvasPainter.zip">本教程</a> 的资料。解压它并导航到CanvasPainterStarter并打开CanvasPainter.uproject。如果按“播放”键，会看到以下内容：   <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-1.jpg" alt=""></p>
+<p>中间的正方形(画布)就是你要在上面作画的地方。左边的UI元素将是你想要绘制的纹理及其大小。</p>
+<p>首先，让我们回顾一下用于绘画的方法。</p>
+<p>  </p>
+<p><strong>2、绘制方法：</strong>
+你需要的第一件事是一个作为画布的渲染目标。为了确定绘制渲染目标的位置，你需要从相机向前绘制一条射线。如果射线击中画布，你可以在UV空间中获得击中位置。</p>
+<p>例如，如果画布是完美的UV映射，在中心点击中将返回值(0.5,0.5)。如果它到达右下角，你将得到一个值(1,1)。然后你可以使用一些简单的数学计算绘制位置： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-1.gif" alt=""></p>
+<p>但为什么要在UV空间中获取位置呢？为什么不使用实际的世界空间位置？在使用世界空间时，你首先需要计算撞击点相对于平面的位置。你还需要考虑到平面的旋转和缩放。</p>
+<p>使用UV空间，你不需要做任何这些计算。在一个完美的UV映射平面上，无论平面的位置和旋转如何，中间的命中总是会返回(0.5,0.5)。</p>
+<p>注意：本教程中的方法通常只适用于平面或类似平面的表面。对于其他类型的几何，需要一个更高级的方法，我将在未来的教程中介绍。</p>
+<p>首先，您将要创建一个显示渲染目标的材质。</p>
+<p>  </p>
+<p><strong>3、创建画布材质：</strong>
+导航到Materials文件夹，然后打开M_Canvas。</p>
+<p>对于本教程，您将在蓝图中动态创建“渲染目标”。这意味着你需要设置一个纹理作为参数，这样你就可以传入“渲染目标”中。为此，创建一个TextureSampleParameter2D并将其命名为RenderTarget。然后，将它连接到BaseColor上：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-2.jpg" alt=""></p>
+<p>不要担心在这里设置纹理-你将在下一步的蓝图中这样做。点击“应用”，然后关闭M_Canvas。</p>
+<p>下一步是创建“渲染目标”，然后在“画布材质”中使用它。</p>
+<p>  </p>
+<p><strong>4、创建渲染目标：</strong><br>
+有两种方法可以创建渲染目标。第一个是在编辑器中通过点击“Add New\Materials &amp; Textures\Render Target”来创建它们。这将允许您轻松地跨多个Actor引用相同的“渲染目标”。然而，如果你想要有多个画布，你必须手动为每个画布创建一个“渲染目标”。</p>
+<p>更好的方法是使用蓝图创建“渲染目标”。这样做的好处是您只在需要时创建“渲染目标”，它们也不会使项目文件膨胀。</p>
+<p>首先，您需要创建渲染目标，并将其存储为变量以供以后使用。进入“Blueprints”文件夹并打开BP_Canvas。找到“Event BeginPlay”事件并添加高亮显示的节点：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-3.jpg" alt=""></p>
+<p>设置宽度和高度为1024。这将把渲染目标的分辨率设置为1024×1024。值越高图像质量越高，但以更多的显存为代价：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-4.jpg" alt=""></p>
+<p>下一步是“Clear Render Target 2D”节点。您可以使用此节点来设置渲染目标的颜色。设置“Clear Color”为(0.07,0.13,0.06)。这将用绿色填充整个渲染目标：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-5.jpg" alt=""></p>
+<p>现在你需要在画布网格上显示渲染目标。</p>
+<p>  </p>
+<p><strong>5、显示渲染目标：</strong><br>
+目前，画布网格使用的是它的默认材质。为了显示渲染目标，你需要创建一个动态的M_Canvas实例并提供渲染目标。然后，你需要将动态材质实例应用到画布网格上。为此，添加高亮显示的节点：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-6.jpg" alt=""></p>
+<p>首先，转到“Create Dynamic Material Instance”节点，并将Parent设置为M_Canvas。这将创建一个M_Canvas的动态实例：   <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-7.jpg" alt=""></p>
+<p>接下来，在“Set Texture Parameter Value”节点上，设置“Parameter Name”为RenderTarget。这将把渲染目标传递给你之前创建（材质中）的纹理参数：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-8.jpg" alt=""></p>
+<p>现在画布网格将显示渲染目标。单击Compile按钮，然后返回“主编辑器”。按Play查看画布的颜色变化：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-9.jpg" alt=""></p>
+<p>现在你有了你的画布，你需要创建一个材料作为你的笔刷。</p>
+<p>  </p>
+<p><strong>6、创建笔刷材质：</strong><br>
+导航到Materials文件夹。创建一个名为M_Brush的材质，然后打开它。首先，设置“Blend Mode”为Translucent。这将允许你使用透明纹理：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-10.jpg" alt=""></p>
+<p>就像画布材质一样，你也可以在蓝图中设置画笔的纹理。创建一个TextureSampleParameter2D并将其命名为BrushTexture。像这样连接它：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-11.jpg" alt=""></p>
+<p>点击“Apply”按钮，然后关闭M_Brush。</p>
+<p>接下来要做的是创建一个笔刷材质的动态实例，这样你就可以改变笔刷材质。打开BP_Canvas，然后添加高亮显示的节点：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-12.jpg" alt=""></p>
+<p>接下来，去&quot;Create Dynamic Material Instance&quot;节点，并设置Parent为M_Brush：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-13.jpg" alt=""></p>
+<p>笔刷材质完成后，你现在需要一个函数将笔刷绘制到渲染目标上。</p>
+<p>  </p>
+<p><strong>7、绘制画笔到渲染目标：</strong><br>
+创建一个新函数，并将其命名为DrawBrush。首先，你需要参数：使用的纹理，笔刷大小和绘制位置。创建以下输入参数：</p>
+<ul>
+<li>BrushTexture: 类型为“Texture 2D”</li>
+<li>BrushSize: 类型为“float”</li>
+<li>DrawLocation: 类型为“Vector 2D”</li>
+</ul>
+<p><img src="/img/ue4/3-part-tutorial-by-tommytran/b1-14.jpg" alt=""></p>
+<p>在你绘制笔刷之前，你需要设置它的纹理。为此，创建下面的设置。确保将“Parameter Name”设置为BrushTexture：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-15.jpg" alt=""></p>
+<p>现在你需要绘制到渲染目标。为此，创建高亮显示的节点： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-16.jpg" alt=""></p>
+<p>“Begin Draw Canvas to Render Target”将让引擎知道你想开始绘制到指定的渲染目标。“Draw Material”将允许你在指定的位置，大小和旋转绘制材质。</p>
+<p>计算绘制位置是一个两步过程。首先，你需要缩放DrawLocation以适应渲染目标的分辨率。为此，将DrawLocation与Size相乘： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-17.jpg" alt=""></p>
+<p>默认情况下，引擎将使用左上角作为原点绘制材质。这将导致笔刷纹理不在你想绘制的地方的中心。为了解决这个问题，您需要将BrushSize除以2，然后减去从前面步骤中的结果：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-18.jpg" alt=""></p>
+<p>然后，将所有东西连接起来如下：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-19.jpg" alt=""></p>
+<p>最后，你需要告诉引擎你想要停止绘制渲染目标。添加一个“End Draw Canvas to Render Target”节点，并像这样连接它： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-20.jpg" alt=""></p>
+<p>现在，每当执行DrawBrush时，它会首先将BrushMaterial的纹理设置为所提供的纹理。之后，它将使用提供的位置和尺寸将BrushMaterial绘制到RenderTarget上。</p>
+<p>这就是绘图函数。单击Compile按钮，然后关闭BP_Canvas。下一步是从相机位置发射射线追踪，如果有击中则绘制画布。</p>
+<p>  </p>
+<p><strong>8、从相机发射射线追踪：</strong>  <br>
+在画布上作画之前，您需要指定画笔的纹理和大小。进入“Blueprints”文件夹并打开BP_Player。之后，将BrushTexture变量设置为T_Brush_01，将BrushSize设置为500。这将设置画笔为500×500像素大小的猴子图像：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-21.jpg" alt=""></p>
+<p>接下来，需要进行射线追踪。找到“InputAxis Paint”并创建以下设置：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-22.jpg" alt=""></p>
+<p>这将执行从摄像机位置向前发射一条射线，只要玩家按住Paint的绑定键(在本教程中为：左键单击)。</p>
+<p>现在您需要检查射线轨迹是否击中画布。添加高亮显示的节点： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-23.jpg" alt=""></p>
+<p>现在，如果射线击中画布，DrawBrush函数将使用提供的画笔变量和UV位置进行执行。</p>
+<p>在“Find Collision UV”节点运转之前，您需要更改两个设置。首先，转到LineTraceByChannel节点并启用“Trace Complex”：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-24.jpg" alt=""></p>
+<p>第二步，点击“Edit\Project Settings”，然后点击“Engine\Physics”。启用“Support UV From Hit Results”，然后重新启动项目：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-25.jpg" alt=""></p>
+<p>重新启动后，按下播放键并左键单击在画布上作画：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-2.gif" alt=""></p>
+<p>你甚至可以创建多个画布，并分别在每个画布上作画。这是可能的，因为每个画布动态创建自己的渲染目标： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-3.gif" alt=""></p>
+<p>在下一节中，你将实现一些功能，让玩家能够改变画笔的大小。</p>
+<p>  </p>
+<p><strong>9、更改画刷大小：</strong>  <br>
+打开BP_Player并找到“InputAxis ChangeBrushSize”节点。这个轴映射设置为使用鼠标滚轮。要改变笔刷大小，你所需要做的就是根据“Axis Value”改变BrushSize的值。为此，创建以下设置：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-26.jpg" alt=""></p>
+<p>这将在玩家每次使用鼠标滚轮时增加或减少BrushSize。第一个乘法将决定加减的快慢。为了安全，添加了一个Clamp (float)节点，以确保画刷的尺寸不低于0或高于1000。</p>
+<p>单击Compile按钮，然后返回“主编辑器”。当你画画时，使用鼠标滚轮来改变画笔的大小：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-4.gif" alt=""></p>
+<p>  </p>
+<p><strong>10、更改画刷纹理：</strong>  <br>
+首先，你需要一个数组来保存玩家可以使用的纹理。打开BP_Player，然后创建一个数组变量。设置类型为“Texture 2D”，并将其命名为Textures：
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-27.jpg" alt=""></p>
+<p>然后，在Textures中创建三个元素。将它们分别设置为：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-28.jpg" alt=""></p>
+<p>这些是玩家能够绘制的纹理。要添加更多纹理，只需将它们添加到这个数组中。</p>
+<p>接下来，需要一个变量来保存数组中的当前索引。创建一个整型变量并将其命名为CurrentTextureIndex：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-29.jpg" alt=""></p>
+<p>接下来，你需要一种循环使用纹理的方法。在本教程中，我设置了一个名为NextTexture的右键操作映射。每当玩家按下这个按钮时，它就会转向下一个纹理。为此，找到“InputAction NextTexture”节点并创建以下设置： <br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-30.jpg" alt=""></p>
+<p>这将在玩家每次点击右键时增加CurrentTextureIndex。如果索引到达数组的末尾，它将被重置为0。最后，将BrushTexture设置为合适的纹理。</p>
+<p>单击Compile按钮，然后关闭BP_Player。按Play播放并按右键在纹理之间循环：<br>
+<img src="/img/ue4/3-part-tutorial-by-tommytran/b1-5.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong><br>
+渲染目标非常强大，你在本教程中学到的只是皮毛。如果你想了解更多关于渲染目标可以做什么，请查看 <a href="https://www.youtube.com/watch?v=QGIKrD7uHu8">Content-Driven Multipass Rendering in UE4</a>。在视频中，您将看到流图绘制、体积绘制、流体模拟等示例。</p>
+<p>还可以查看现场培训 <a href="https://www.youtube.com/watch?v=1Z-V1Buk6z8">Blueprint Drawing to Render Targets</a>，以了解如何使用渲染目标创建一个高度地图画家。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/5246-unreal-engine-4-tutorial-painting-with-render-targets">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/cesium/cesium-for-unreal/0-cesium-for-unreal/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">Cesium for Unreal</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/nodejs/node-2-cpp/">
+                  <span class="button__text">Node调用C&#43;&#43;</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

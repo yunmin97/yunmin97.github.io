@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：材质 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4材质教程中，你将学习如何在材质编辑器中修改纹理，创建材质实例，并在游戏过程中更新材质实例。
+和现实世界一样，游戏里也包含各种各样的物体（每一个都有自己的外观）。在虚幻引擎中，材料定义了这些外观。它是什么颜色的？它有多亮？是透明的吗？这些都是在材料中定义的。
+在虚幻引擎中，材质几乎用于任何视觉元素。你可以将材质应用到各种东西上，比如网格、粒子和UI元素。
+在这个教程中，你将学习如何：
+操纵纹理来改变它们的亮度和颜色。 使用材料实例快速创建变化。 当玩家收集道具时，使用动态材料实例去改变角色的颜色。 在本教程中，您将会导航材料和蓝图编辑器。如果你不熟悉它们，请阅读我们的 入门 和 蓝图 教程。
+1、准备开始：
+下载本教程 工程文件 并解压。前往项目文件夹下并双击BananaCollector.uproject打开项目。
+注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。
+你会看到有香蕉的一块地方。点击Play播放，然后使用W、A、S和D键来控制红色方块。你可以通过移动来收集香蕉：
+首先，你要修改香蕉材质来改变它的亮度。导航到材质文件夹，双击M_Banana在材质编辑器中打开它：
+为了调整香蕉的亮度，你需要调整它的Texture纹理： 2、操作纹理：
+最基本的，纹理就是一张图像，而图像是像素的集合。在彩色图像中，像素的颜色由其红(R)、绿(G)和蓝(B)通道决定。
+下面是一个每个像素的RGB值都被标记的2×2图像的例子：
+注意:在虚幻引擎中，RGB通道的范围是0.0到1.0。然而，在大多数其他应用程序中，RGB通道的范围是0到255。这些只是显示相同信息的不同方式，并不意味着虚幻引擎的颜色范围更小。
+纹理操作通过对纹理的每个像素执行一个操作。操作可以简单到向通道添加一个数值。
+下面是一个将每个通道的值限制到0.4到1.0范围的例子。这样做会提高每个通道的最小值，使每个颜色变浅： 下面展示你如何在材质编辑器中完成它： 接下来，你将使用“Multiply”节点来调整纹理的亮度。
+3、Multiply节点：
+Multiply节点正如其名称所示：它将一个输入与另一个输入相乘。
+使用乘法，您可以改变一个像素的亮度而不影响其色调或饱和度。下面是一个通过对每个通道乘0.5来将亮度减半的例子： 通过对每个像素执行这个操作，你可以改变整个纹理的亮度：
+虽然在本教程中没有涉及到，但你可以协同使用Multiply节点和蒙版纹理。使用蒙版，你可以指定基本纹理的哪些区域应该更暗。这是一个使用瓷砖纹理掩盖石头纹理的例子：
+屏蔽能运作，是因为灰度值为0(黑色)到1(白色)范围： 白色区域有充分的亮度，因为通道值乘上1。灰色区域比较暗，因为通道值乘上小于1的值。黑色区域没有亮度，因为通道值乘上0。
+现在，是时候使用Multiply节点了。
+4、调整纹理亮度：
+断开Texture Sample节点和Base Color引脚之间的连接。您可以通过右键单击任何一个引脚并选择断开连接来做到这一点。或者，您可以按住Alt键并左键单击连线： 创建一个Multiply和一个Constant节点。您可以按住M键(对于Multiply节点)或1键(对于Constant节点)，然后左键单击图表中的空白区域，从而快速创建这些内容。然后，像这样连接所有内容： 这个设置将遍历每个像素，并将每个通道乘以Constan常量节点的值。最后，生成的纹理色输出为Base Color。
+现在，输出的纹理将是黑色的，因为Multiply节点乘数被设置为零(乘以零结果为零)。要更改乘数的值，请选择Constant节点并转到Details面板。把Value字段设置为5：
+单击“Apply”按钮，然后返回到主编辑器。你会看到香蕉现在更亮了：
+我们加些不同颜色的香蕉来调味吧。虽然你可以为每种颜色创建一个新的材质，但更简单的方法是创建一个材质实例。
+5、关于材质实例：
+材质实例是材质的一个副本。在基础材质中所做的任何更改会同步到材质实例中。
+材质实例非常好，因为您可以在不用重新编译的情况下对它们进行更改。当您在材质中点击“Apply”按钮时，您可能会注意到一个通知，说明着色器正在编译： 对于基本材质这个过程只需要几秒钟。然而，对于复杂的材质，编译时间可能会显著增加：
+使用材质实例是个好主意，当遇到以下情况时：
+有一个复杂的材质和想要快速修改。 想要创造一个基础材料的变种。这些可以是任何东西，如改变颜色，亮度，甚至纹理本身。 下面是一个使用材质实例创建颜色变化的场景。所有实例共享相同的基础材质：
+在创建实例之前，需要在基本材质中创建参数。这些将显示在你的材料实例中，并允许你调整你材质的属性。
+6、创建材质参数：
+回到材质编辑器，确保你还在M_Banana材质中。
+首先，您需要一个节点来改变纹理的色调。您可以使用HueShift节点进行此操作。添加一个到你的图表中并像下面这样连接它：
+按住Alt键并左键单击连线，断开Multiply节点和M_Banana节点之间的连接。 右键单击蓝图中的空白处，搜索HueShift节点，并选择该节点。 按上图所示连接导线。 接下来，您需要创建一个Scalar Parameter节点。这个节点拥有一个单一值，并且可以在材质实例中编辑。您可以通过按住S键并左键单击图表中的空白区域来快速创建一个。创建后，将其连接到HueShift节点上的HueShift Percentage (S)引脚：
+为参数命名也是一个好主意。选择Scalar Parameter节点，然后转到Details面板。修改Parameter Name参数名称为“HueShiftPercentage”： 您还可以将常量节点转换为标量参数。右键单击前面添加的Constant节点，然后选择Convert to Parameter。然后，将参数重命名为“Brightness”： 您现在已经完成了对基础材质的参数化。点击“应用”，然后关闭材质编辑器。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/3-materials/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：材质"/>
+<meta name="twitter:description" content="在这个虚幻引擎4材质教程中，你将学习如何在材质编辑器中修改纹理，创建材质实例，并在游戏过程中更新材质实例..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：材质" />
+<meta property="og:description" content="在这个虚幻引擎4材质教程中，你将学习如何在材质编辑器中修改纹理，创建材质实例，并在游戏过程中更新材质实例..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/3-materials/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-07T22:05:04+08:00" />
+<meta property="article:modified_time" content="2018-11-07T22:05:04+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：材质</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-07
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4材质教程中，你将学习如何在材质编辑器中修改纹理，创建材质实例，并在游戏过程中更新材质实例。</p>
+<p>和现实世界一样，游戏里也包含各种各样的物体（每一个都有自己的外观）。在虚幻引擎中，材料定义了这些外观。它是什么颜色的？它有多亮？是透明的吗？这些都是在材料中定义的。</p>
+<p>在虚幻引擎中，材质几乎用于任何视觉元素。你可以将材质应用到各种东西上，比如网格、粒子和UI元素。</p>
+<p>在这个教程中，你将学习如何：</p>
+<ul>
+<li>操纵纹理来改变它们的亮度和颜色。</li>
+<li>使用材料实例快速创建变化。</li>
+<li>当玩家收集道具时，使用动态材料实例去改变角色的颜色。</li>
+</ul>
+<p>在本教程中，您将会导航材料和蓝图编辑器。如果你不熟悉它们，请阅读我们的 <a href="https://yunmin97.github.io/posts/ue4/getting-started/">入门</a> 和 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">蓝图</a> 教程。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载本教程 <a href="https://koenig-media.raywenderlich.com/uploads/2017/07/BananaCollectorStarter.zip">工程文件</a> 并解压。前往项目文件夹下并双击BananaCollector.uproject打开项目。</p>
+<p>注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。</p>
+<p>你会看到有香蕉的一块地方。点击Play播放，然后使用W、A、S和D键来控制红色方块。你可以通过移动来收集香蕉：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-1.jpg" alt=""></p>
+<p>首先，你要修改香蕉材质来改变它的亮度。导航到材质文件夹，双击M_Banana在材质编辑器中打开它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-1.png" alt=""></p>
+<p>为了调整香蕉的亮度，你需要调整它的Texture纹理：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-2.jpg" alt=""></p>
+<p>  </p>
+<p><strong>2、操作纹理：</strong><br>
+最基本的，纹理就是一张图像，而图像是像素的集合。在彩色图像中，像素的颜色由其红(R)、绿(G)和蓝(B)通道决定。</p>
+<p>下面是一个每个像素的RGB值都被标记的2×2图像的例子：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-2.png" alt=""></p>
+<p>注意:在虚幻引擎中，RGB通道的范围是0.0到1.0。然而，在大多数其他应用程序中，RGB通道的范围是0到255。这些只是显示相同信息的不同方式，并不意味着虚幻引擎的颜色范围更小。</p>
+<p>纹理操作通过对纹理的每个像素执行一个操作。操作可以简单到向通道添加一个数值。</p>
+<p>下面是一个将每个通道的值限制到0.4到1.0范围的例子。这样做会提高每个通道的最小值，使每个颜色变浅： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-3.png" alt=""></p>
+<p>下面展示你如何在材质编辑器中完成它： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-4.png" alt=""></p>
+<p>接下来，你将使用“Multiply”节点来调整纹理的亮度。</p>
+<p>  </p>
+<p><strong>3、Multiply节点：</strong><br>
+Multiply节点正如其名称所示：它将一个输入与另一个输入相乘。</p>
+<p>使用乘法，您可以改变一个像素的亮度而不影响其色调或饱和度。下面是一个通过对每个通道乘0.5来将亮度减半的例子：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-5.png" alt=""></p>
+<p>通过对每个像素执行这个操作，你可以改变整个纹理的亮度：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-3.jpg" alt=""></p>
+<p>虽然在本教程中没有涉及到，但你可以协同使用Multiply节点和蒙版纹理。使用蒙版，你可以指定基本纹理的哪些区域应该更暗。这是一个使用瓷砖纹理掩盖石头纹理的例子：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-4.jpg" alt=""></p>
+<p>屏蔽能运作，是因为灰度值为0(黑色)到1(白色)范围： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-5.jpg" alt="">
+白色区域有充分的亮度，因为通道值乘上1。灰色区域比较暗，因为通道值乘上小于1的值。黑色区域没有亮度，因为通道值乘上0。</p>
+<p>现在，是时候使用Multiply节点了。</p>
+<p>  </p>
+<p><strong>4、调整纹理亮度：</strong><br>
+断开Texture Sample节点和Base Color引脚之间的连接。您可以通过右键单击任何一个引脚并选择断开连接来做到这一点。或者，您可以按住Alt键并左键单击连线：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-1.gif" alt=""></p>
+<p>创建一个Multiply和一个Constant节点。您可以按住M键(对于Multiply节点)或1键(对于Constant节点)，然后左键单击图表中的空白区域，从而快速创建这些内容。然后，像这样连接所有内容： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-6.png" alt=""></p>
+<p>这个设置将遍历每个像素，并将每个通道乘以Constan常量节点的值。最后，生成的纹理色输出为Base Color。</p>
+<p>现在，输出的纹理将是黑色的，因为Multiply节点乘数被设置为零(乘以零结果为零)。要更改乘数的值，请选择Constant节点并转到Details面板。把Value字段设置为5：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-7.png" alt=""></p>
+<p>单击“Apply”按钮，然后返回到主编辑器。你会看到香蕉现在更亮了：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-6.jpg" alt=""></p>
+<p>我们加些不同颜色的香蕉来调味吧。虽然你可以为每种颜色创建一个新的材质，但更简单的方法是创建一个材质实例。</p>
+<p>  </p>
+<p><strong>5、关于材质实例：</strong><br>
+材质实例是材质的一个副本。在基础材质中所做的任何更改会同步到材质实例中。</p>
+<p>材质实例非常好，因为您可以在不用重新编译的情况下对它们进行更改。当您在材质中点击“Apply”按钮时，您可能会注意到一个通知，说明着色器正在编译：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-7.jpg" alt=""></p>
+<p>对于基本材质这个过程只需要几秒钟。然而，对于复杂的材质，编译时间可能会显著增加：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-8.jpg" alt=""></p>
+<p>使用材质实例是个好主意，当遇到以下情况时：</p>
+<ul>
+<li>有一个复杂的材质和想要快速修改。</li>
+<li>想要创造一个基础材料的变种。这些可以是任何东西，如改变颜色，亮度，甚至纹理本身。</li>
+</ul>
+<p>下面是一个使用材质实例创建颜色变化的场景。所有实例共享相同的基础材质：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-9.jpg" alt=""></p>
+<p>在创建实例之前，需要在基本材质中创建参数。这些将显示在你的材料实例中，并允许你调整你材质的属性。</p>
+<p>  </p>
+<p><strong>6、创建材质参数：</strong><br>
+回到材质编辑器，确保你还在M_Banana材质中。</p>
+<p>首先，您需要一个节点来改变纹理的色调。您可以使用HueShift节点进行此操作。添加一个到你的图表中并像下面这样连接它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-10.jpg" alt=""></p>
+<ul>
+<li>按住Alt键并左键单击连线，断开Multiply节点和M_Banana节点之间的连接。</li>
+<li>右键单击蓝图中的空白处，搜索HueShift节点，并选择该节点。</li>
+<li>按上图所示连接导线。</li>
+</ul>
+<p>接下来，您需要创建一个Scalar Parameter节点。这个节点拥有一个单一值，并且可以在材质实例中编辑。您可以通过按住S键并左键单击图表中的空白区域来快速创建一个。创建后，将其连接到HueShift节点上的HueShift Percentage (S)引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-11.jpg" alt=""></p>
+<p>为参数命名也是一个好主意。选择Scalar Parameter节点，然后转到Details面板。修改Parameter Name参数名称为“HueShiftPercentage”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-8.png" alt=""></p>
+<p>您还可以将常量节点转换为标量参数。右键单击前面添加的Constant节点，然后选择Convert to Parameter。然后，将参数重命名为“Brightness”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-9.png" alt=""></p>
+<p>您现在已经完成了对基础材质的参数化。点击“应用”，然后关闭材质编辑器。</p>
+<p>下面，你将要创建一个材质实例。</p>
+<p>  </p>
+<p><strong>7、创建材质实例：</strong><br>
+前往“内容浏览器”面板并确保你在“Materials”文件夹中。右键点击M_Banana并选择“Create Material Instance”选项。为新创建的材质实例资产命名：“MI_Banana_Green”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-10.png" alt=""></p>
+<p>双击MI_Banana_Green打开它。这将在材质实例编辑器中打开它。</p>
+<p>材质实例编辑器由三个面板组成：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-12.jpg" alt="">
+  a、详细：这里将显示您的参数和其他常规设置。
+  b、实例父类：显示当前实例的父材质列表。在本例中，唯一的父材质是M_Banana。<br>
+  c、视口：包含一个预览网格，它将显示你的材质实例。通过按住左键并移动鼠标来旋转相机。通过滚动鼠标滚轮来缩放。</p>
+<p>要查看其使用在香蕉网格上的变化，转到Details面板并找到Previewing部分。左键单击Preview Mesh旁边的下拉菜单，选择SM_Banana。你现在看到的是将香蕉而不是球体：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-11.png" alt=""></p>
+<p>接下来，您将编辑参数，将香蕉的颜色调整为绿色。要使参数成为可编辑的，单击每个参数旁边的复选框：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-12.png" alt=""></p>
+<p>设置Brightness为0.5，设置HueShiftPercentage为0.2。你会得到这样的结果： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-13.jpg" alt=""></p>
+<p>现在你已经创建了你的材料实例，是时候把它应用到一些香蕉上了!关闭材质实例，进入主编辑器的Viewport。</p>
+<p>  </p>
+<p><strong>8、使用材质实例：</strong><br>
+您放置到场景中的Actor可以单独编辑。这意味着如果你换了一根香蕉的原料，其他的不会受到影响。你可以用这个行为把一些香蕉变成绿色。</p>
+<p>选择任意一个香蕉，然后转到“细节”面板。在组件列表中，选择StaticMesh组件:<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-13.png" alt=""></p>
+<p>Details面板将刷新为StaticMesh组件的属性。将材质更改为MI_Banana_Green：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-14.jpg" alt=""></p>
+<p>重复这个过程几次，以获得黄香蕉和绿香蕉更好的分配。看看你是否可以创建另一个材料实例来制作一些紫色香蕉：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-15.jpg" alt=""></p>
+<p>  </p>
+<p><strong>9、动态的改变材质：</strong>  <br>
+材质不完全是装饰性的;你也可以将其用于游戏设计中。接下来，你将学习如何动态地把立方体的颜色从白色改到红色，当玩家收集足够多的香蕉时。</p>
+<p>在你创建材质实例之前，你还需要创建立方体的材质。</p>
+<p>确保你在“Materials”文件夹中，然后双击M_Cube打开它。</p>
+<p>首先，你需要一种创建颜色的方法。您将看到一个连接到基本颜色的Constant3Vector节点。这个节点非常适合用于选择颜色，因为它们有红色、绿色和蓝色的通道：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-16.jpg" alt=""></p>
+<p>红色已经创建好了，现在您需要创建白色。添加另一个Constant3Vector节点。您可以通过按住3键并左键单击图表中的空白区域来快速实现这一点。</p>
+<p>双击Constant3Vector节点，打开颜色选择器（拾色器）：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-2.gif" alt=""></p>
+<p>通过使用滑块或在R、G和B通道中输入1.0值，将颜色设置为白色。然后，按下OK键：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-17.jpg" alt=""></p>
+<p>要把颜色从白色改为红色，你需要一个平滑过度的方式。一个简单的方法是使用线性插值linear interpolation。</p>
+<p>  </p>
+<p><strong>10、什么是线性插值：</strong> <br>
+线性插值是一种找到a和b之间的值的方法。例如，您可以使用线性插值来找到100和200之间的一个值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-18.jpg" alt=""></p>
+<p>当你控制alpha时，线性插值会变得更加强大。你可以认为它是A和B之间的百分比，0会返回A, 1会返回B。</p>
+<p>例如，你可以随着时间的推移增加alpha来平稳地将一个物体从A点移动到B点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-3.gif" alt=""></p>
+<p>在本教程中，你将通过使用收集的香蕉数量来控制alpha。</p>
+<p>  </p>
+<p><strong>11、使用LinearInterpolate节点：</strong> <br>
+首先，添加一个LinearInterpolate节点。您可以通过按住L键并左键单击图形中的空白区域来快速实现这一点：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-19.jpg" alt=""></p>
+<p>接下来，创建一个Scalar Parameter节点并将其命名为ColorAlpha。然后，像这样连接你的节点(注意现在顶部是白色的)： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-20.jpg" alt="">
+简介:LinearInterpolate节点将输出A的值。这是因为ColorAlpha的初值是0。当其接近1时，输出将接近B的值。</p>
+<p>材质现在完成了。还有更多要做的，但要查看到目前为止的进度，请单击Apply应用，然后关闭材质编辑器。如果按Play键播放，您将看到立方体现在是白色而不是红色：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-21.jpg" alt=""></p>
+<p>要使立方体改变颜色，您需要编辑ColorAlpha参数。然而，有一个问题。当游戏在运行时，你不能在一个材料实例上编辑其参数。解决方案是使用一个动态材料实例。</p>
+<p>  </p>
+<p><strong>12、关于动态材质实例：</strong><br>
+与常规实例不同，你可以在游戏过程中编辑动态材料实例。您可以使用蓝图或c++来实现这一点。</p>
+<p>您可以以多种方式使用动态实例，例如改变对象的不透明度使其不可见。或者，你可以增加一个物体的高光度，当它是变湿后： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-4.gif" alt=""></p>
+<p>动态材质实例的另一个好处是，你可以单独编辑它们。</p>
+<p>下面是一个单独对每个实例进行更新以屏蔽对象区域的示例： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-5.gif" alt=""></p>
+<p>让我们开始创建一个材质实例吧。</p>
+<p>  </p>
+<p><strong>13、创建动态材质实例：</strong><br>
+你只能在游戏中创建动态材料实例。您可以使用blueprint(或c++)来实现这一点。</p>
+<p>在“内容浏览器”中，转到Blueprints文件夹，双击BP_Player打开它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-22.jpg" alt=""></p>
+<p>你要做的第一件事是创建一个新的动态材质实例，然后将它应用到立方体网格上。当虚幻生成的Actor的时候去做会是一个好主意，这是Event BeginPlay节点的目的。</p>
+<p>确保你在“事件图表”中，然后找到Event BeginPlay节点：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-23.jpg" alt=""></p>
+<p>现在，添加Create Dynamic Material Instance (StaticMesh)节点。这个节点将同时创建并应用一个新的动态材料实例到立方体网格上：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-24.jpg" alt=""></p>
+<p>接下来，您需要指定立方体应该使用的材质。点击Source Material下的下拉菜单并选择M_Cube：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-25.jpg" alt=""></p>
+<p>为了方便以后引用材质，最好将其存储在一个变量中。一个简单的方法是右键Create Dynamic Material Instance节点上的返回值引脚。然后，选择“提升到变量”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-6.gif" alt=""></p>
+<p>如果您查看“My Blueprint”选项卡，您将注意到有一个新的变量。把它重命名为“CubeMaterial”。您可以通过按F2键快速完成此操作：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-26.jpg" alt=""></p>
+<p>最后，把Event BeginPlay节点连接到Create Dynamic Material Instance节点上：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-27.jpg" alt=""></p>
+<p>总结：一旦虚幻生成BP_Player，它将会创建一个动态材质实例，并把其应用到BP_Player的StaticMesh组件上。然后将会把动态材质实例存储到名为CubeMaterial的变量当中。</p>
+<p>下一步是创建一个计数器来跟踪收集到的香蕉数量。</p>
+<p>  </p>
+<p><strong>14、创建香蕉计数器：</strong> <br>
+如果你从Event BeginPlay节点向下平移一点，你会看到下面的设置。在这里你将更新香蕉计数器和材质： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-28.jpg" alt=""></p>
+<p>当Cube与另一个Actor重叠时，将执行“On Component Begin Overlap”节点。接下来，“Cast to BP_Banana”节点检查重叠的Actor是否为香蕉。如果Actor是一根香蕉，那么“DestroyActor”节点将摧毁它，使其从游戏中消失。</p>
+<p>首先要做的是创建一个变量来存储收集到的香蕉数量。然后，每次立方体与香蕉重叠时，将变量增加1。</p>
+<p>创建一个新的Float类型变量，并将其命名为Banancounter。将Banancounter变量拖到事件图表中并选择Get： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-7.gif" alt=""></p>
+<p>若要将计数器增加1，请添加一个IncrementFloat节点。创建完成后，将Banancounter连接到它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-29.jpg" alt=""></p>
+<p>接下来，将DestroyActor节点连接到IncrementFloat节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-30.jpg" alt=""></p>
+<p>现在，每当玩家收集香蕉时，Banancounter变量就会增加1。</p>
+<p>如果您现在使用Banancounter作为Alpha的值，您将得到意想不到的结果。这是因为LinearInterpolation节点的值在0到1之间。可以使用标准化将计数器转换为0到1的范围。</p>
+<p>要规范化，只需将Banancounter除以一个最大值。这个值是玩家在方块变成全红色之前需要收集的香蕉数量。</p>
+<p>添加一个“float / float”节点，并将其顶部引脚连接到IncrementFloat节点的输出引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-31.jpg" alt=""></p>
+<p>把“float / float”节点下面的输入引脚的值改为6.这意味着当玩家搜集6个香蕉时立方体变成全红： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-32.jpg" alt=""></p>
+<p>有一个小问题。当玩家收集超过6个香蕉时，你将获得大于1的alpha值。为了解决这个问题，使用Clamp (float)节点将alpha限制在0到1的范围内。</p>
+<p>添加一个Clamp (float)节点，并将Value引脚连接到“float / float”节点的右引脚上：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-33.jpg" alt=""></p>
+<p>现在，你得到了alpha值，是时候把它送到材质上了。</p>
+<p>  </p>
+<p><strong>15、更新材质：</strong>  <br>
+将CubeMaterial变量拖到事件图表中并选择Get。</p>
+<p>接下来，将CubeMaterial变量的引脚拖到空白区域，然后释放鼠标左键。这将显示一个可以使用这种类型变量的节点列表。选中的任何节点都将自动与该变量连接。添加“Set Scalar Parameter”节点。此节点将把指定的参数设置为提供的值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-8.gif" alt=""></p>
+<p>现在，您需要指定要更新的参数。设置参数名称字段为ColorAlpha。这是您在Cube材质中创建的参数：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-34.jpg" alt=""></p>
+<p>将“Clamp(float)”节点的结果连接到“Set Scalar Parameter Value node”节点的Value引脚：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-35.jpg" alt=""></p>
+<p>最后，将IncrementFloat节点与“Set Scalar Parameter Value node”节点连接： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-36.jpg" alt=""></p>
+<p>执行顺序如下:<br>
+  a、On Component Begin Overlap (StaticMesh)节点：当Cube的网格体和其他Actor重叠时执行。<br>
+  b、Cast to BP_Banana节点：检测重叠的是否时香蕉。     <br>
+  c、DestroyActor节点：如果重叠的是香蕉则销毁它以使其在游戏中消失。<br>
+  d、IncrementFloat节点：把BananaCounter变量值加1。<br>
+  e、float / float节点：把Counter计数器除以一个指定的数值来使其标准化。
+  f、Clamp (float)节点：限制除法节点的结果，使其不会大于1。<br>
+  g、Set Scalar Parameter Value节点：把立方体材质的ColorAlpha属性设置为指定的值。在本例中，值是Banancounter的规范化和限制后的版本。</p>
+<p>是时候测试一下了!单击Compile按钮，然后关闭蓝图编辑器。</p>
+<p>点击Play并开始收集香蕉。一开始，方块是白色的，随着你收集香蕉，方块逐渐变红。一旦你收集到6根香蕉，它就会完全变红：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a3-9.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong><br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/07/BananaCollectorComplete.zip">这里</a> 下载完成的项目。</p>
+<p>我喜欢材质，因为它们很强大，你可以用它们做很多事情。你可以将材质层合在一起，创造出一种复杂的材料，比如裂缝中生长着苔藓的石头。你也可以制作一些很酷的效果，如教程中所示的解体效果。</p>
+<p>如果你想了解更多关于材质的知识，我建议你阅读虚幻引擎文档中的 <a href="https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/MaterialInputs/index.html">材质输入</a> 页面。了解这些输入的作用将允许你创造更高级的材质。</p>
+<p>我鼓励您乱用材料，并测试一堆节点(有很多)。学习东西的最好方法就是亲自尝试:)</p>
+<p>如果你想继续学习，请查看本系列的 <a href="https://yunmin97.github.io/posts/ue4/ui/">下一篇文章</a>，在这里我将介绍如何在游戏中添加Lable或Button等UI元素。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/504-unreal-engine-4-materials-tutorial">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/4-ui/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：UI</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/2-blueprints/">
+                  <span class="button__text">虚幻引擎4：蓝图</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

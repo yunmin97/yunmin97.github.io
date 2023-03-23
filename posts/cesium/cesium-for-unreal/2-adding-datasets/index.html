@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Cesium for Unreal：添加Datasets数据集 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="这个教程将向你展示如何使用Cesium for Unreal插件导入模型。首先，你将从Cesium ion上导入一个倾斜摄影模型。你将使用世界上众多最宜居住的城市之一：澳大利亚的墨尔本 的模型。然后，你将从计算机中导入一份本地的数据集。
+你将学会：
+从Cesium ion上添加一个城市级别的3D Tiles倾斜摄影模型到关卡中。 使用CesiumGeoreference对象在地球上定位你的关卡。 从您的计算机中使用本地的3D Tiles数据集 前提要求：
+一个4.26或更高的虚幻引擎版本，并且安装了Cesium for Unreal插件。 一个用于把墨尔本Tileset导入到虚幻引擎中Cesium ion帐户。 参见 快速入门 学习如何安装Cesium for Unreal插件和连接到Cesium ion上。
+步骤1、创建项目和关卡： 请参见 快速入门 详细说明。在完成步骤6之后停止，因为你将要添加倾斜摄影测量衍生的建筑，而不再是向场景中添加全局3D建筑。
+步骤2、从Cesium ion中添加墨尔本的倾斜摄影模型： a、点击工具栏上的Cesium图标打开Cesium面板： b、连接到Cesium ion如果你没有： c、点击“Add”按钮打开Cesium ion Assets面板： d、在资产列表中找到“Melbourne Photogrammetry”，选择并点击“Add to Level”添加到关卡：
+如果在资产列表中没有看见Melbourne Photogrammetry，访问Melbourne Photogrammetry资产仓库页面，并单击添加到我的资产。然后返回到引擎中，关闭Cesium ion Assets面板，然后在Cesium面板上再次点击“Add”按钮重新打开和刷新资产列表。
+e、在“世界大纲视图”中双击Melbourne Photogrammetry以使其在视口中聚焦：
+它的方向可能很奇怪，你甚至可能会看到它的底部： 步骤3、把引擎世界的中心定在墨尔本：
+墨尔本在屏幕上的方向是奇怪的，因为虚幻编辑器摄像机保持其正常的“&#43;Z方向是向上”的方向。在地球上-不像在大多数游戏中的情况-在一个以地球为中心的坐标系中“向上”的方向取决于你在世界上的位置。
+让我们以更有用的方式重新定位虚幻引擎世界:
+a、在“世界大纲视图”中点击CesiumGeoreference-1： b、在其详细选项卡上，点击“Place Georeference Origin Here”按钮： 城市将会翻转。如果场景画面变黑，可能是因为现在墨尔本是夜晚时间。在CesiumSunSky对象上试着调整“Solar Time”属性来修正： 点击“Place Georeference Origin Here”按钮不仅改变了朝向，如果你近距离观察，你可能已经注意到在按钮下面的Origin Latitude、Origin Longitude和Origin Height的值已经发生了改变。准确地说，按钮重新定位了虚幻引擎关卡的坐标系统，使它的中心点(0,0,0)恰好位于之前摄像机所在的位置。它对齐了虚幻轴，使&#43;X指向东方，&#43;Y指向南方，&#43;Z指向上方。
+也可以直接输入纬度、经度和高度值来将世界定位到一个精确的位置。
+这种定位世界原点到地球上任何地方的能力非常有用，因为虚幻引擎中的许多东西，从相机到树叶再到物理，都倾向于使用相对较小的值和向上的&#43;Z坐标系统。通过以这种方式“georeferencing”虚幻世界，我们允许普通的虚幻物体放置在墨尔本及其周围，就好像它们在任何其他游戏中一样。
+步骤4、添加全局环境：
+现在这个时候，墨尔本是一个漂浮在黑暗海洋中的城市。让我们添加一些全局背景:
+a、在Cesium面板上，点击Cesium World Terrain &#43; Bing Maps Aerial imagery旁边的“&#43;”按钮，或你选择的其他的Cesium World Terrain选项： 墨尔本周围的区域将被你添加的全球资产填充: 从远处看起来不错，但当我们放大时，我们可以看到一些地方，Cesium World Terrain地形从倾斜摄影测量模型中 伸出来，视觉上似交叉在一起： 这是因为Cesium World Terrain地形和墨尔本倾斜摄影测量模型都是高分辨率的数据集，可能重叠在同一地理位置。Cesium for Unreal的未来版本将允许你“剪辑”Cesium World Terrain地形，为倾斜摄影测量模型腾出空间。现在，让我们将倾斜摄影测量模型向上移动，以便地形模型不再穿透。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/cesium/cesium-for-unreal/2-adding-datasets/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Cesium for Unreal：添加Datasets数据集"/>
+<meta name="twitter:description" content="这个教程将向你展示如何使用Cesium for Unreal插件导入模型..."/>
+
+
+
+<meta property="og:title" content="Cesium for Unreal：添加Datasets数据集" />
+<meta property="og:description" content="这个教程将向你展示如何使用Cesium for Unreal插件导入模型..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/cesium/cesium-for-unreal/2-adding-datasets/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-05T22:19:30+08:00" />
+<meta property="article:modified_time" content="2021-07-05T22:19:30+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Cesium for Unreal：添加Datasets数据集</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2021-07-05
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>这个教程将向你展示如何使用Cesium for Unreal插件导入模型。首先，你将从Cesium ion上导入一个倾斜摄影模型。你将使用世界上众多最宜居住的城市之一：澳大利亚的墨尔本 的模型。然后，你将从计算机中导入一份本地的数据集。</p>
+<p><strong>你将学会：</strong></p>
+<ul>
+<li>从Cesium ion上添加一个城市级别的3D Tiles倾斜摄影模型到关卡中。</li>
+<li>使用CesiumGeoreference对象在地球上定位你的关卡。</li>
+<li>从您的计算机中使用本地的3D Tiles数据集</li>
+</ul>
+<p><strong>前提要求：</strong></p>
+<ul>
+<li>一个4.26或更高的虚幻引擎版本，并且安装了Cesium for Unreal插件。</li>
+<li>一个用于把墨尔本Tileset导入到虚幻引擎中Cesium ion帐户。</li>
+</ul>
+<p>参见 <a href="https://yunmin97.github.io/posts/cesium/cesium-for-unreal-quickstart/">快速入门</a> 学习如何安装Cesium for Unreal插件和连接到Cesium ion上。</p>
+<p>  </p>
+<p><strong>步骤1、创建项目和关卡：</strong>  <br>
+请参见 <a href="https://yunmin97.github.io/posts/cesium/cesium-for-unreal-quickstart/">快速入门</a> 详细说明。在完成步骤6之后停止，因为你将要添加倾斜摄影测量衍生的建筑，而不再是向场景中添加全局3D建筑。</p>
+<p>  </p>
+<p><strong>步骤2、从Cesium ion中添加墨尔本的倾斜摄影模型：</strong> <br>
+  a、点击工具栏上的Cesium图标打开Cesium面板：  <br>
+<img src="/img/cesium/cesium-for-unreal/a1.jfif" alt=""></p>
+<p>  b、连接到Cesium ion如果你没有：
+<img src="/img/cesium/cesium-for-unreal/a2.jfif" alt=""></p>
+<p>  c、点击“Add”按钮打开Cesium ion Assets面板：  <br>
+<img src="/img/cesium/cesium-for-unreal/a3.jfif" alt=""></p>
+<p>  d、在资产列表中找到“Melbourne Photogrammetry”，选择并点击“Add to Level”添加到关卡：<br>
+<img src="/img/cesium/cesium-for-unreal/a4.jfif" alt=""></p>
+<p>如果在资产列表中没有看见Melbourne Photogrammetry，访问Melbourne Photogrammetry资产仓库页面，并单击添加到我的资产。然后返回到引擎中，关闭Cesium ion Assets面板，然后在Cesium面板上再次点击“Add”按钮重新打开和刷新资产列表。</p>
+<p>  e、在“世界大纲视图”中双击Melbourne Photogrammetry以使其在视口中聚焦：<br>
+<img src="/img/cesium/cesium-for-unreal/a5.jfif" alt=""></p>
+<p>它的方向可能很奇怪，你甚至可能会看到它的底部：   <br>
+<img src="/img/cesium/cesium-for-unreal/a26.jpg" alt=""></p>
+<p>  </p>
+<p><strong>步骤3、把引擎世界的中心定在墨尔本：</strong><br>
+墨尔本在屏幕上的方向是奇怪的，因为虚幻编辑器摄像机保持其正常的“+Z方向是向上”的方向。在地球上-不像在大多数游戏中的情况-在一个以地球为中心的坐标系中“向上”的方向取决于你在世界上的位置。</p>
+<p>让我们以更有用的方式重新定位虚幻引擎世界:</p>
+<p>  a、在“世界大纲视图”中点击CesiumGeoreference-1：  <br>
+<img src="/img/cesium/cesium-for-unreal/a6.jfif" alt=""></p>
+<p>  b、在其详细选项卡上，点击“Place Georeference Origin Here”按钮：  <br>
+<img src="/img/cesium/cesium-for-unreal/a7.jfif" alt=""></p>
+<p>城市将会翻转。如果场景画面变黑，可能是因为现在墨尔本是夜晚时间。在CesiumSunSky对象上试着调整“Solar Time”属性来修正：     <br>
+<img src="/img/cesium/cesium-for-unreal/a27.jpg" alt=""></p>
+<p>点击“Place Georeference Origin Here”按钮不仅改变了朝向，如果你近距离观察，你可能已经注意到在按钮下面的Origin Latitude、Origin Longitude和Origin Height的值已经发生了改变。准确地说，按钮重新定位了虚幻引擎关卡的坐标系统，使它的中心点(0,0,0)恰好位于之前摄像机所在的位置。它对齐了虚幻轴，使+X指向东方，+Y指向南方，+Z指向上方。</p>
+<p>也可以直接输入纬度、经度和高度值来将世界定位到一个精确的位置。</p>
+<p>这种定位世界原点到地球上任何地方的能力非常有用，因为虚幻引擎中的许多东西，从相机到树叶再到物理，都倾向于使用相对较小的值和向上的+Z坐标系统。通过以这种方式“georeferencing”虚幻世界，我们允许普通的虚幻物体放置在墨尔本及其周围，就好像它们在任何其他游戏中一样。</p>
+<p>  </p>
+<p><strong>步骤4、添加全局环境：</strong></p>
+<p>现在这个时候，墨尔本是一个漂浮在黑暗海洋中的城市。让我们添加一些全局背景:</p>
+<p>  a、在Cesium面板上，点击Cesium World Terrain + Bing Maps Aerial imagery旁边的“+”按钮，或你选择的其他的Cesium World Terrain选项：  <br>
+<img src="/img/cesium/cesium-for-unreal/a8.jfif" alt=""></p>
+<p>墨尔本周围的区域将被你添加的全球资产填充:    <br>
+<img src="/img/cesium/cesium-for-unreal/a28.jpg" alt=""></p>
+<p>从远处看起来不错，但当我们放大时，我们可以看到一些地方，Cesium World Terrain地形从倾斜摄影测量模型中
+伸出来，视觉上似交叉在一起：   <br>
+<img src="/img/cesium/cesium-for-unreal/a29.jpg" alt=""></p>
+<p>这是因为Cesium World Terrain地形和墨尔本倾斜摄影测量模型都是高分辨率的数据集，可能重叠在同一地理位置。Cesium for Unreal的未来版本将允许你“剪辑”Cesium World Terrain地形，为倾斜摄影测量模型腾出空间。现在，让我们将倾斜摄影测量模型向上移动，以便地形模型不再穿透。</p>
+<p>  b、选择“Melbourne Photogrammetry”对象，并且调整其Z坐标的值，使Cesium World Terrain地形不再穿出即可。</p>
+<p>  </p>
+<p><strong>从本地路径添加3D Tileset：</strong></p>
+<p>在这一节，你将使用包含不同高度的盒子的3D Tileset。这个3D Tileset可以在<a href="https://cesiumjs.s3.amazonaws.com/downloads/unreal-learning-content/Tileset.zip">这里</a>下载。确保下载整个Tileset文件夹，其中包括Tileset.Json文件以及所有引用的.b3dm文件。你也可以使用自己的3D Tileset。</p>
+<p>如果你是3D Tiles格式的新手，查看<a href="https://github.com/CesiumGS/3d-tiles">3D Tiles Specification</a>了解更多。</p>
+<p>  a、在Cesium UI编辑器左侧，点击“Add Blank”按钮。这将会添加一个空的Cesium的3D Tileset到场景中：<br>
+<img src="/img/cesium/cesium-for-unreal/a9.jfif" alt=""></p>
+<p>  b、在“世界大纲视图”窗口中选中刚刚添加的Cesium的3D Tileset对象，并重命名为“LocalTileset”。</p>
+<p>  c、在其详细面板中，找到Cesium分类选项卡。通常情况下要从Cesium ion加载数据，您需要填写“Ion Asset ID”和“Ion Access Token”字段。为了加载本地数据，您将用3D tileset的主文件tileset.json所在的路径填充Url字段。在你的本地路径系统中定位3D Tileset数据。</p>
+<p>举个例子，如果路径为：</p>
+<pre tabindex="0"><code>C:\Users\username\document\Unreal Projects\CesiumForUnrealSamples\Data\Tileset\tileset.json     
+</code></pre><p>则Url将填写为：</p>
+<pre tabindex="0"><code>file:///C:/Users/username/document/Unreal Projects/CesiumForUnrealSamples/Data/Tileset/tileset.json     
+</code></pre><p>注意 file: 后面有三个斜杠。<br>
+<img src="/img/cesium/cesium-for-unreal/a10.jfif" alt=""></p>
+<p>  d、在“世界大纲视图”中，双击LocalTileset对象并在视口中聚焦它，世界和资产的方向可能是错误的，如下：<br>
+<img src="/img/cesium/cesium-for-unreal/a11.jfif" alt=""></p>
+<p>这是因为CesiumGeoreference对象的原点距离LocalTileset太原的缘故。</p>
+<p>  e、保持LocalTileset对象聚焦在视口中，前往“世界大纲视图”窗口，选中CesiumGeoreference对象，然后找到“Place Georeference Origin Here”按钮，点击它重新对世界朝向进行调整：  <br>
+<img src="/img/cesium/cesium-for-unreal/a12.jfif" alt=""></p>
+<p>  f、通过调整LocalTileset在“细节”面部中的位置来把其放置在想要的位置。例如：将3D tieset的底部位置设置在地形的上面，改变位置变换的Z坐标为7400：
+<img src="/img/cesium/cesium-for-unreal/a13.jfif" alt=""></p>
+<p>目前，不支持使用Cesium for Unreal加载局部量化网格地形文件。然而，地形资产可以从任何服务器上加载，包括本地主机。要完全脱机加载地形资源，可以考虑设置一个本地主机来服务地形。可以使用与上述相同的步骤来填充Url字段。</p>
+<p>  </p>
+<p><strong>资源：</strong></p>
+<ul>
+<li>3D Tiles瓦片规范。</li>
+<li>Cesium ion数据上传指南。</li>
+</ul>
+<p>  </p>
+<p><strong>下一步：</strong>  <br>
+阅读下一个教程 <a href="https://yunmin97.github.io/posts/cesium/cesium-for-unreal-placing-objects-on-the-globe/">在地球上放置对象</a>，学习更多关于在Cesium for Unreal关卡中放置物体的知识。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://cesium.com/learn/unreal/unreal-datasets/">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/cesium/cesium-for-unreal/3-placing-objects-on-the-globe/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">Cesium for Unreal：在地球上放置对象</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/cesium/cesium-for-unreal/1-quickstart/">
+                  <span class="button__text">Cesium for Unreal：快速入门</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

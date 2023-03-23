@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：音频 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4音频教程中，您将学习如何使用不同的方法在3D空间播放音频，并通过UI控制音频音量。
+在电子游戏中，音频是指音乐、对话和音效等内容。在这个游戏时代，如果你的项目没有音频，它就会显得不够完善和不完整。
+音频还有助于增加玩家与游戏之间的沉浸感。音乐引起情感上的反应。对话发展了人物和故事。音效提供反馈和可信度。所有这些都能够让一款y优秀游戏变成一款极品游戏。
+在本教程中，您将学习如何：
+循环播放音乐。 在动画的特定位置播放音效。 每次播放时调整声音的音调。 根据其在3D空间中的位置来平移和调整声音的音量。 使用UI独立控制音乐和音效的音量。 请注意，您将在本教程中使用蓝图。如果还没有熟悉，请阅读前面的教程，因为它们涵盖了蓝图的不同领域。
+本教程还建议使用耳机，因为您将学习如何将音频空间化。
+1、准备开始： 下载 工程文件 并解压它。前往“项目文件夹”并通过打开SkywardMuffin.uproject来打开项目。
+按下Play播放键开始游戏。本游戏的目标是在不坠落的情况下触摸尽可能多的云彩。点击鼠标左键跳转到第一个云彩： 这游戏很放松，不是吗?为了强调放松的感觉，你要做的第一件事就是演奏一些平静的钢琴曲。
+2、播放音乐：
+转到“内容浏览器”并导航到“音频文件夹”。在这里，你会找到所有你将在本教程中使用的声音。您可以通过将鼠标悬停在它们的图标上，然后单击出现的播放图标来收听它们： 播放音乐就像将声音资产拖放到视口中一样简单。然而，音乐只播放一次。这是因为您需要手动启用资产中的循环。双击S_Music打开它：
+将出现一个带有单个“详细”面板的新窗口。进入“Sound Wave”部分并启用“Looping”： 接下来，回到“主编辑器”界面，然后将S_Music资产拖拽到Viewport视口中： 这将创建一个使用S_Music作为声源的AmbientSound对象。当游戏开始时，这个对象将自动播放S_Music。
+按“Play”按钮开始游戏并收听音乐。在17秒(音乐的长度)后，它将循环并重头播放： 接下来，每当松饼走一步你将添加一个音效。要做到这一点，你将使用动画通知。
+3、什么是动画通知： 动画通知允许你在动画的特定点触发事件。你可以以很多不同的方式使用它们。例如，你可以创建一个Notify来生成一个粒子效果： 在这个游戏中，松饼一接触地面就会出现“重启按钮”。然而，使用动画通知，您可以使它出现在死亡动画的结尾： 在本教程中，您将创建一个动画通知当每个脚着地时去播放一个声音。
+4、创建动画通知： 导航到“Characters\Muffin”文件夹，然后打开SK_Muffin_Walk。这将打开动画编辑器。
+在Viewport下方的面板中，您将看到一个名为Notifies的区域。浅灰色区域是“Notify Track”。这是您将创建和管理您的通知的地方： 第10帧和第22帧是每只脚着地的时候，所以你需要在这两个点上分别创建一个Notify。要创建一个通知，右键单击“Notify Track”并选择添“Add Notify\Play Sound.”。这将创建一个名为PlaySound的Notify： 接下来，你需要定位Notify，让它出现在第10帧。
+5、移动动画通知： 要知道把Notify移动到哪里有点困难，因为“Notify Track”并没有指明第10帧在哪里。但是，您可以使用“时间轴”来显示标记。
+首先，转到位于面板底部的“时间轴”。拖动点击“红色播放头”，并在当前帧为10时释放。一定要先暂停： 现在，“Notify Track”将有一条红线指示播放头的位置： 拖动单击“PlaySound Notify”，当它与红线对齐时释放： 接下来，您需要告诉Notify播放脚步声。
+6、播放脚步声： 左键单击PlaySound选择它，然后转到Details面板。在Anim Notify部分中，将Sound设置为S_Footstep： 接下来，对另一只脚重复上述步骤。执行以下操作：
+创建另一个播放声音的通知。 将Notify移动到第21帧。 将Notify的声音设置为S_Footstep。 现在，当walk动画到达第10帧和第21帧时，Notifies将触发并播放S_Footstep声音。
+关闭SK_Muffin_Walk，然后返回到“主编辑器”界面。按下“Play”按钮，开始四处走动，听听脚步： 反复听脚步声后，玩家可能会注意到一些东西。每次的音效都是一样的！要是每次都能改变声音就好了。
+在下一节中，您将在玩家接触云时播放音效。但这一次，你将每次都改变声音通过使用一个“Sound Cue”。
+7、什么是Sound Cue： “Sound Cue”是一种资产，允许你操纵多个声音并将它们组合起来。然后，您可以将“Sound Cue”视为它自己的声音。在任何你可以使用常规声音的地方，你可以使用“Sound Cue”来代替。
+下面是一个“Sound Cue”的例子，使用Concatenator连续播放三个声音： 如果你使用随机节点，每次播放“Sound Cue”时你可以选择一个随机的声音： 在本教程中，您将创建并使用一个“Sound Cue”来改变声音的音调。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/7-audio/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：音频"/>
+<meta name="twitter:description" content="在这个虚幻引擎4音频教程中，您将学习如何使用不同的方法在3D空间播放音频，并通过UI控制音频音量..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：音频" />
+<meta property="og:description" content="在这个虚幻引擎4音频教程中，您将学习如何使用不同的方法在3D空间播放音频，并通过UI控制音频音量..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/7-audio/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-11T21:25:32+08:00" />
+<meta property="article:modified_time" content="2018-11-11T21:25:32+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：音频</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-11
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4音频教程中，您将学习如何使用不同的方法在3D空间播放音频，并通过UI控制音频音量。</p>
+<p>在电子游戏中，音频是指音乐、对话和音效等内容。在这个游戏时代，如果你的项目没有音频，它就会显得不够完善和不完整。</p>
+<p>音频还有助于增加玩家与游戏之间的沉浸感。音乐引起情感上的反应。对话发展了人物和故事。音效提供反馈和可信度。所有这些都能够让一款y优秀游戏变成一款极品游戏。</p>
+<p>在本教程中，您将学习如何：</p>
+<ul>
+<li>循环播放音乐。</li>
+<li>在动画的特定位置播放音效。</li>
+<li>每次播放时调整声音的音调。</li>
+<li>根据其在3D空间中的位置来平移和调整声音的音量。</li>
+<li>使用UI独立控制音乐和音效的音量。</li>
+</ul>
+<p>请注意，您将在本教程中使用蓝图。如果还没有熟悉，请阅读前面的教程，因为它们涵盖了蓝图的不同领域。</p>
+<p>本教程还建议使用耳机，因为您将学习如何将音频空间化。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong>    <br>
+下载 <a href="https://koenig-media.raywenderlich.com/uploads/2017/10/SkywardMuffinAudioStarter.zip">工程文件</a> 并解压它。前往“项目文件夹”并通过打开SkywardMuffin.uproject来打开项目。</p>
+<p>按下Play播放键开始游戏。本游戏的目标是在不坠落的情况下触摸尽可能多的云彩。点击鼠标左键跳转到第一个云彩：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-1.gif" alt=""></p>
+<p>这游戏很放松，不是吗?为了强调放松的感觉，你要做的第一件事就是演奏一些平静的钢琴曲。</p>
+<p>  </p>
+<p><strong>2、播放音乐：</strong><br>
+转到“内容浏览器”并导航到“音频文件夹”。在这里，你会找到所有你将在本教程中使用的声音。您可以通过将鼠标悬停在它们的图标上，然后单击出现的播放图标来收听它们：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-1.jpg" alt=""></p>
+<p>播放音乐就像将声音资产拖放到视口中一样简单。然而，音乐只播放一次。这是因为您需要手动启用资产中的循环。双击S_Music打开它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-2.jpg" alt=""></p>
+<p>将出现一个带有单个“详细”面板的新窗口。进入“Sound Wave”部分并启用“Looping”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-3.jpg" alt=""></p>
+<p>接下来，回到“主编辑器”界面，然后将S_Music资产拖拽到Viewport视口中：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-2.gif" alt=""></p>
+<p>这将创建一个使用S_Music作为声源的AmbientSound对象。当游戏开始时，这个对象将自动播放S_Music。</p>
+<p>按“Play”按钮开始游戏并收听音乐。在17秒(音乐的长度)后，它将循环并重头播放：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-3.gif" alt=""></p>
+<p>接下来，每当松饼走一步你将添加一个音效。要做到这一点，你将使用动画通知。</p>
+<p>  </p>
+<p><strong>3、什么是动画通知：</strong>     <br>
+动画通知允许你在动画的特定点触发事件。你可以以很多不同的方式使用它们。例如，你可以创建一个Notify来生成一个粒子效果：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-4.gif" alt=""></p>
+<p>在这个游戏中，松饼一接触地面就会出现“重启按钮”。然而，使用动画通知，您可以使它出现在死亡动画的结尾：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-5.gif" alt=""></p>
+<p>在本教程中，您将创建一个动画通知当每个脚着地时去播放一个声音。</p>
+<p>  </p>
+<p><strong>4、创建动画通知：</strong>    <br>
+导航到“Characters\Muffin”文件夹，然后打开SK_Muffin_Walk。这将打开动画编辑器。</p>
+<p>在Viewport下方的面板中，您将看到一个名为Notifies的区域。浅灰色区域是“Notify Track”。这是您将创建和管理您的通知的地方：         <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-4.jpg" alt=""></p>
+<p>第10帧和第22帧是每只脚着地的时候，所以你需要在这两个点上分别创建一个Notify。要创建一个通知，右键单击“Notify Track”并选择添“Add Notify\Play Sound.”。这将创建一个名为PlaySound的Notify：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-5.jpg" alt=""></p>
+<p>接下来，你需要定位Notify，让它出现在第10帧。</p>
+<p>  </p>
+<p><strong>5、移动动画通知：</strong> <br>
+要知道把Notify移动到哪里有点困难，因为“Notify Track”并没有指明第10帧在哪里。但是，您可以使用“时间轴”来显示标记。</p>
+<p>首先，转到位于面板底部的“时间轴”。拖动点击“红色播放头”，并在当前帧为10时释放。一定要先暂停：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-6.gif" alt=""></p>
+<p>现在，“Notify Track”将有一条红线指示播放头的位置：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-6.jpg" alt=""></p>
+<p>拖动单击“PlaySound Notify”，当它与红线对齐时释放： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-7.gif" alt=""></p>
+<p>接下来，您需要告诉Notify播放脚步声。</p>
+<p>  </p>
+<p><strong>6、播放脚步声：</strong>      <br>
+左键单击PlaySound选择它，然后转到Details面板。在Anim Notify部分中，将Sound设置为S_Footstep：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-7.jpg" alt=""></p>
+<p>接下来，对另一只脚重复上述步骤。执行以下操作：</p>
+<ul>
+<li>创建另一个播放声音的通知。</li>
+<li>将Notify移动到第21帧。</li>
+<li>将Notify的声音设置为S_Footstep。</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a7-8.jpg" alt=""></p>
+<p>现在，当walk动画到达第10帧和第21帧时，Notifies将触发并播放S_Footstep声音。</p>
+<p>关闭SK_Muffin_Walk，然后返回到“主编辑器”界面。按下“Play”按钮，开始四处走动，听听脚步：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-8.gif" alt=""></p>
+<p>反复听脚步声后，玩家可能会注意到一些东西。每次的音效都是一样的！要是每次都能改变声音就好了。</p>
+<p>在下一节中，您将在玩家接触云时播放音效。但这一次，你将每次都改变声音通过使用一个“Sound Cue”。</p>
+<p>  </p>
+<p><strong>7、什么是Sound Cue：</strong> <br>
+“Sound Cue”是一种资产，允许你操纵多个声音并将它们组合起来。然后，您可以将“Sound Cue”视为它自己的声音。在任何你可以使用常规声音的地方，你可以使用“Sound Cue”来代替。</p>
+<p>下面是一个“Sound Cue”的例子，使用Concatenator连续播放三个声音：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-9.jpg" alt=""></p>
+<p>如果你使用随机节点，每次播放“Sound Cue”时你可以选择一个随机的声音：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-10.jpg" alt=""></p>
+<p>在本教程中，您将创建并使用一个“Sound Cue”来改变声音的音调。</p>
+<p>  </p>
+<p><strong>8、创建Sound Cue：</strong>   <br>
+首先，导航回Audio文件夹。您将使用S_Pop作为声音效果，因此您需要为它创建一个“Create Cue”。为此，右键单击S_Pop并选择“Create Cue”：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-11.jpg" alt=""></p>
+<p>这将创建一个名为S_Pop_Cue的新的“Sound Cue”资源。双击S_Pop_Cue在“Sound Cue”编辑器中打开它：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-12.jpg" alt=""></p>
+<p>注意：这个编辑器和材质编辑器非常相似，所以我就不介绍了。如果你不熟悉材质编辑器，你可以在 <a href="https://yunmin97.github.io/posts/ue4/getting-started/">入门教程</a> 中学习它。</p>
+<p>在图中，您将看到两个节点：“Wave Player: S_Pop”和“Output”。“Sound Cue”将播放您连接到Output节点的任何内容(在本例中，它将播放S_Pop声音)。您可以通过进入“工具栏”并点击“Play Cue”来收听“Sound Cue”：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-13.jpg" alt=""></p>
+<p>接下来，你将学习如何改变音高。</p>
+<p>  </p>
+<p><strong>9、改变声音音调：</strong>    <br>
+要改变声音的音调，您需要使用“Modulator”调制器节点。创建一个并像这样连接它： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-14.jpg" alt=""></p>
+<p>现在，你需要定义音高可以改变多少。选择Modulator节点，然后转到Details面板。你会看到两个与音高相关的字段：音高最小和音高最大。小于1的值表示可以降低音高，反之亦然。值为1表示音调将保持不变。</p>
+<p>对于本教程，音高应该只能被提高。设置“Pitch Min”为1.0和“Pitch Max”为2.0：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-15.jpg" alt=""></p>
+<p>现在，每次你播放“Sound Cue”时，声音会在原音高和两倍原音高之间。</p>
+<p>接下来，你需要在玩家触碰云时播放“Sound Cue”。</p>
+<p>  </p>
+<p><strong>10、播放Sound Cue：</strong>  <br>
+返回到主编辑器并导航到blueprint文件夹。打开BP_Cloud，然后打开CloudTouched函数。每当玩家触碰云时，这个函数就会执行，所以这是播放“Sound Cue”的最佳地点。</p>
+<p>你可以使用两个节点来播放声音：</p>
+<ul>
+<li>Play Sound 2D：播放没有任何衰减或空间化的声音(你将在后面的教程中了解这些)。将此节点用于“不存在”于游戏世界中的声音，如音乐和UI声音。</li>
+<li>Play Sound at Location：在3D空间的某个位置播放声音。如果你想让声音根据玩家的位置和方向而变化，请使用此节点。</li>
+</ul>
+<p>因为云存在于游戏世界中，所以其声音也应该存在于游戏世界中。在节点链的末尾添加一个“Play Sound at Location”节点：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-16.jpg" alt=""></p>
+<p>然后，将Sound设置为S_Pop_Cue：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-17.jpg" alt=""></p>
+<p>现在，每当玩家接触到云，S_Pop_Cue就会播放。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”界面。按下Play按钮，开始进行游戏。每次你触摸到云彩时，你应该会听到相同的声音，但有不同的音高：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-9.gif" alt=""></p>
+<p>声音的音高改变了，但听起来不像是在3D空间中。要实现这一点，您需要将声音spatialize空间化。</p>
+<p>  </p>
+<p><strong>11、什么是空间化：</strong>   <br>
+空间化是一个让人觉得音频存在于3D空间中的过程。来自左边的声音会被左耳听到，反之亦然：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-10.gif" alt=""></p>
+<p>除了增加沉浸感，空间化还可以帮助提升游戏玩法。在《守望先锋》和《反恐精英》等竞争游戏中，空间化音频能够帮助玩家辨别其他玩家的位置。</p>
+<p>在本教程中，您将基于云的位置使用空间化来移动云的声音。</p>
+<p>  </p>
+<p><strong>12、启用空间化：</strong>     <br>
+有两种方法可以实现声音提示的空间化：</p>
+<ul>
+<li>Sound Attenuation asset：该资源包含与衰减和空间化相关的设置。你可以将这个资源分配给不同的声音，以确保它们都有相同的设置。</li>
+<li>Override Attenuation：代替使用一个“Sound Attenuation asset”，你也可以在“Sound Cue”内指定设置。这允许您为单个“Sound Cue”创建设置。</li>
+</ul>
+<p>对于本教程，您将使用第二种方法。打开S_Pop_Cue，然后转到Details面板。找到“Attenuation”部分并启用“Override Attenuation”。这将启用“Attenuation Overrides”部分：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-18.jpg" alt=""></p>
+<p>若要检查是否启用了空间化，请单击“Attenuation Overrides”旁边的箭头。“Spatialize”属性将显示您的声音是否空间化：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-19.jpg" alt=""></p>
+<p>这就是空间化设置，继续并关闭S_Pop_Cue。接下来，你需要指定声音在3D空间中的位置。</p>
+<p>  </p>
+<p><strong>13、在空间中播放声音：</strong>   <br>
+打开BP_Cloud，然后创建GetActorLocation节点。然后，把它连接到“Play Sound at Location”节点的Location引脚：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-20.jpg" alt=""></p>
+<p>现在，声音将在和云彩相同位置播放。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”界面。按Play按钮，开始触摸云彩。你应该能听到从不同地方传来的声音：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-11.gif" alt=""></p>
+<p>注意：默认情况下，摄像头是音频侦听器。这意味着你将从摄像机的角度听到声音。如果您想更改哪个actor对象才是侦听器，可以使用 <a href="https://docs.unrealengine.com/latest/INT/BlueprintAPI/Game/Audio/SetAudioListenerOverride/index.html">Set Audio listener Override</a> 节点。</p>
+<p>你可能已经注意到有些云下雨了。但如果听起来不像在下雨，那就不是真正的雨云！接下来，您将添加一个雨声，并使用“attenuation”来根据它的距离来改变它的音量。</p>
+<p>  </p>
+<p><strong>14、添加雨声：</strong>   <br>
+您可以使用音频组件代替使用节点来播放雨声。使用组件的优点之一是它会自动在云的位置播放。</p>
+<p>打开BP_Cloud，然后转到Components面板。添加一个新的音频组件，命名为RainAudio。</p>
+<p>转到“细节”面板并找到“Sound”部分。将声音更改为S_Rain：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-21.jpg" alt=""></p>
+<p>雨的声音不应该为普通的云播放。这意味着对于普通的云，你需要停用RainAudio。要做到这一点，向下滚动到“Activation”部分并禁用“Auto Activate”：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-22.jpg" alt=""></p>
+<p>现在，你需要为雨云激活RainAudio。执行此操作的一个好地方是EnableRain函数。如果是雨云，则执行此函数。打开EnableRain函数并添加高亮显示的节点：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-23.jpg" alt=""></p>
+<p>接下来，您需要启用衰减并定义衰减设置。</p>
+<p>  </p>
+<p><strong>15、设置衰减：</strong>   <br>
+进入“组件”面板并选择RainAudio。转到“细节”面板，然后转到“Attenuation”部分。启用“Override Attenuation”设置。</p>
+<p>衰减设置决定了声音如何随着距离增大而减小音量。在“Attenuation Overrides”区域，你将会使用两种设置：</p>
+<ul>
+<li>半径：音量开始减弱前玩家所能达到的最大距离。</li>
+<li>衰减距离：在声音完全消失前玩家所需要的距离。这个距离（= Radius + Falloff Distance）加上了半径。</li>
+</ul>
+<p>看看下面的例子：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-12.gif" alt=""></p>
+<p>当玩家在内圈(由半径定义)时，音量为100%。当玩家从内圆移动到外圆的边缘时(由衰减距离定义)，音量将淡出到0%。</p>
+<p>在本教程中，设置半径为300，衰减距离为400：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-24.jpg" alt=""></p>
+<p>这意味着当玩家距离声音小于300个单位时，声音的音量将达到100%。当玩家的距离接近700(300 + 400)个单位时，音量将逐渐下降到0%。</p>
+<p>如果玩家没有移动出衰减范围时，云彩就消失，声音将会停止。为了解决这个问题，你可以让声音淡出。</p>
+<p>  </p>
+<p><strong>16、让声音渐出：</strong> <br>
+切换到“事件图表”并定位FadeOut事件。您可以通过转到“My Blueprint”面板并转到Graphs部分来做到这一点。双击列在“Event Graph”上的FadeOut。</p>
+<p>将高亮显示的节点添加到节点链的末端：      <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-25.jpg" alt=""></p>
+<p>当玩家接触云彩时FadeOut事件将被执行。“Timeline (FadeTimeline)”节点在指定的持续时间内输出一个从1到0的值(Alpha)。使用这个值，RainAudio的音量会减弱。</p>
+<p>注意：您可以双击“Timeline”节点来打开它并查看它是如何工作的。如果您想了解更多关于“Timeline”的信息，请查看 <a href="https://docs.unrealengine.com/latest/INT/Engine/Blueprints/UserGuide/Timelines/">官方文档</a>。</p>
+<p>在S_Rain中有一个设置需要更改，然后在活动时才能听到它。当一个声音的音量为0%时，它将停止播放。由于声音在开始时就超出了你的收听范围，所以S_Rain的音量将为0%。当你进入听觉范围内时，你什么也听不到：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-13.gif" alt=""></p>
+<p>你可以通过使用“Virtualize when Silent”设置来修复这个问题。此设置将始终播放声音，而不管其音量大小。</p>
+<p>单击Compile按钮，然后关闭BP_Cloud。导航到Audio文件夹并打开S_Rain。转到Sound部分，并启用“Virtualize when Silent”：      <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-26.jpg" alt=""></p>
+<p>现在，即使S_Rain是无声的，它也会播放。关闭S_Rain，然后返回“主编辑器”。按下Play按钮，然后进入雨云的范围听它的声音：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-14.gif" alt=""></p>
+<p>在最后一节中，您将使用“Sound Classes”和“Sound Mixes”控制声音的音量。</p>
+<p>  </p>
+<p><strong>17、Sound Classes和Sound Mixes：</strong>     <br>
+“Sound Classes”是组合多个声音的一种简单方法。例如，你可以将所有的音乐组合到一个类中，将音效组合到另一个类中：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-27.jpg" alt=""></p>
+<p>为了在游戏中调整“Sound Class”的属性(音量，音高等)，你需要使用“Sound Mix”。一个“Sound Mix”基本上是一个表，表中的每个条目都是一个“Sound Class”。每个条目都包含了“Sound Class”应有的调整。</p>
+<p>下面是一个“Sound Mix”可以包含的例子：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-28.jpg" alt=""></p>
+<p>通过使用上述“Sound Mix”，Music类中的每一个声音都会以半音量播放。Effects类中的每一个声音的音高都会增加一倍。</p>
+<p>首先，您将创建声音类。</p>
+<p>  </p>
+<p><strong>18、创建Sound Classes：</strong>  <br>
+在本教程中，您将分别调整音乐和效果的音量。这意味着你需要两个“Sound Class”。在“内容浏览器”中，单击“Add New”按钮并选择“Sounds\Sound Class”。将“Sound Class”重命名为S_Music_Class。</p>
+<p>创建另一个“Sound Class”，并命名为S_Effects_Class：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-29.jpg" alt=""></p>
+<p>接下来，您需要将每个声音分配给一个“Sound Class”。首先，从音乐类型开始做。打开S_Music，然后找到声音部分。将“Sound Class”更改为“S_Music_Class”：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-30.jpg" alt=""></p>
+<p>完成这一步后，关闭S_Music。</p>
+<p>接下来是音效。你可以一次完成所有操作，而不是每次打开一个声音并分配一个“Sound Class”。首先，选择以下资产：</p>
+<ul>
+<li>S_Footstep</li>
+<li>S_Pop_Cue</li>
+<li>S_Rain</li>
+</ul>
+<p>然后，右键单击选中的资产之一。选择“ Asset Actions\Bulk Edit via Property Matrix”。这将在“属性矩阵编辑器”中打开资产：         <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-31.jpg" alt=""></p>
+<p>“property matrix editor”属性矩阵编辑器允许您同时编辑公共属性。</p>
+<p>转到Details面板并展开Sound分支。要选择“Sound Class”，请单击“Sound Class”右侧的网格图标：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-32.jpg" alt=""></p>
+<p>选择S_Effects_Class，然后关闭“属性矩阵编辑器”。</p>
+<p>所有的声音现在都在他们适当的“Sound Class”中。接下来，您将创建一个“Sound Mix”，并使用蓝图调整它。</p>
+<p>  </p>
+<p><strong>19、创建并调整Sound Mix：</strong>  <br>
+在“内容浏览器”中，单击“Add New”并选择“Sounds\Sound Mix”。将“Sound Mix”资产重命名为S_Volume_Mix。</p>
+<p>要控制每个“ Sound Class”的音量，您将要使用滑块。我已经创建了一个带有两个滑块的小部件供您使用。导航到UI文件夹并打开WBP_Options：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-33.jpg" alt=""></p>
+<p>要调整音量，您需要使用这些滑块中的值并将其输入到“Sound Mix”中。先从音乐开始。</p>
+<p>切换到“图形”模式，然后转到“我的蓝图”面板。在Variables部分，选择MusicSlider。转到Details面板，单击“On Value Changed”旁边的按钮：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-34.jpg" alt=""></p>
+<p>这将创建“On Value Changed (MusicSlider)”事件。每当你移动滑块句柄时，这个事件就会触发：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-35.jpg" alt=""></p>
+<p>现在，您需要在S_Volume_Mix中设置S_Music_Class的音量。为此，您需要使用“Set Sound Mix Class Override”节点。此节点允许您指定“Sound Mix”和“Sound Class”。如果“Sound Class”不在“Sound Mix”中，它将会被添加。如果它已经在“Sound Mix”中，它将被更新。</p>
+<p>添加一个“Set Sound Mix Class Override”节点，并设置以下选项：</p>
+<ul>
+<li>In Sound Mix Modifier: S_Volume_Mix</li>
+<li>In Sound Class: S_Music_Class</li>
+<li>Fade in Time: 0 (这将确保音量调整是即时的)</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a7-36.jpg" alt=""></p>
+<p>接下来，像这样连接你的节点：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-37.jpg" alt=""></p>
+<p>为设置EffectsSlider重复以上步骤。将“In Sound Class”引脚更改为S_Effects_Class：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-38.jpg" alt=""></p>
+<p>现在，当滑块的值改变时，S_Volume_Mix将调整相关“Sound Class”的音量。</p>
+<p>在这一切工作之前，您需要激活“Sound Mix”。</p>
+<p>  </p>
+<p><strong>20、激活Sound Mix：</strong> <br>
+对于这种情况(使用UI控制音量)，最好在游戏开始时激活“Sound Mix”。这样“Sound Class”将自动使用“Sound Mix”中调整好的音量。但是，为了简单起见，您将在小部件中激活“Sound Mix”。</p>
+<p>创建一个“Event Pre Construct”节点。这类似于blueprint中的“Event BeginPlay”节点：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-39.jpg" alt=""></p>
+<p>要激活一个“Sound Mix”，你需要使用“Push Sound Mix Modifier”节点。创建一个并将其连接到“Event Pre Construct”节点上。然后，将“In Sound Mix Modifier”引脚设置为S_Volume_Mix：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-40.jpg" alt=""></p>
+<p>当WBP_Options生成时，这将激活S_Volume_Mix。</p>
+<p>单击Compile按钮，然后关闭WBP_Options。按“Play”按钮，然后按“M”键调出滑块界面。调整滑块以影响每个“Sound Class”的音量：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a7-15.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/10/SkywardMuffinAudioComplete.zip">这里</a> 下载完成的项目。</p>
+<p>正如你所看到的，让你的音频在虚幻引擎4中运行是非常容易的。如果你想了解更多关于音频系统的信息，请查看 <a href="https://docs.unrealengine.com/latest/INT/Engine/Audio/Overview/index.html#reverbeffects">官方文档</a>。你可以做其他很酷的事情，如添加混响和EQ。此外，一定要检查 <a href="https://www.youtube.com/watch?v=ErejaBCicds">新音频引擎</a> 的功能!</p>
+<p>如果你想继续学习，看看这个系列的 <a href="https://yunmin97.github.io/posts/ue4/particle-systems/">下一篇文章</a>，在那里我将向你展示如何创建粒子效果。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/354-unreal-engine-4-audio-tutorial">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/8-particle-systems/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：粒子系统</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/6-animation/">
+                  <span class="button__text">虚幻引擎4：动画</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

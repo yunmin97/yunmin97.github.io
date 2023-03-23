@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Cesium for Unreal：快速入门 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="这是一篇使用 Cesium World Terrain世界地形 和 Cesium OSM Buildings建筑 构建Cesium for Unreal应用的快速入门指南。
+你将学到：
+为虚幻引擎安装Cesium for Unreal插件。 添加一个关卡，并把Cesium ion上的资产导入到此关卡中。 为你的Cesium for Unreal应用添加逼真的灯光。 前提要求：
+一个4.26或更高的虚幻引擎版本。虚幻引擎下载和安装的详细说明可访问 虚幻引擎下载 和 虚幻引擎安装指南 进行查阅。 为了能把地形和建筑资产导入到虚幻引擎中使用，你需要一个Cesium ion账号，如果你没有，点击Sign up免费注册一个。 Cesium ion是一个开放的平台，用于存储和托管3D内容，包括全球的、经过管理的数据，您可以使用这些数据创建你自己的真实世界应用程序。
+步骤1、安装Cesium for Unreal插件和创建你的第一个项目：
+开始安装Cesium for Unreal插件，如果你还没有安装。
+a、在虚幻引擎商场中找到并打开Cesium for Unreal插件页： b、登录后点击免费按钮，在你的Unreal Engine账号上安装此插件。
+步骤2、创建项目和关卡： a、启动虚幻引擎并创建一个新项目。分类栏下选择游戏类型，点击下一步： b、选择项目模板。为了保持简单选择空项目模板（其他模板类型也可以），点击下一步： c、项目设置。为了保持简单选择“无起始内容”，以免项目中出现其他混淆性的内容： d、激活Cesium for Unreal插件。导航 编辑菜单=&amp;gt;插件，在弹出来的插件窗口的右上角搜索栏中搜索“Cesium”，定位Cesium for Unreal插件并确保激活复选框已勾选，勾选完后重启虚幻引擎： e、在“世界大纲”视图里删除关卡中的所有对象，我们从一个空关卡开始： f、前往 文件菜单=&amp;gt;保存当前关卡，保存关卡并给它取一个名字。
+g、前往 编辑菜单=&amp;gt;项目设置，并搜索“Default”。把编辑器开始地图和游戏默认地图都选为刚刚保存的地图，这样能确保下次打开虚幻引擎的时候默认的打开刚刚保存的关卡： 步骤3、添加SunSky灯光和一个FloatingPawn： Cesium的SunSky对象为外景增加了漂亮的灯光效果。它通过扩展引擎内置的SunSky对象，使其具有全球感知能力。同样的，Cesium的FloatingPawn对象也扩展了引擎内置的FloatingPawn对象，使其具有全球感知能力和可使用鼠标滚轮控制移动速度的功能，这在长距离移动时是非常有必要的。 当摄像机在Cesium地球上不同的位置之间进行飞行时，摄像机应该沿着一条平行于地球表面的曲线路径，而不是一条线性点对点的轨迹。Cesium的FloatingPawn对象就是被用来实现这一行为的。
+a、导航 编辑菜单=&amp;gt;项目设置，并搜索“Luminance”。确保“扩展自动曝光设置中的默认亮度范围”被勾选。如果不启用这个选项，一个用SunSky点亮的关卡在阳光充足的时候会被完全洗掉（一片白）。启用这个选项后你可能需要重启引擎： b、切换到“内容浏览器”窗口，点击左下角的 视图选项，确保“显示引擎内容”和“显示插件内容”被勾选： c、还是在“内容浏览器”窗口，通过鼠标滚轮向下滚动，找到CesiumForUnreal内容并选中： d、找到 CesiumSunSky 和 FloatingPawn，并把他们拖拽到关卡视口中以添加到关卡： 步骤4、在关卡开始时自动控制FloatingPawn： 在以上步骤中，你添加了一个FloatingPawn到关卡中，但是还需要一些额外的步骤才能使用它在世界场景中移动。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/cesium/cesium-for-unreal/1-quickstart/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Cesium for Unreal：快速入门"/>
+<meta name="twitter:description" content="这是一篇使用Cesium World Terrain世界地形和Cesium OSM Buildings建筑构建Cesium for Unreal应用..."/>
+
+
+
+<meta property="og:title" content="Cesium for Unreal：快速入门" />
+<meta property="og:description" content="这是一篇使用Cesium World Terrain世界地形和Cesium OSM Buildings建筑构建Cesium for Unreal应用..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/cesium/cesium-for-unreal/1-quickstart/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-05T21:19:30+08:00" />
+<meta property="article:modified_time" content="2021-07-05T21:19:30+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Cesium for Unreal：快速入门</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2021-07-05
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>这是一篇使用 <a href="https://cesium.com/platform/cesium-ion/content/cesium-world-terrain/">Cesium World Terrain</a>世界地形 和 <a href="https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/">Cesium OSM Buildings</a>建筑 构建Cesium for Unreal应用的快速入门指南。</p>
+<p><strong>你将学到：</strong></p>
+<ul>
+<li>为虚幻引擎安装Cesium for Unreal插件。</li>
+<li>添加一个关卡，并把Cesium ion上的资产导入到此关卡中。</li>
+<li>为你的Cesium for Unreal应用添加逼真的灯光。</li>
+</ul>
+<p><strong>前提要求：</strong></p>
+<ul>
+<li>一个4.26或更高的虚幻引擎版本。虚幻引擎下载和安装的详细说明可访问 <a href="https://www.unrealengine.com/en-US/download">虚幻引擎下载</a> 和 <a href="https://docs.unrealengine.com/en-US/Basics/InstallingUnrealEngine/index.html">虚幻引擎安装指南</a> 进行查阅。</li>
+<li>为了能把地形和建筑资产导入到虚幻引擎中使用，你需要一个Cesium ion账号，如果你没有，点击<a href="https://cesium.com/ion/signup">Sign up</a>免费注册一个。</li>
+</ul>
+<p>  </p>
+<p>Cesium ion是一个开放的平台，用于存储和托管3D内容，包括全球的、经过管理的数据，您可以使用这些数据创建你自己的真实世界应用程序。</p>
+<p>  </p>
+<p><strong>步骤1、安装Cesium for Unreal插件和创建你的第一个项目：</strong></p>
+<p>开始安装Cesium for Unreal插件，如果你还没有安装。</p>
+<p>  a、在虚幻引擎商场中找到并打开<a href="https://cesium.com/unreal-marketplace/">Cesium for Unreal</a>插件页： <br>
+<img src="/img/cesium/cesium-for-unreal/a1.jpg" alt=""></p>
+<p>  b、登录后点击免费按钮，在你的Unreal Engine账号上安装此插件。</p>
+<p>  </p>
+<p><strong>步骤2、创建项目和关卡：</strong>  <br>
+  a、启动虚幻引擎并创建一个新项目。分类栏下选择游戏类型，点击下一步： <br>
+<img src="/img/cesium/cesium-for-unreal/a2.jpg" alt=""></p>
+<p>  b、选择项目模板。为了保持简单选择空项目模板（其他模板类型也可以），点击下一步：  <br>
+<img src="/img/cesium/cesium-for-unreal/a3.jpg" alt=""></p>
+<p>  c、项目设置。为了保持简单选择“无起始内容”，以免项目中出现其他混淆性的内容：  <br>
+<img src="/img/cesium/cesium-for-unreal/a4.jpg" alt=""></p>
+<p>  d、激活Cesium for Unreal插件。导航 编辑菜单=&gt;插件，在弹出来的插件窗口的右上角搜索栏中搜索“Cesium”，定位Cesium for Unreal插件并确保激活复选框已勾选，勾选完后重启虚幻引擎：   <br>
+<img src="/img/cesium/cesium-for-unreal/a5.jpg" alt=""></p>
+<p>  e、在“世界大纲”视图里删除关卡中的所有对象，我们从一个空关卡开始：  <br>
+<img src="/img/cesium/cesium-for-unreal/a6.jpg" alt=""></p>
+<p>  f、前往 文件菜单=&gt;保存当前关卡，保存关卡并给它取一个名字。</p>
+<p>  g、前往 编辑菜单=&gt;项目设置，并搜索“Default”。把编辑器开始地图和游戏默认地图都选为刚刚保存的地图，这样能确保下次打开虚幻引擎的时候默认的打开刚刚保存的关卡： <br>
+<img src="/img/cesium/cesium-for-unreal/a7.jpg" alt=""></p>
+<p>  </p>
+<p><strong>步骤3、添加SunSky灯光和一个FloatingPawn：</strong>    <br>
+Cesium的SunSky对象为外景增加了漂亮的灯光效果。它通过扩展引擎内置的SunSky对象，使其具有全球感知能力。同样的，Cesium的FloatingPawn对象也扩展了引擎内置的FloatingPawn对象，使其具有全球感知能力和可使用鼠标滚轮控制移动速度的功能，这在长距离移动时是非常有必要的。
+  </p>
+<p>当摄像机在Cesium地球上不同的位置之间进行飞行时，摄像机应该沿着一条平行于地球表面的曲线路径，而不是一条线性点对点的轨迹。Cesium的FloatingPawn对象就是被用来实现这一行为的。</p>
+<p>  a、导航 编辑菜单=&gt;项目设置，并搜索“Luminance”。确保“扩展自动曝光设置中的默认亮度范围”被勾选。如果不启用这个选项，一个用SunSky点亮的关卡在阳光充足的时候会被完全洗掉（一片白）。启用这个选项后你可能需要重启引擎： <br>
+<img src="/img/cesium/cesium-for-unreal/a8.jpg" alt=""></p>
+<p>  b、切换到“内容浏览器”窗口，点击左下角的 视图选项，确保“显示引擎内容”和“显示插件内容”被勾选： <br>
+<img src="/img/cesium/cesium-for-unreal/a9.jpg" alt=""></p>
+<p>  c、还是在“内容浏览器”窗口，通过鼠标滚轮向下滚动，找到CesiumForUnreal内容并选中：     <br>
+<img src="/img/cesium/cesium-for-unreal/a10.jpg" alt=""><br>
+<img src="/img/cesium/cesium-for-unreal/a11.jpg" alt=""></p>
+<p>  d、找到 CesiumSunSky 和 FloatingPawn，并把他们拖拽到关卡视口中以添加到关卡： <br>
+<img src="/img/cesium/cesium-for-unreal/a12.jpg" alt=""></p>
+<p>  </p>
+<p><strong>步骤4、在关卡开始时自动控制FloatingPawn：</strong>  <br>
+在以上步骤中，你添加了一个FloatingPawn到关卡中，但是还需要一些额外的步骤才能使用它在世界场景中移动。</p>
+<p>  a、在“世界大纲视图”中选中FloatingPawn。  <br>
+  b、在其“详细面板”，搜索“possess”。点击“自动接收输入”旁边的“下拉列表”，选择“玩家0”。这样FloatingPawn才能被鼠标和键盘的输入控制：  <br>
+<img src="/img/cesium/cesium-for-unreal/a13.jpg" alt=""></p>
+<p>  </p>
+<p><strong>步骤5、连接Cesium ion：</strong></p>
+<p>  a、通过点击工具栏上面的Cesium图标打开Cesium面板:  <br>
+<img src="/img/cesium/cesium-for-unreal/a14.jpg" alt=""><br>
+  b、Cesium面板将会在引擎左上角显示出来：<br>
+<img src="/img/cesium/cesium-for-unreal/a15.jpg" alt=""></p>
+<p>  c、点击“Connect”按钮连接Cesium ion，将显示一个弹出式浏览器，要求你允许Cesium for Unreal访问你的资产，并使用Cesium ion当前登录的帐户: <br>
+<img src="/img/cesium/cesium-for-unreal/a16.jpg" alt=""></p>
+<p>  d、选择允许并返回到虚幻引擎中继续接下来的步骤。</p>
+<p>  </p>
+<p><strong>步骤6、创建一个地球：</strong>  <br>
+在这里，你将用来自Cesium ion的资产填充场景。</p>
+<p>  a、点击工具栏中的Cesium按钮打开Cesium面板。从“快速添加”窗口，点击“Cesium World Terrain + Bing Maps Aerial imagery”(随意添加一个其他Cesium World Terrain + imagery的组合)：<br>
+<img src="/img/cesium/cesium-for-unreal/a17.jpg" alt=""></p>
+<p>  b、这个步骤将会在“世界大纲视图”中生成Cesium World Terrain和CesiumGeoreference对象： <br>
+<img src="/img/cesium/cesium-for-unreal/a18.jpg" alt=""></p>
+<p>  c、在地平线附加可能会出现一个黑色条纹。要解决这个问题，选择CesiumGeoreference对象，在其细节面板中找到SunSky，并用已经添加的CesiumSunSky对象给它初始化：
+<img src="/img/cesium/cesium-for-unreal/a19.jpg" alt=""></p>
+<p>一旦CesiumSunSky对象连接到CesiumGeoreference对象后，就会自动修改其纬度和经度变量，以保持地球和太阳的同步。</p>
+<p>  d、如果场景太过于黑暗，可以对CesiumSunSky对象的Solar Time属性进行调整，或者为了营造一个美丽的日落场景，你也许还需要更改Time Zone：<br>
+<img src="/img/cesium/cesium-for-unreal/a20.jpg" alt=""></p>
+<p>有关这些属性如何工作的更多信息，请访问<a href="https://cesium.com/learn/unreal/unreal-geospatially-accurate-sun/">Using a Geospatially Accurate Sun</a>或者引擎官方文档<a href="https://docs.unrealengine.com/en-US/BuildingWorlds/LightingAndShadows/SunSky/index.html">SunSky</a>。</p>
+<p>  </p>
+<p><strong>步骤7、向场景中添加全局3D建筑：</strong>    <br>
+在这里，你将学会在Cesium World Terrain的上面添加Cesium OSM Buildings。类似步骤6，你将使用Cesium UI编辑器添加新的资产。</p>
+<p>  a、返回到引擎中的Cesium UI编辑器。你将使用Cesium ion Assets窗口来添加Cesium OSM Buildings，而不是使用在之前的步骤中通过“快速添加”窗口的方式。在引擎左上角，点击“Add”按钮切换到Cesium ion Assets窗口。在这里你将会看见所有你Cesium ion账号里面的资产：<br>
+<img src="/img/cesium/cesium-for-unreal/a21.jpg" alt=""></p>
+<p>  b、选择Cesium OSM Buildings并点击“Add to Level”按钮添加到关卡中：
+<img src="/img/cesium/cesium-for-unreal/a22.jpg" alt=""></p>
+<p>您将再次看到Cesium OSM Buildings现在被添加到世界大纲。</p>
+<p>如果在资产列表中没有看见Cesium OSM Buildings，访问Cesium OSM Buildings资产仓库页面，并单击添加到我的资产。然后返回到引擎中，关闭Cesium ion Assets面板，然后在Cesium面板上再次点击“Add”按钮重新打开和刷新资产列表。</p>
+<p>  c、如果你无法看见任何建筑，你可能处在没有任何建筑的区域。为了切换到不同的世界区域，点击世界大纲视图中的CesiumGeoreference对象，在其详细面板中，在Cesium类型分类下面找到起始经度、起始维度和起始高度变量: <br>
+<img src="/img/cesium/cesium-for-unreal/a23.jpg" alt=""></p>
+<p>通过调整这些变量值使你出于一个你想要的位置，例如：美国芝加哥伊利诺伊州属性值分别为Longitude = -87.629799, Latitude = 41.878101, and Height = 2250.0：</p>
+<p>当你设置Georeference的原点时，编辑器相机会立即跳转到那里。而且不管原点怎么改变，FloatingPawn对象会自动调整其自身以保证其在地球上的之前所在的位置。如果你希望点击“开始”时身处芝加哥，那么在“世界大纲视图”中点击FloatingPawn对象并设置其坐标为（0，0，0）：<br>
+<img src="/img/cesium/cesium-for-unreal/a24.jpg" alt=""></p>
+<p>  d、点击工具栏上的“开始”按钮，然后使用键盘上W、A、S、D键和鼠标一起控制飞行并查看创建好的世界！上下移动鼠标滚轮，根据你试图覆盖的距离来改变摄像机的速度。您还可以使用编辑器视图右上角的控件来更改编辑器摄像机的速度：
+<img src="/img/cesium/cesium-for-unreal/a25.jpg" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+现在你将准备添加更多的资产和自定义场景。阅读 <a href="https://yunmin97.github.io/posts/cesium/cesium-for-unreal-adding-datasets/">添加Datasets数据集</a> 继续。</p>
+<p>  </p>
+<h6 id="-------模糊翻译水平有限若有错译请予指正原文地址httpscesiumcomlearnunrealunreal-quickstart-------">&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正。<a href="https://cesium.com/learn/unreal/unreal-quickstart/">原文地址</a> &mdash;&mdash;</h6>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/cesium/cesium-for-unreal/2-adding-datasets/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">Cesium for Unreal：添加Datasets数据集</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/cesium/cesium-for-unreal/0-cesium-for-unreal/">
+                  <span class="button__text">Cesium for Unreal</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

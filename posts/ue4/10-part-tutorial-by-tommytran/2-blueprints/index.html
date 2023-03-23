@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：蓝图 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个教程中，你将会学到如何使用蓝图创建一个玩家角色，设置输入控制和让玩家触摸到的道具消失。
+蓝图是虚幻引擎4中的可视化脚本系统，是制作游戏（仿真、可视化等）原型的快速方法。您不必逐行编写代码，而是可视化地完成所有操作:拖放节点、在UI中设置它们的属性，并拖动连接线进行连接。
+在这个教程中，你将使用蓝图进行：
+创建一个自上而下的相机。 创建一个能基本运动的玩家控制Actor对象。 设置玩家输入。 创建一个玩家触摸到就会消失的道具。 注意：本教程假设你知道如何在虚幻引擎4各个界面中导航。熟悉基本的Blueprint概念，如组件和节点。如果你是一个新手，请先阅读 虚幻引擎4的新手教程 教程。本教程还介绍了Vector向量的基本用法。如果你不熟悉向量，我推荐你在gamedev.net上阅读 这篇 关于向量的文章。
+1、准备开始：
+下载本教程 工程文件 并解压。前往项目文件夹下并双击BananaCollector.uproject打开项目。
+注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。
+你将看到下面的场景。这是玩家移动并收集道具的地方： 我已经把项目文件分类到文件夹中，以便于导航，就像你在这里看到的: 如果你愿意，你可以使用上面的红色高亮按钮来显示或隐藏源面板。
+2、创建角色：
+在“内容浏览器”面板中，进入“Blueprints”文件夹，然后点击“添加/导入”按钮并选中“蓝图类”选项。
+因为你想让Actor对象能够接收玩家的输入，所以Pawn类是较合适的。从弹出窗口中选择Pawn并命名为“BP_Player”：
+注意：Character类也可以运作。它甚至在默认情况下包含一个移动组件。然而，你将要实现自己的移动系统，所以Pawn类就足够了。
+3、添加相机：
+摄像机是玩家观察世界的方法。你将创造一个朝下看向玩家的摄像机。
+在“内容浏览器”面板中，双击“BP_Player”在蓝图编辑面板中打开它。
+为了创建摄像机，前往其“组件”面板，点击“添加组件”按钮并选择“摄像机”组件： 为了让摄像机处于自上而下视图中，你需要将其置于玩家上方。选择摄像机组件后，转到“Viewport”选项卡。
+按下W键激活移动控制器，然后移动到(-1100,0,2000)。或者，您可以在“Location”字段中输入坐标。它位于其“Details”面板中的Transform部分的下面： 如果你看不见相机，按F键聚焦。
+接下来，按E键激活旋转控制器。在y轴上旋转相机至-60度：
+4、角色呈现：
+一个红色的立方体将用来代表玩家，所以你将需要使用“静态网格组件”来显示它。
+首先，通过左键单击Components面板中的空白区域来取消选择Camera组件。如果不这样做，下一个添加的组件将是Camera的子组件。
+点击“添加组件”按钮并选择“Static Mesh”静态网格体组件：
+要显示红色立方体，请选择Static Mesh组件，然后转到Details选项卡。单击“静态网格”右侧的下拉列表，并选择“SM_Cube”： 这是你应该看到的(你可以在视口内按F键，如果你没有看到它)： 现在，是时候生成角色Pawn了。单击Compile并返回到主编辑器。
+5、生成角色：
+在可以控制角色Pawn之前，你需要指定两件事：
+a、玩家将要控制Pawn。
+b、Pawn在哪里生成出来。
+你将通过创建一个新的“Game Mode”游戏模式类来完成第一个事。
+6、创建游戏模式：
+游戏模式是控制玩家如何进入游戏的类。例如：在一个多人游戏中，你将会使用“Game Mode”游戏模式来决定每个玩家的生成位置。更重要的是，游戏模式决定玩家将使用哪一个Pawn。
+前往“内容浏览器”面板并确保你在“Blueprints”文件夹中。点击“添加/导入”按钮并选择Blueprint Class蓝图类。
+在弹出窗口中，选择“Game Mode Base”并命名为GM_Tutorial：
+现在，您需要指定哪个Pawn类将是默认的。双击GM_Tutorial打开它。
+前往其“详细”面板并在Classes类部分下查看。单击“默认Pawn类”旁边的下拉菜单并选择“BP_Player”：
+在你使用新的游戏模式之前，关卡需要知道当前使用了哪个游戏模式。你可以在“世界设置”里面指定。单击Compile并关闭蓝图编辑器。
+每个关卡都有自己的设置。您可以通过选择“窗口-&amp;gt;世界设置”来进行设置。或者，你可以去工具栏，选择“设置-&amp;gt;世界设置”：
+一个新的“世界设置”面板将被打开在“细节”面板的旁边。这里，点击“GameMode Override”的下拉菜单并选择GM_Tutorial： 现在您将看到类别已经更改为GM_Tutorial： 最后，你需要指定玩家生成的地方。你可以通过在关卡中放置一个“Player Start”Actor对象来做到这一点。
+7、放置“Player Start”： 在生成角色的过程中，“Game Mode”类会找到“Player Start”对象。如果找到，它将尝试在那里生成角色。
+为了放置“Player Start”，前往“Modes”模式面板并搜索“Player Start”。左击并把“Player Start”从模式面板拖入视口中。释放左键将放置它： 你可以把它放在任何你喜欢的地方。完成后，转到工具栏，单击“播放”按钮。你将在放置“Player Start”的地方出生： 如果要退出游戏，点击工具栏中的“停止”按钮或按下Esc键。如果你看不到光标，按下Shift&#43;F1组合键。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/2-blueprints/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：蓝图"/>
+<meta name="twitter:description" content="在这个教程中，你将会学到如何使用蓝图创建一个玩家角色，设置输入控制和让玩家触摸到的道具消失..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：蓝图" />
+<meta property="og:description" content="在这个教程中，你将会学到如何使用蓝图创建一个玩家角色，设置输入控制和让玩家触摸到的道具消失..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/2-blueprints/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-06T22:20:32+08:00" />
+<meta property="article:modified_time" content="2018-11-06T22:20:32+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：蓝图</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-06
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个教程中，你将会学到如何使用蓝图创建一个玩家角色，设置输入控制和让玩家触摸到的道具消失。</p>
+<p>蓝图是虚幻引擎4中的可视化脚本系统，是制作游戏（仿真、可视化等）原型的快速方法。您不必逐行编写代码，而是可视化地完成所有操作:拖放节点、在UI中设置它们的属性，并拖动连接线进行连接。</p>
+<p>在这个教程中，你将使用蓝图进行：</p>
+<ul>
+<li>创建一个自上而下的相机。</li>
+<li>创建一个能基本运动的玩家控制Actor对象。</li>
+<li>设置玩家输入。</li>
+<li>创建一个玩家触摸到就会消失的道具。</li>
+</ul>
+<p>注意：本教程假设你知道如何在虚幻引擎4各个界面中导航。熟悉基本的Blueprint概念，如组件和节点。如果你是一个新手，请先阅读 <a href="https://yunmin97.github.io/posts/ue4/getting-started/">虚幻引擎4的新手教程</a> 教程。本教程还介绍了Vector向量的基本用法。如果你不熟悉向量，我推荐你在gamedev.net上阅读 <a href="https://www.gamedev.net/resources/_/technical/math-and-physics/practical-use-of-vector-math-in-games-r2968">这篇</a> 关于向量的文章。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载本教程 <a href="https://koenig-media.raywenderlich.com/uploads/2017/04/BananaCollectorStarter.zip">工程文件</a> 并解压。前往项目文件夹下并双击BananaCollector.uproject打开项目。</p>
+<p>注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。</p>
+<p>你将看到下面的场景。这是玩家移动并收集道具的地方：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-1.jpg" alt="收集道具的场景"></p>
+<p>我已经把项目文件分类到文件夹中，以便于导航，就像你在这里看到的:  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-1.png" alt="文件分类">
+如果你愿意，你可以使用上面的红色高亮按钮来显示或隐藏源面板。</p>
+<p>  </p>
+<p><strong>2、创建角色：</strong><br>
+在“内容浏览器”面板中，进入“Blueprints”文件夹，然后点击“添加/导入”按钮并选中“蓝图类”选项。</p>
+<p>因为你想让Actor对象能够接收玩家的输入，所以Pawn类是较合适的。从弹出窗口中选择Pawn并命名为“BP_Player”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-2.png" alt="选择Actor类型">
+注意：Character类也可以运作。它甚至在默认情况下包含一个移动组件。然而，你将要实现自己的移动系统，所以Pawn类就足够了。</p>
+<p>  </p>
+<p><strong>3、添加相机：</strong><br>
+摄像机是玩家观察世界的方法。你将创造一个朝下看向玩家的摄像机。</p>
+<p>在“内容浏览器”面板中，双击“BP_Player”在蓝图编辑面板中打开它。</p>
+<p>为了创建摄像机，前往其“组件”面板，点击“添加组件”按钮并选择“摄像机”组件： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-3.png" alt="选择摄像机">
+为了让摄像机处于自上而下视图中，你需要将其置于玩家上方。选择摄像机组件后，转到“Viewport”选项卡。</p>
+<p>按下W键激活移动控制器，然后移动到(-1100,0,2000)。或者，您可以在“Location”字段中输入坐标。它位于其“Details”面板中的Transform部分的下面：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-1.gif" alt="调整摄像机位置">
+如果你看不见相机，按F键聚焦。</p>
+<p>接下来，按E键激活旋转控制器。在y轴上旋转相机至-60度：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-2.gif" alt="调整摄像机角度"></p>
+<p>  </p>
+<p><strong>4、角色呈现：</strong><br>
+一个红色的立方体将用来代表玩家，所以你将需要使用“静态网格组件”来显示它。</p>
+<p>首先，通过左键单击Components面板中的空白区域来取消选择Camera组件。如果不这样做，下一个添加的组件将是Camera的子组件。</p>
+<p>点击“添加组件”按钮并选择“Static Mesh”静态网格体组件：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-4.png" alt="添加静态网格体"></p>
+<p>要显示红色立方体，请选择Static Mesh组件，然后转到Details选项卡。单击“静态网格”右侧的下拉列表，并选择“SM_Cube”：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-5.png" alt="选择模型"></p>
+<p>这是你应该看到的(你可以在视口内按F键，如果你没有看到它)：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-2.jpg" alt="模型展示">
+现在，是时候生成角色Pawn了。单击Compile并返回到主编辑器。</p>
+<p>  </p>
+<p><strong>5、生成角色：</strong><br>
+在可以控制角色Pawn之前，你需要指定两件事：<br>
+  a、玩家将要控制Pawn。<br>
+  b、Pawn在哪里生成出来。</p>
+<p>你将通过创建一个新的“Game Mode”游戏模式类来完成第一个事。</p>
+<p>  </p>
+<p><strong>6、创建游戏模式：</strong><br>
+游戏模式是控制玩家如何进入游戏的类。例如：在一个多人游戏中，你将会使用“Game Mode”游戏模式来决定每个玩家的生成位置。更重要的是，游戏模式决定玩家将使用哪一个Pawn。</p>
+<p>前往“内容浏览器”面板并确保你在“Blueprints”文件夹中。点击“添加/导入”按钮并选择Blueprint Class蓝图类。</p>
+<p>在弹出窗口中，选择“Game Mode Base”并命名为GM_Tutorial：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-6.png" alt="选择游戏模式">  <br>
+现在，您需要指定哪个Pawn类将是默认的。双击GM_Tutorial打开它。</p>
+<p>前往其“详细”面板并在Classes类部分下查看。单击“默认Pawn类”旁边的下拉菜单并选择“BP_Player”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-7.png" alt="设置默认Pawn"></p>
+<p>在你使用新的游戏模式之前，关卡需要知道当前使用了哪个游戏模式。你可以在“世界设置”里面指定。单击Compile并关闭蓝图编辑器。</p>
+<p>每个关卡都有自己的设置。您可以通过选择“窗口-&gt;世界设置”来进行设置。或者，你可以去工具栏，选择“设置-&gt;世界设置”：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-8.png" alt="世界设置"></p>
+<p>一个新的“世界设置”面板将被打开在“细节”面板的旁边。这里，点击“GameMode Override”的下拉菜单并选择GM_Tutorial： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-9.png" alt="重置游戏模式"></p>
+<p>现在您将看到类别已经更改为GM_Tutorial：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-10.png" alt="游戏模式"></p>
+<p>最后，你需要指定玩家生成的地方。你可以通过在关卡中放置一个“Player Start”Actor对象来做到这一点。</p>
+<p>  </p>
+<p><strong>7、放置“Player Start”：</strong>  <br>
+在生成角色的过程中，“Game Mode”类会找到“Player Start”对象。如果找到，它将尝试在那里生成角色。</p>
+<p>为了放置“Player Start”，前往“Modes”模式面板并搜索“Player Start”。左击并把“Player Start”从模式面板拖入视口中。释放左键将放置它：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-3.gif" alt="放置Player Start"></p>
+<p>你可以把它放在任何你喜欢的地方。完成后，转到工具栏，单击“播放”按钮。你将在放置“Player Start”的地方出生： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-3.jpg" alt="出生位置"></p>
+<p>如果要退出游戏，点击工具栏中的“停止”按钮或按下Esc键。如果你看不到光标，按下Shift+F1组合键。</p>
+<p>如果你动不了就算不上什么游戏，对吧？下一个任务是构建输入设置。</p>
+<p>  </p>
+<p><strong>8、构建输入：</strong>    <br>
+为一个按键分配动作称为按键绑定。</p>
+<p>在虚幻中，你可以设置按键绑定，当你按下它们时会触发一个事件。事件是当某些动作发生时(在本例中是当您按下绑定的键时)执行的节点。当触发该事件时，连接到该事件的任何节点都将执行：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-11.png" alt="事件蓝图"></p>
+<p>这种绑定按键的方法很有用，因为这意味着您不必对按键进行硬编码。</p>
+<p>例如，绑定左键单击并将其命名为Shoot。任何能够射击的角色都可以使用shoot事件来检测玩家何时按下左键。如果您想要更改按键，您可以在输入设置中更改它：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-12.png" alt="事件触发流程"></p>
+<p>如果您对它进行硬编码，您将不得不检查每个actor并分别更改按键。</p>
+<p>  </p>
+<p><strong>9、轴和动作的映射：</strong>  <br>
+要查看输入设置，转到“编辑-&gt;项目设置”。在左侧，选择Engine部分下的Input：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-13.png" alt="玩家输入"></p>
+<p>Bindings部分是设置输入的地方：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-14.png" alt="轴绑定"></p>
+<p>虚幻引擎提供两种创建按键绑定的方式：</p>
+<ul>
+<li>动作映射：只能处于两种状态:按下或不按下。动作事件只会在您按下或释放按键时触发。用于没有中间状态的动作，如开枪。</li>
+<li>轴映射：输出一个称为轴值的数值(稍后会详细介绍)。Axis事件每一帧都会触发。一般用于Thumbsticks或鼠标的操作。</li>
+</ul>
+<p>在本教程中，您将使用轴映射。</p>
+<p>  </p>
+<p><strong>10、创建移动映射：</strong>   <br>
+首先，您将创建两个轴映射组。组允许您将多个按键绑定到一个事件。</p>
+<p>要创建一个新的轴映射组，单击轴映射右侧的+号。创建两个组，分别命名为MoveForward和MoveRight：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-15.png" alt="轴映射组"></p>
+<p>“MoveForward” 将处理向前和向后移动。    <br>
+“MoveRight” 将处理向左和向右移动。</p>
+<p>你将把移动控制映射到四个按键:W, A, S和D。目前，只有两个槽可以映射按键。通过单击组名称字段旁边的+符号，为每个组添加另一个轴映射槽： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-16.png" alt="添加轴映射槽"></p>
+<p>若要映射一个键，请单击下拉菜单以调出一个按键列表。将W键和S键映射到MoveForward。将A和D键映射到MoveRight： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-17.png" alt="设置轴映射"></p>
+<p>接下来，你要设置按键的“Scale”的值。</p>
+<p>  </p>
+<p><strong>11、轴值和输入Scale”地段值：</strong>   <br>
+在设置Scale字段值之前，您需要了解它们与轴值的工作原理。</p>
+<p>轴值是由输入类型和使用方式决定的数值。按钮和按键按下输出1。根据方向和你推它的距离，Thumbsticks输出-1到1之间的值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-18.png" alt="输出值对照"></p>
+<p>你可以使用轴值来控制一个Pawn的速度。例如：如果你将Thumbstick推到边缘，轴值将为1。如果你把它推到一半，它就是0.5： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-19.png" alt="轴输出值"></p>
+<p>您还可以使用轴值来指定沿轴的方向。如果你将Pawn的速度乘以一个正的轴值，你将得到一个正的偏移量。使用负轴值将得到负的偏移量。将这个偏移量添加到Pawn的位置将决定它的移动方向：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-20.png" alt="轴输出值控制方向"></p>
+<p>因为键盘键只能输出1或0的轴值，所以可以使用Scale将其转换为负值。它的工作原理是取轴值，然后乘以Scale值。</p>
+<p>如果将正数(轴值)与负数(Scale值)相乘，将得到负数。</p>
+<p>通过单击Scale字段并输入-1来设置S和A键的Scale值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-21.png" alt="Scale值设置"></p>
+<p>接下来是有趣的部分：让Pawn移动！关闭“项目设置”，然后双击BP_Player打开“蓝图编辑器”。</p>
+<p>  </p>
+<p><strong>12、移动角色：</strong>   <br>
+首先，你需要获取移动映射的事件。右键单击“事件图表”中的空白区域以获得节点列表。在菜单中，搜索“MoveForward”，添加Axis Events下列出的MoveForward节点。注意，您要寻找Axis Events下的红色节点，而不是Axis Values下的绿色节点。</p>
+<p>重复以上步骤添加MoveRight节点：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-4.gif" alt="获取事件"></p>
+<p>现在，您将设置MoveForward节点。</p>
+<p>  </p>
+<p><strong>13、使用变量：</strong>      <br>
+要移动，首先你需要指定Pawn的移动速度。指定速度的一种简单方法是将其存储在一个变量中。</p>
+<p>要创建一个，请转到“My Blueprint”选项卡，并单击Variables部分的右侧+号： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-22.png" alt="创建变量"></p>
+<p>选中新创建的变量后，转到其“详细”选项卡。把其重命名为MaxSpeed。然后，把其“变量类型”更改为“浮点”类型。通过单击“变量类型”旁边的下拉菜单并选择“浮动”来实现：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-23.png" alt="更改变量类型"></p>
+<p>接下来，你需要为其设置默认值，在您可以设置它之前，您需要单击工具栏中的“编译”按钮进行编译。</p>
+<p>保持变量选中状态，返回其“详细”面板。找到其“默认值”区域并把其默认值改为10：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-24.png" alt="更改变量默认值"></p>
+<p>接下来，从“My Blueprint”选项卡中拖动MaxSpeed变量到“事件图表”中。从菜单中选择Get：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-5.gif" alt="拖入变量"></p>
+<p>现在将MaxSpeed和轴值相乘，以确定最终的速度和方向。添加一个float * float节点，并把“Axis Value”和“MaxSpeed”连接到它上面。  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-6.gif" alt="添加float*float节点"></p>
+<p>  </p>
+<p><strong>14、获取角色方向：</strong> <br>
+要向前移动，你需要知道Pawn的朝向。幸运的是，虚幻拥有一个用于此目的的节点。添加一个“Get Actor Forward Vector”节点。   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-25.png" alt="获取角色朝向"></p>
+<p>接下来，添加一个“Add Movement Input”节点。该节点接收方向和值的输入，并将其转换为存储的偏移量。像这样连接节点：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-26.png" alt="添加移动节点"></p>
+<p>白线代表一个执行链。换句话说，当玩家移动输入轴时，将生成一个事件来执行InputAxis MoveForward节点。白线表示，一旦发生这种情况，您将执行Add Movement Input节点。</p>
+<p>Add Movement Input节点接收以下输入:</p>
+<ul>
+<li>Target：置为自己本身，在本例中是玩家角色(红色正方体)。</li>
+<li>World Direction：目标移动的方向，在本例中是玩家角色的朝向。</li>
+<li>Scale Value：移动玩家多少距离，在本例中是最大速度*轴值(在-1到1的范围内)。</li>
+</ul>
+<p>对MoveRight重复此过程，但将“Get Actor Forward Vector”换成“Get Actor Right Vector”。看看在查看以上说明的情况下你自己能做多少事情：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-4.jpg" alt="所有节点连接图"></p>
+<p>  </p>
+<p><strong>15、添加偏移量：</strong>   <br>
+要能够实际移动Pawn，您需要通过“Add Movement Input”获得偏移量，并将其值加到Pawn的位置上。</p>
+<p>基本上，你的策略将是在游戏的每一帧中对玩家移动一点点，所以你需要将移动添加到每个帧都会生成的Event Tick事件中。</p>
+<p>在“事件图表”中导航到“Event Tick”节点。它应该是灰色的，但如果你没有它，则创建一个：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-5.jpg" alt="EventTick节点"></p>
+<p>要获得偏移量，创建一个“Consume Movement Input Vector”节点。要添加偏移量，创建一个“AddActorLocalOffset”节点。然后，像这样链接它们：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-6.jpg" alt="创建节点"></p>
+<p>基本上，这意味着在游戏的每一帧中，你将获得任何存储的移动输入，并将其添加到actor的当前位置上。</p>
+<p>单击Compile进行编译，返回主编辑器并单击Play播放。你现在可以四处走动了：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-7.gif" alt="移动预览"></p>
+<p>不过有一个小问题。高端机器能够以更快的速率渲染帧。因为每一帧都调用“Event Tick”事件，所以“移动”节点将更频繁地被执行。这将导致Pawn在高端机器上以更快的速度移动，反之亦然。</p>
+<p>为了解决这个问题，你的移动是需要独立于帧率的。</p>
+<p>注意:我已经设置了一些按键绑定事件，这将会展示帧速率依赖的效果。按0将帧率设置为60，按1重置帧率。在两种帧率中移动，看看速度的差异。</p>
+<p>  </p>
+<p><strong>16、帧速率无关性：</strong>   <br>
+帧率无关意味着无论帧率如何，所有内容都会得到相同的结果。值得庆幸的是，在Unreal中实现帧率无关性是很容易的。</p>
+<p>退出游戏然后打开BP_Player。接下来前往你的Event Tick节点并查看Delta Seconds：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-7.jpg" alt=""></p>
+<p>Delta Seconds是自最后一个帧事件时间点以来经过的时间量。通过将其与偏移量相乘，你的移动将是独立于帧率的。</p>
+<p>例如，你的Pawn最高速度是100。如果自最后一个帧事件到现在的时间是1秒，你的Pawn将移动完整的100个单位。如果是半秒，它将会移动50个单位：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-27.png" alt=""></p>
+<p>如果移动独立于帧率，Pawn将每帧移动100个单位，而不管帧间的时间是多少。</p>
+<p>要把你的偏移量和Delta Seconds相乘，添加一个“vector*float”的节点，然后，像下面一样连接它：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-8.jpg" alt=""></p>
+<p>因为帧之间的时间（Delta Seconds）非常小，所以你的Pawn将会移动的很慢。通过将MaxSpeed的默认值更改为600来修复这个问题：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-28.png" alt=""></p>
+<p>祝贺你，你已经成功地实现了帧率无关性：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-29.png" alt=""></p>
+<p>你可能已经注意到这个立方体可以穿过任何东西。为了解决这个问题，你需要学习碰撞。</p>
+<p>系好你的安全帽，因为你即将与某些理论发生正面碰撞!</p>
+<p>  </p>
+<p><strong>17、Actor碰撞：</strong>   <br>
+当你想到碰撞，你可能会想到汽车互相碰撞。幸运的是，虚幻中的碰撞要安全得多。</p>
+<p>为了能够碰撞，Actor需要一个可碰撞空间的表现(通常称为碰撞)。你可以使用下面的一种方法：</p>
+<ul>
+<li>Collision mesh：这些是在导入网格时自动生成的(如果你启用它的话)。用户还可以使用3D软件创建自定义碰撞网格。红色Cube已经有一个自动生成的碰撞网格。</li>
+<li>Collision component：它们有三种形状:盒状、胶囊状和球形。您可以通过“Components”面板添加它们。一般用于简单碰撞。</li>
+</ul>
+<p>下面是一个角色及其碰撞的例子：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-9.jpg" alt=""></p>
+<p>当一个Actor的碰撞体碰到另一个Actor的碰撞体时，碰撞就发生了：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-30.png" alt=""></p>
+<p>现在，是时候启用碰撞了。</p>
+<p>  </p>
+<p><strong>18、启用碰撞：</strong>      <br>
+你可能想知道为什么盒子没有碰撞，即使它有一个碰撞网格。当你移动一个Actor时，虚幻只考虑根组件的碰撞。因为你的Pawn的根组件没有任何碰撞，所以它会穿过所有内容。</p>
+<p>注意：一个没有把碰撞体放在根组件的Actor仍然可以阻塞其他Actor。但是，如果你移动Actor，它不会与任何东西碰撞。</p>
+<p>因此，要使用Mesh网格的碰撞，StaticMesh需要是根网格。为此，转到Components面板。接下来，左击并将StaticMesh拖到DefaultSceneRoot。释放左键以使StaticMesh成为新的根：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-8.gif" alt=""></p>
+<p>在碰撞起作用之前还有一件事要做。切换到事件图并转到AddActorLocalOffset节点。找到Sweep输入引脚，并通过左击复选框将其设置为true：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-10.jpg" alt=""></p>
+<p>基本上，AddActorLocalOffset将Actor传送到一个新位置。勾选Sweep属性确保Actor与新旧位置之间的任何东西发生碰撞。</p>
+<p>回到主编辑器并单击Play播放。立方体现在将与关卡发生碰撞：         <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-9.gif" alt=""></p>
+<p>你要做的最后一件事是创建一个当玩家角色触摸到它时候就会消失的道具。</p>
+<p>  </p>
+<p><strong>19、创建道具：</strong><br>
+一般来说，道具是指玩家可以收集的任何东西。本例中您将使用BP_Banana作为道具。</p>
+<p>要检测立方体何时碰到道具，您需要一个事件节点，该事件在发生碰撞时触发。您可以使用碰撞响应来生成这样的事件。</p>
+<p>碰撞响应还决定了一个Actor在与另一个Actor碰撞时的反应。有三种类型的碰撞响应:Ignore，Overlap和Block。以下是它们之间的互动方式：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-31.png" alt=""></p>
+<p>虽然你可以使用Overlap或Block，本教程将只告诉你如何使用Overlap。</p>
+<p>  </p>
+<p><strong>20、设置碰撞响应：</strong>   <br>
+退出游戏，然后打开BP_Banana。选择StaticMesh组件，然后转到其“细节”面板。碰撞部分是你设置碰撞响应的地方：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-32.png" alt=""></p>
+<p>正如你所看到的，大部分设置都是灰色的。要使它们可编辑，左键单击“Collision Presets”旁边的下拉菜单。从列表中选择Custom：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-33.png" alt=""></p>
+<p>现在，您需要指定道具和立方体之间的碰撞响应。</p>
+<p>组件有一个称为“对象类型”的属性。对象类型只是将类似的Actor组合在一起的一种方便的方式。你可以在<a href="https://docs.unrealengine.com/latest/INT/Engine/Physics/Collision/Reference/index.html">这里</a>阅读更多关于对象类型的内容。</p>
+<p>因为立方体的类型是WorldDynamic，所以需要将碰撞响应更改为该类型。在“碰撞响应”部分，将WorldDynamic的“碰撞响应”更改为Overlap。通过左击WorldDynamic右边的中间复选框来实现：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-34.png" alt=""></p>
+<p>  </p>
+<p><strong>21、处理碰撞：</strong><br>
+为了处理碰撞，你需要使用一个“Overlap”事件。转到Components面板，右键单击StaticMesh。从上下文菜单中依次选择“Add Event -&gt; Add OnComponentBeginOverlap”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-10.gif" alt=""></p>
+<p>这将添加OnComponentBeginOverlap (StaticMesh)节点到你的“事件图表”中： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-11.jpg" alt=""></p>
+<p>最后，创建一个DestroyActor节点并把它和OnComponentBeginOverlap (StaticMesh)相连。顾名思义，它将从游戏中移除目标Actor，但是，由于没有目标，它将摧毁调用它的Actor： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-12.jpg" alt=""></p>
+<p>  </p>
+<p><strong>22、处理碰撞：</strong>   <br>
+关闭蓝图编辑器，然后确保您在Blueprint文件夹中。</p>
+<p>通过左键点击并将BP_Banana拖到视口中，将BP_Banana放置到关卡中：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-11.gif" alt=""></p>
+<p>点击Play播放，开始收集香蕉： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a2-12.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/04/BananaCollectorComplete.zip">这里</a> 下载完成的项目。</p>
+<p>现在你离成为虚幻引擎专家更近了一步。我希望这个教程没有让你抓狂。</p>
+<p>如果你想继续学习，请查看本系列的 <a href="https://yunmin97.github.io/posts/ue4/materials/">下一篇文章</a>，在那里我将介绍虚幻引擎中的材质。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/663-unreal-engine-4-blueprints-tutorial">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/3-materials/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：材质</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/1-getting-started/">
+                  <span class="button__text">虚幻引擎4：新手入门</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

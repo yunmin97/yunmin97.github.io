@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        虚幻引擎4：动画 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="在这个虚幻引擎4动画教程中，您将学习如何导入和使用动画。
+你很难看到没有动画的现代游戏。这是因为动画是传达运动的关键。如果没有动画，角色看起来就像是在滑动而不是奔跑。
+幸运的是，虚幻可以在花费很少时间的情况下让你的角色动起来！
+在本教程中，您将学习如何：
+导入一个带有骨架的网格。 导入动画。 创建一个动画蓝图来切换不同的动画。 动画之间的融合。 请注意，您将在本教程中使用蓝图。如果您需要复习，请查看我们的 蓝图 教程。
+1、准备开始：
+下载本教程 工程文件 并解压。在根目录中，你会看到一个名为“Animation Assets”的文件夹。此文件夹中包含您将要导入的角色和动画： 通过导航到项目文件夹并打开SkywardMuffin.uproject来打开项目。
+注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。
+按下Play播放键开始游戏。本游戏的目标是在不坠落的情况下触摸尽可能多的云彩。点击鼠标左键跳转到第一个云： 让我们来控制这个可爱的小松饼，而不是一个普通的红色圆圈： 这个松饼包含一个你可以让它动起来的骨架： 2、什么是骨架： 在3D应用程序中，骨架是一组相互连接的点，称为关节。在下面的图片中，每个球都是一个关节：
+注：虚幻中使用的术语“关节”和“骨骼”是一个意思。
+通过操纵这些关节，你可以为你的角色创造不同的姿势：
+当你从一个姿势转到另一个姿势时，你就创建了一个动画：
+如果你在之前的姿势之间创建更多的姿势，你可以得到这样的结果： 在Unreal中，任何带有骨架的网格都是骨架网格。让我们从导入松饼的骨骼网格开始。
+3、导入骨架网格：
+转到“内容浏览器”界面，并导航到“Characters\Muffin”文件夹中。点击导入，然后转到“SkywardMuffinStarter\Animation Assets”。选择SK_Muffin.fbx，单击“打开”： 在导入窗口中，转到网格部分，取消勾选“创建物理资产”选项。“物理资产”帮助创建布娃娃效果。因为本教程没有介绍这些内容，所以您不需要： 这个项目已经包括了松饼的材料和纹理，所以你不需要导入它们。取消选择“导入材质”和“导入纹理”选项：
+其余设置保持默认，然后单击Import。这将创建以下资产：
+SK_Muffin：骨骼网格资产。这基本上只是一个链接到骨架资源的网格。 SK_Muffin_Skeleton：骨架资产。它包含关节列表和其他信息，如关节的层次结构。 现在你已经导入了松饼，是时候使用它了。
+4、使用骨骼网格：
+在你使用新的骨骼网格之前，你应该给它一个材质，这样它将不再是灰色一团。双击SK_Muffin打开它。
+转到资产“详细”面板，找到“Material Slots”部分。分配M_Muffin材质，然后关闭SK_Muffin： 现在，让我们使用SK_Muffin作为玩家角色。返回到“内容浏览器”界面，双击BP_Muffin打开它。
+转到Components面板并选择“Mesh (Inherited)”组件。导航到其Details面板并找到Mesh部分。将“骨架网格”属性设置为SK_Muffin：
+单击Compile按钮，然后返回到主编辑器。按下Play播放键，以松饼来进行游戏：
+现在游戏看起来已经好多了！你的下一步是导入一些增加松饼生命值的动画。
+5、导入动画：
+转到“内容浏览器”界面并单击“导入”按钮。确保你在“SkywardMuffinStarter\Animation Assets”文件夹中。选择以下文件：
+SK_Muffin_Death.fbx SK_Muffin_Fall.fbx SK_Muffin_Idle.fbx SK_Muffin_Jump.fbx SK_Muffin_Walk.fbx 完成此操作后，单击Open： 在导入窗口中，转到Mesh部分，取消选中“import Mesh”选项。这将确保“骨架网格”不会再次导入： 接下来，确保Skeleton属性设置为SK_Muffin_Skeleton。它指定动画将使用哪个骨架： 最后，单击“Import All”。这将导入所有带有您刚才指定设置的动画： 现在您已经拥有了所有的动画，您需要一种方法来播放它们。您可以使用动画蓝图来完成此操作。
+6、创建动画蓝图：
+动画蓝图就像普通的蓝图一样。然而，它也有一个图形专用于动画任务。
+要创建一个，转到“内容浏览器”界面并单击“Add New”按钮。选择“Animation\Animation Blueprint”。
+在弹出窗口中，找到“Target Skeleton”属性并选择SK_Muffin_Skeleton。接下来，单击OK按钮创建动画蓝图： 将资产重命名为ABP_Muffin。然后，双击它，在动画蓝图编辑器中打开它。
+7、动画蓝图编辑器："
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/ue4/10-part-tutorial-by-tommytran/6-animation/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="虚幻引擎4：动画"/>
+<meta name="twitter:description" content="在这个虚幻引擎4动画教程中，您将学习如何导入和使用动画..."/>
+
+
+
+<meta property="og:title" content="虚幻引擎4：动画" />
+<meta property="og:description" content="在这个虚幻引擎4动画教程中，您将学习如何导入和使用动画..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ue4/10-part-tutorial-by-tommytran/6-animation/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-11-10T21:30:02+08:00" />
+<meta property="article:modified_time" content="2018-11-10T21:30:02+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">虚幻引擎4：动画</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2018-11-10
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>在这个虚幻引擎4动画教程中，您将学习如何导入和使用动画。</p>
+<p>你很难看到没有动画的现代游戏。这是因为动画是传达运动的关键。如果没有动画，角色看起来就像是在滑动而不是奔跑。</p>
+<p>幸运的是，虚幻可以在花费很少时间的情况下让你的角色动起来！</p>
+<p>在本教程中，您将学习如何：</p>
+<ul>
+<li>导入一个带有骨架的网格。</li>
+<li>导入动画。</li>
+<li>创建一个动画蓝图来切换不同的动画。</li>
+<li>动画之间的融合。</li>
+</ul>
+<p>请注意，您将在本教程中使用蓝图。如果您需要复习，请查看我们的 <a href="https://yunmin97.github.io/posts/ue4/blueprints/">蓝图</a> 教程。</p>
+<p>  </p>
+<p><strong>1、准备开始：</strong><br>
+下载本教程 <a href="https://koenig-media.raywenderlich.com/uploads/2017/08/InfiniteMatrixStarterProject.zip">工程文件</a> 并解压。在根目录中，你会看到一个名为“Animation Assets”的文件夹。此文件夹中包含您将要导入的角色和动画： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-1.jpg" alt=""></p>
+<p>通过导航到项目文件夹并打开SkywardMuffin.uproject来打开项目。</p>
+<p>注意：如果你得到一条消息说项目是用早期版本的虚幻编辑器创建的，那也没关系(引擎会经常更新)。您可以选择打开一个副本，也可以选择就地转换。</p>
+<p>按下Play播放键开始游戏。本游戏的目标是在不坠落的情况下触摸尽可能多的云彩。点击鼠标左键跳转到第一个云： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-1.gif" alt=""></p>
+<p>让我们来控制这个可爱的小松饼，而不是一个普通的红色圆圈： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-2.jpg" alt=""></p>
+<p>这个松饼包含一个你可以让它动起来的骨架： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-3.jpg" alt=""></p>
+<p>  </p>
+<p><strong>2、什么是骨架：</strong>  <br>
+在3D应用程序中，骨架是一组相互连接的点，称为关节。在下面的图片中，每个球都是一个关节：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-4.jpg" alt=""><br>
+注：虚幻中使用的术语“关节”和“骨骼”是一个意思。</p>
+<p>通过操纵这些关节，你可以为你的角色创造不同的姿势：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-5.jpg" alt=""></p>
+<p>当你从一个姿势转到另一个姿势时，你就创建了一个动画：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-2.gif" alt=""></p>
+<p>如果你在之前的姿势之间创建更多的姿势，你可以得到这样的结果： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-3.gif" alt=""></p>
+<p>在Unreal中，任何带有骨架的网格都是骨架网格。让我们从导入松饼的骨骼网格开始。</p>
+<p>  </p>
+<p><strong>3、导入骨架网格：</strong><br>
+转到“内容浏览器”界面，并导航到“Characters\Muffin”文件夹中。点击导入，然后转到“SkywardMuffinStarter\Animation Assets”。选择SK_Muffin.fbx，单击“打开”： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-6.jpg" alt=""></p>
+<p>在导入窗口中，转到网格部分，取消勾选“创建物理资产”选项。“物理资产”帮助创建布娃娃效果。因为本教程没有介绍这些内容，所以您不需要： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-7.jpg" alt=""></p>
+<p>这个项目已经包括了松饼的材料和纹理，所以你不需要导入它们。取消选择“导入材质”和“导入纹理”选项：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-8.jpg" alt=""></p>
+<p>其余设置保持默认，然后单击Import。这将创建以下资产：</p>
+<ul>
+<li>SK_Muffin：骨骼网格资产。这基本上只是一个链接到骨架资源的网格。</li>
+<li>SK_Muffin_Skeleton：骨架资产。它包含关节列表和其他信息，如关节的层次结构。</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a6-9.jpg" alt=""></p>
+<p>现在你已经导入了松饼，是时候使用它了。</p>
+<p>  </p>
+<p><strong>4、使用骨骼网格：</strong><br>
+在你使用新的骨骼网格之前，你应该给它一个材质，这样它将不再是灰色一团。双击SK_Muffin打开它。</p>
+<p>转到资产“详细”面板，找到“Material Slots”部分。分配M_Muffin材质，然后关闭SK_Muffin：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-10.jpg" alt=""></p>
+<p>现在，让我们使用SK_Muffin作为玩家角色。返回到“内容浏览器”界面，双击BP_Muffin打开它。</p>
+<p>转到Components面板并选择“Mesh (Inherited)”组件。导航到其Details面板并找到Mesh部分。将“骨架网格”属性设置为SK_Muffin：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-11.jpg" alt=""></p>
+<p>单击Compile按钮，然后返回到主编辑器。按下Play播放键，以松饼来进行游戏：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-4.gif" alt=""></p>
+<p>现在游戏看起来已经好多了！你的下一步是导入一些增加松饼生命值的动画。</p>
+<p>  </p>
+<p><strong>5、导入动画：</strong><br>
+转到“内容浏览器”界面并单击“导入”按钮。确保你在“SkywardMuffinStarter\Animation Assets”文件夹中。选择以下文件：</p>
+<ul>
+<li>SK_Muffin_Death.fbx</li>
+<li>SK_Muffin_Fall.fbx</li>
+<li>SK_Muffin_Idle.fbx</li>
+<li>SK_Muffin_Jump.fbx</li>
+<li>SK_Muffin_Walk.fbx</li>
+</ul>
+<p>完成此操作后，单击Open： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-12.jpg" alt=""></p>
+<p>在导入窗口中，转到Mesh部分，取消选中“import Mesh”选项。这将确保“骨架网格”不会再次导入：
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-13.jpg" alt=""></p>
+<p>接下来，确保Skeleton属性设置为SK_Muffin_Skeleton。它指定动画将使用哪个骨架： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-14.jpg" alt=""></p>
+<p>最后，单击“Import All”。这将导入所有带有您刚才指定设置的动画： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-15.jpg" alt=""></p>
+<p>现在您已经拥有了所有的动画，您需要一种方法来播放它们。您可以使用动画蓝图来完成此操作。</p>
+<p>  </p>
+<p><strong>6、创建动画蓝图：</strong><br>
+动画蓝图就像普通的蓝图一样。然而，它也有一个图形专用于动画任务。</p>
+<p>要创建一个，转到“内容浏览器”界面并单击“Add New”按钮。选择“Animation\Animation Blueprint”。</p>
+<p>在弹出窗口中，找到“Target Skeleton”属性并选择SK_Muffin_Skeleton。接下来，单击OK按钮创建动画蓝图：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-16.jpg" alt=""></p>
+<p>将资产重命名为ABP_Muffin。然后，双击它，在动画蓝图编辑器中打开它。</p>
+<p>  </p>
+<p><strong>7、动画蓝图编辑器：</strong><br>
+动画蓝图编辑器类似于蓝图编辑器，但有四个额外的面板： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-17.jpg" alt="">
+  a、Anim Graph: 这个图表是用于动画的。这是你播放动画的地方。<br>
+  b、Preview Scene Settings：这个面板允许你在视口中调整预览场景。
+  c、Anim Preview Editor：你创建的变量也会显示在这里。使用此面板预览变量在最终动画上的效果。<br>
+  d、Asset Browser：该面板包含当前框架可以使用的动画列表。</p>
+<p>要决定每个动画应该在什么时候播放，可以使用状态机。</p>
+<p>  </p>
+<p><strong>8、什么是状态机：</strong><br>
+状态机是一组状态和规则。对于本教程，您可以将状态视为动画。</p>
+<p>状态机一次只能处于一种状态。要转换到不同的状态，必须满足某些由规则定义的条件。</p>
+<p>下面是一个简单的状态机示例。它显示了跳转的状态和转换到每个状态的规则：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-18.jpg" alt=""></p>
+<p>状态也可以有双向关系。在下面的例子中，Jump和Fall状态可以相互转换：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-19.jpg" alt=""></p>
+<p>如果没有这种双向关系，角色便不能执行双重跳跃。这是因为角色只能从Idle状态进入Jump状态。</p>
+<p>关于状态机就讲到这里。让我们继续创建一个新的状态机。</p>
+<p>  </p>
+<p><strong>9、创建状态机：</strong><br>
+确保你在“Anim Graph”中，然后右键单击一个空白区域。从菜单中选择“Add New State Machine”：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-20.jpg" alt=""></p>
+<p>这将向图表中添加一个状态机节点。将状态机重命名为“Locomotion”。然后，将“Locomotion”状态机连接到“Final Animation Pose”节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-21.jpg" alt=""></p>
+<p>现在，“Locomotion”状态机将决定松饼的最终动画。</p>
+<p>接下来，双击“Locomotion”状态机打开它。在内部，您将看到一个Entry节点：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-22.jpg" alt=""></p>
+<p>连接到此节点的状态是默认状态。对于本教程，默认状态将是空闲动画。通过右键单击图形上的空白区域来创建此状态。从菜单中选择“Add State”并将其重命名为Idle：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-23.jpg" alt=""></p>
+<p>现在，您需要将Entry节点连接到Idle状态。将“Entry”引脚拖到“Idle”状态的灰色区域。释放左键以连接它们：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-5.gif" alt=""></p>
+<p>当你使用上下文菜单创建一个状态时，不会有动画链接到它上面。让我们来解决这个问题。</p>
+<p>  </p>
+<p><strong>10、向状态中链接动画：</strong><br>
+双击Idle状态打开它。</p>
+<p>要链接动画，请转到“Asset Browser”，然后点击拖动SK_Muffin_Idle动画。在图形中的空白区域上释放左键以添加它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-6.gif" alt=""></p>
+<p>接下来，将“SK_Muffin_Idle”节点连接到“Final Animation Pose”节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-24.jpg" alt=""></p>
+<p>要使用动画蓝图，您需要更新BP_Muffin。</p>
+<p>  </p>
+<p><strong>11、使用动画蓝图：</strong><br>
+单击Compile按钮，然后切换到BP_Muffin。</p>
+<p>转到Components面板，然后选择“Mesh (Inherited)”组件。转到其“细节”面板，然后找到“动画”部分。</p>
+<p>设置“动画模式”为“使用动画蓝图”。接下来，将“Anim Class”设置为ABP_Muffin：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-25.jpg" alt=""></p>
+<p>现在，骨骼网格将使用ABP_Muffin作为它的动画蓝图。</p>
+<p>单击Compile按钮，然后关闭BP_Muffin。转到“主编辑器”并按下Play播放键以测试动画蓝图。由于Idle是默认状态，松饼将自动使用闲置动画：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-7.gif" alt=""></p>
+<p>在下一节中，您将创建跳跃和下落的状态。</p>
+<p>  </p>
+<p><strong>12、创造跳跃和下落状态：</strong> <br>
+回到ABP_Muffin，然后切换回“Locomotion”状态机的图表。您可以通过单击位于图表顶部的“面包心”来实现这一点：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-26.jpg" alt=""></p>
+<p>您可以创建一个已经链接的动画，而不是创建一个状态然后再链接一个动画。让我们对Jump状态这样做。</p>
+<p>转到“资产浏览器”面板，单击拖动SK_Muffin_Jump动画，然后在图形的空白区域上释放。这将创建一个已经链接动画的状态：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-8.gif" alt=""></p>
+<p>将状态重命名为Jump。</p>
+<p>使用SK_Muffin_Fall动画重复此过程，并将状态重命名为Fall。</p>
+<p>现在你将拥有三种状态:Idle, Jump和Fall：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-27.jpg" alt=""></p>
+<p>接下来，您将把这些状态彼此连接起来。您可以通过拖动要转换的状态的灰色区域来实现这一点，然后在目标状态的灰色区域上释放左键以创建一个转换。</p>
+<p>创建以下转换：</p>
+<ul>
+<li>Idle 到 Jump</li>
+<li>Jump 到 Fall</li>
+<li>Fall 到 Jump</li>
+<li>Fall 到 Idle</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a6-28.jpg" alt=""></p>
+<p>现在您已经有了转换，您需要定义何时可以发生转换。您可以通过使用“Transition Rules”转换规则来做到这一点。</p>
+<p>  </p>
+<p><strong>13、转换规则：</strong><br>
+这个图标表示一个转换规则：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-29.jpg" alt=""></p>
+<p>每个转换规则包含一个带有布尔类型的输入引脚的Result节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-30.jpg" alt=""></p>
+<p>如果此输入引脚值为真，则可以发生转换。</p>
+<p>接下来，你将创造变量来告知玩家是在跳跃还是下落。然后您将在转换规则中使用这些变量。</p>
+<p>  </p>
+<p><strong>14、检查玩家在跳跃还是下落：</strong> <br>
+创建两个布尔类型变量：IsJumping和IsFalling。</p>
+<p>首先，您将设置IsJumping的值。切换到“事件图表”中并找到“Event Blueprint Update Animation”节点。该节点的功能类似于“Event Tick”节点：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-31.jpg" alt=""></p>
+<p>为了检查玩家是否在跳跃，创建以下设置：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-32.jpg" alt=""></p>
+<p>这将检查玩家在z轴上的速度是否大于0。如果是，则玩家正在跳跃，IsJumping将被设置为true。</p>
+<p>注意：确保转换到将要使用此“Animation Blueprint”的类。这是能够使用“Anim Preview Editor”预览变量的关键。</p>
+<p>为了检查玩家是否下落，你只需要执行相反的检查。添加突出显示的节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-33.jpg" alt=""></p>
+<p>现在，如果玩家再Z轴的速度小于0，IsFalling将被设置为true。</p>
+<p>是时候使用这些变量来定义转换规则了。</p>
+<p>  </p>
+<p><strong>15、定义转换规则：</strong><br>
+首先，您将定义 Idle到Jump 转换规则。切换“Locomotion”状态机。双击“Idle 到 Jump”的转换规则图标打开它：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-34.jpg" alt=""></p>
+<p>创建一个IsJumping节点并将其连接到Result节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-35.jpg" alt=""></p>
+<p>现在，当IsJumping为真时，Idle状态可以转换到Jump状态。</p>
+<p>重复以上过程来实现“Jump 到 Fall”和“Fall 到 Jump”的转换规则。使用以下变量：</p>
+<ul>
+<li>Jump 到 Fall: IsFalling</li>
+<li>Fall 到 Jump: IsJumping</li>
+</ul>
+<p><img src="/img/ue4/10-part-tutorial-by-tommytran/a6-36.jpg" alt=""></p>
+<p>现在，Jump和Fall状态可以相互转换了。</p>
+<p>仍然还有一个转换规则需要定义。继续并打开“Fall 到 Idle”转换规则： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-37.jpg" alt=""></p>
+<p>为了转换到Idle状态，玩家必须不能跳跃或下降。要执行此检查，可以使用NOR节点。只有当它的两个输入引脚值都为假时，该节点才返回true。</p>
+<p>创建一个NOR节点，并把IsJumping和IsFalling节点分别连接到它的两个输入引脚上面。然后，将NOR节点连接到Result节点：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-38.jpg" alt=""></p>
+<p>现在，当IsJumping和IsFalling为false时，Fall状态可以转换为Idle状态。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”。按下Play来测试转换：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-9.gif" alt=""></p>
+<p>注意：你也可以通过在“Anim Preview Editor”中编辑变量来测试转换。</p>
+<p>现在，松饼在地面上移动时就会滑动。这是因为您还没有使用行走动画!</p>
+<p>你可以使用“Blend Space”混合空间将它与Idle动画混合，而不是创建一个新的行走状态。</p>
+<p>  </p>
+<p><strong>16、混合空间是什么：</strong><br>
+混合空间是一种动画资源。它根据输入值在不同的动画之间进行线性插入。在本教程中，你将使用玩家的速度作为输入值：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-10.gif" alt=""></p>
+<p>混合空间还可以帮助简化状态机。如果你不使用混合空间进行行走，那么“Locomotion”状态机将会是这样的： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-39.jpg" alt=""></p>
+<p>使用混合空间，你所要做的就是替换空闲动画： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-40.jpg" alt=""></p>
+<p>现在你已经知道混合空间的魔力了，让我们来创建一个。</p>
+<p>  </p>
+<p><strong>17、创建混合空间：</strong><br>
+转到“内容浏览器”界面并单击“Add New”按钮。选择“Animation\Blend Space 1D”。</p>
+<p>注意：“Blend Space”和“Blend Space 1D”之间的区别是前者可以有两个输入，后者只能有一个。</p>
+<p>从弹出的窗口中选择SK_Muffin_Skeleton： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-41.jpg" alt=""></p>
+<p>将资源重命名为BS_IdleWalk，然后双击在动画编辑器中打开它。</p>
+<p>当你打开混合空间，你会在底部看到一个面板。这就是混合空间编辑器，这是你添加动画的地方：     <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-42.jpg" alt=""></p>
+<p>让我们给混合空间添加一些动画。</p>
+<p>  </p>
+<p><strong>18、向混合空间中添加动画：</strong><br>
+首先，您将更改轴值(输入)的名称。转到“Asset Details”面板，找到“Axis Settings”部分。将“Horizontal Axis\Name”属性改为“Speed”。</p>
+<p>现在，您将要添加动画。转到“资产浏览器”面板并拖动SK_Muffin_Idle动画。将其移动到混合空间网格的左边，使其对齐到0.0值。释放左键以添加动画：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-11.gif" alt=""></p>
+<p>注意：要显示动画名称，请按混合空间网格左上角的标签图标。</p>
+<p>然后，再轴值为100.0处添加SK_Muffin_Walk动画：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-43.jpg" alt=""></p>
+<p>现在，混合空间将根据输入值混合空闲动画和行走动画。如果输入为0，则只播放空闲的动画。如果输入为100，则只播放walk动画。任何介于两者之间的值将是两个动画的混合。</p>
+<p>注意：这些值是任意的。例如，可以将最大值更改为500。这将导致行走动画只会在以速度很高的时候播放。您可以在“资产详细”面板中的“Axis Settings”部分下更改这个值。</p>
+<p>是时候使用混合空间了。</p>
+<p>  </p>
+<p><strong>19、使用混合空间：</strong><br>
+关闭BS_IdleWalk，然后打开ABP_Muffin。切换到“Locomotion”状态机，然后打开Idle状态。</p>
+<p>首先，删除“SK_Muffin_Idle”节点。</p>
+<p>接下来，使用拖放的方法添加BS_IdleWalk混合空间。然后，将BS_IdleWalk节点连接到“Final Animation Pose”节点： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-44.jpg" alt=""></p>
+<p>现在，BS_IdleWalk将自动播放，因为它是默认状态。但是，它只会显示Idle动画。这是因为它的Speed值保持在0值。</p>
+<p>为了解决这个问题，你需要为Speed提供玩家的真实的速度值。</p>
+<p>  </p>
+<p><strong>20、获取玩家速度：</strong><br>
+创建一个名为Speed的浮动类型变量。然后，切换到“事件图表”中。</p>
+<p>向Sequence节点添加一个新的引脚，然后将高亮显示的节点添加到上面：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-45.jpg" alt=""></p>
+<p>这个设置将不断地将速度变量设置为玩家的速度。</p>
+<p>切换回Idle状态的图表。将刚刚创建的Speed变量连接到BS_IdleWalk节点的Speed输入引脚：  <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-46.jpg" alt=""></p>
+<p>现在，BS_IdleWalk将能够在空闲动画和行走动画之间进行混合了。</p>
+<p>单击Compile按钮，然后返回到“主编辑器”界面。按下Play播放来测试混合空间：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-12.gif" alt=""></p>
+<p>你还需要使用另一个动画：死亡动画！</p>
+<p>  </p>
+<p><strong>21、使用死亡动画：</strong><br>
+在这款游戏中，你只能在Idle状态下死亡(在地面上)。然而，让我们假设你可能死于任何一种状态。你的第一个想法可能是创建一个死亡状态，并将每个状态都连接到它上面。虽然这是一种选择，但它可能很快导致图表混乱： <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-47.jpg" alt=""></p>
+<p>一个解决方案是使用“Blend Poses by bool”节点。这个节点可以根据布尔值输入值在两个动画之间切换。</p>
+<p>在你创建它之前，你需要一个变量去保存玩家的死亡状态。</p>
+<p>  </p>
+<p><strong>22、检查玩家是否死亡：</strong>   <br>
+回到ABP_Muffin并创建一个名为IsDead的布尔变量。然后，切换到“事件图表”。</p>
+<p>向Sequence节点添加一个新的引脚，然后将高亮显示的节点添加到它上面：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-48.jpg" alt=""></p>
+<p>这将根据玩家的死亡状态设置IsDead变量值。</p>
+<p>接下来，你将使用“Blend Poses by bool”节点。</p>
+<p>  </p>
+<p><strong>23、使用“Blend Poses by Bool”节点：</strong>  <br>
+切换到&quot;Anim Graph&quot;窗口并添加SK_Muffin_Death动画。选中它后，转到“细节”面板，取消选中“Loop Animation”属性:   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-49.jpg" alt=""></p>
+<p>这将确保死亡动画只播放一次。</p>
+<p>接下来，创建一个“Blend Poses by Bool”节点：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-50.jpg" alt=""></p>
+<p>选择“Blend Poses by Bool”节点后，转到其“细节”面板。在Option部分，勾选“Reset Child on Activation”属性：   <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-51.jpg" alt=""></p>
+<p>因为死亡动画只播放一次，这个选项将确保动画在播放前重置。</p>
+<p>最后，添加IsDead变量并像这样连接所有内容：<br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-52.jpg" alt=""></p>
+<p>如果IsDead为真，死亡动画就会播放。如果IsDead为false，“Locomotion”状态机的当前动画将会播放。</p>
+<p>单击Compile按钮，然后关闭ABP_Muffin。按下Play播放并测试新的死亡动画：    <br>
+<img src="/img/ue4/10-part-tutorial-by-tommytran/a6-13.gif" alt=""></p>
+<p>  </p>
+<p><strong>下一步：</strong> <br>
+你可以在 <a href="https://koenig-media.raywenderlich.com/uploads/2017/09/SkywardMuffinComplete.zip">这里</a> 下载完整的项目。</p>
+<p>现在的游戏看起来更精致了，不是吗?虽然您可以利用目前学到的知识做很多事情，但还有更多！你可以查阅虚幻引擎文档的 <a href="https://docs.unrealengine.com/latest/INT/Engine/Animation/">Skeletal Mesh Animation System</a> 这一页。在这里，你可以了解其他类型的动画资产和如何使用它们。</p>
+<p>如果你想继续学习，请查看本系列的 <a href="https://yunmin97.github.io/posts/ue4/audio/">下一篇文章</a>，我将向你展示如何在游戏中添加音乐和音效。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://www.raywenderlich.com/383-unreal-engine-4-animation-tutorial">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+              <span class="button previous">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/7-audio/">
+                  <span class="button__icon">←</span>
+                  <span class="button__text">虚幻引擎4：音频</span>
+                </a>
+              </span>
+            
+            
+              <span class="button next">
+                <a href="/posts/ue4/10-part-tutorial-by-tommytran/5-how-to-create-a-simple-game/">
+                  <span class="button__text">虚幻引擎4：如何创建一个简单的游戏</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

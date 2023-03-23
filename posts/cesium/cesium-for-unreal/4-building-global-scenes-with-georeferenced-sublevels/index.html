@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Cesium for Unreal：使用地理引用子关卡构建地球场景 ::
+        个人博客
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="本教程将向您展示了如何构建跨Cesium地球的Georeferenced子关卡，您可以无缝地切进和切出。您将参观丹佛、波士顿、大峡谷以及您所选择的任何其他地方。在每个子关卡中，你可以像在虚幻中那样自由地构建游戏机制和场景。
+前提条件
+了解如何创建一个基本的Cesium for Unreal应用。如果Cesium for Unreal的新手，查阅Cesium for Unreal Quickstart学习如何安装Cesium for Unreal，连接到Cesium ion和创建一个简单的世界。 一个可以把真实世界数据导进Unreal Engine引擎的Cesium ion的账号。 按顺序完成了之前Cesium for Unreal快速入门教程。尤其是确保你对Cesium for Unreal中的Georeferencing and object placement有很熟悉。 介绍
+到目前为止，本教程已经涵盖了几种用Cesium for Unreal插件建立项目和探索3D tile贴图图集的方法。然而，到目前为止，你只能一次围绕地球上的一个地点构建虚幻场景。到目前为止，这个中心位置是由你可能在“世界大纲”视图中看到的CesiumGeoreference对象决定的。准确的说，CesiumGeoreference对象的职责是把这个“中心位置”放在引擎原点。当你离原点越远，事情就会变得越来越奇怪。用于确定重力的向下方向将变得不正确，物理将变得抖动，虚幻对象的精确位置将开始变得不精确。
+虽然这些限制不存在于Georeferenced对象，如3D tilesets, FloatingPawn，和具有CesiumGeoreferenceComponent组件的Actor对象(在这里了解更多关于Georeferenced对象的信息)，一旦你离原点足够远，许多你可能想要使用引擎工具包括内置的物理引擎、Sunsky系统、对象放置将会变崩溃。
+要介绍的这个教程的目的是客服以上这些问题的。创建的所有Georeferenced子关卡都允许我们指定一个唯一的“中心位置”。每个子关卡都可以支持你在虚幻引擎中所习惯的所有物理、植被和游戏逻辑。学完这个教程你将能够：
+创建一个持久的全局关卡。 在持久关卡中放入诸多子关卡。 使用引擎特有的工作方式添加资产和游戏逻辑到每个关卡中。 在子关卡之间无缝的飞行，就好像在探索一个持久关卡一样。 保持对沿途陷阱的警惕。 步骤1：创建一个由世界构成的项目：
+创建一个Georeferenced子关卡需要一些快速开始教程中没有覆盖的其他步骤。
+1、首先，创建一个完完全全空关卡的新项目，然后删除在“世界大纲”中显示的任何默认的Actor对象： 2、前往“内容浏览器”并且在你工程内容文件夹下面创建一个名为“World”的文件夹。把当前空的关卡保存到此目录中，并取名为“Globe”。这将是接下来的持久关卡，代表整个地球。 3、前往工具栏中的“设置”按钮并点击“世界设置”：
+4、搜索“Enable World Composition”并激活它： 5、仍然在“世界设置”里面，搜索“Enable World Bounds Check”并关闭它。在Cesium for Unreal的全球尺度世界中，物体可能会移动非常远的距离。关闭“Enable World Bounds Check”确保引擎不会删除那些远离原点的物体：
+6、现在前往“窗口”并点击“关卡”来打开关卡面板：
+7、接下来，在关卡面板中，点击“Summon World Composition”按钮：
+8、在刚刚打开的“World Composition”窗口中，创建一个关闭了“Streaming Distance”的新层（CesiumGeoreference将会小心翼翼的决定什么时候去加载子关卡），并取名为“CesiumLayer”： 如果你不小心保持“Streaming Distance”启用，你将不得不创建一个新的层。目前，一旦图层已经创建，就没有办法再编辑其设置。
+9、为了完成项目的创建，确保你在虚幻中登录了Cesium ion。如果你不确定该怎么做，阅读快速开始教程的第5步： 步骤2：设置持久化全局关卡： 如果你已经按顺序通过了Cesium for Unreal快速入门教程，这个步骤所做的事情将会很相似，如果有不确定的或令人困惑的情况，请遵循提供的链接以获得更详细的说明。"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/cesium/cesium-for-unreal/4-building-global-scenes-with-georeferenced-sublevels/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css" />
+
+<link rel="stylesheet" href="/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="/img/favicon.png" />
+
+
+<link href="/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Cesium for Unreal：使用地理引用子关卡构建地球场景"/>
+<meta name="twitter:description" content="本教程将向您展示了如何构建跨Cesium地球的Georeferenced子关卡..."/>
+
+
+
+<meta property="og:title" content="Cesium for Unreal：使用地理引用子关卡构建地球场景" />
+<meta property="og:description" content="本教程将向您展示了如何构建跨Cesium地球的Georeferenced子关卡..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/cesium/cesium-for-unreal/4-building-global-scenes-with-georeferenced-sublevels/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-10T18:11:30+08:00" />
+<meta property="article:modified_time" content="2021-07-10T18:11:30+08:00" /><meta property="og:site_name" content="个人博客" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    
+    <span class="logo__text">主页</span>
+    
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">简介</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">简介</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Cesium for Unreal：使用地理引用子关卡构建地球场景</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2021-07-10
+        </span>
+
+        
+          
+            
+
+
+
+          
+        
+      
+
+      
+        <span class="post-author"
+          >— Written by  Yunmin</span
+        >
+
+
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>本教程将向您展示了如何构建跨Cesium地球的Georeferenced子关卡，您可以无缝地切进和切出。您将参观丹佛、波士顿、大峡谷以及您所选择的任何其他地方。在每个子关卡中，你可以像在虚幻中那样自由地构建游戏机制和场景。</p>
+<p><strong>前提条件</strong></p>
+<ul>
+<li>了解如何创建一个基本的Cesium for Unreal应用。如果Cesium for Unreal的新手，查阅<a href="">Cesium for Unreal Quickstart</a>学习如何安装Cesium for Unreal，连接到Cesium ion和创建一个简单的世界。</li>
+<li>一个可以把真实世界数据导进Unreal Engine引擎的Cesium ion的账号。</li>
+<li>按顺序完成了之前Cesium for Unreal快速入门教程。尤其是确保你对Cesium for Unreal中的Georeferencing and object placement有很熟悉。</li>
+</ul>
+<p><strong>介绍</strong></p>
+<p>到目前为止，本教程已经涵盖了几种用Cesium for Unreal插件建立项目和探索3D tile贴图图集的方法。然而，到目前为止，你只能一次围绕地球上的一个地点构建虚幻场景。到目前为止，这个中心位置是由你可能在“世界大纲”视图中看到的CesiumGeoreference对象决定的。准确的说，CesiumGeoreference对象的职责是把这个“中心位置”放在引擎原点。当你离原点越远，事情就会变得越来越奇怪。用于确定重力的向下方向将变得不正确，物理将变得抖动，虚幻对象的精确位置将开始变得不精确。</p>
+<p>虽然这些限制不存在于Georeferenced对象，如3D tilesets, FloatingPawn，和具有CesiumGeoreferenceComponent组件的Actor对象(在这里了解更多关于Georeferenced对象的信息)，一旦你离原点足够远，许多你可能想要使用引擎工具包括内置的物理引擎、Sunsky系统、对象放置将会变崩溃。</p>
+<p>要介绍的这个教程的目的是客服以上这些问题的。创建的所有Georeferenced子关卡都允许我们指定一个唯一的“中心位置”。每个子关卡都可以支持你在虚幻引擎中所习惯的所有物理、植被和游戏逻辑。学完这个教程你将能够：</p>
+<ul>
+<li>创建一个持久的全局关卡。</li>
+<li>在持久关卡中放入诸多子关卡。</li>
+<li>使用引擎特有的工作方式添加资产和游戏逻辑到每个关卡中。</li>
+<li>在子关卡之间无缝的飞行，就好像在探索一个持久关卡一样。</li>
+<li>保持对沿途陷阱的警惕。</li>
+</ul>
+<p>  </p>
+<p><strong>步骤1：创建一个由世界构成的项目：</strong><br>
+创建一个Georeferenced子关卡需要一些<a href="">快速开始</a>教程中没有覆盖的其他步骤。</p>
+<p>1、首先，创建一个完完全全空关卡的新项目，然后删除在“世界大纲”中显示的任何默认的Actor对象： <br>
+<img src="/img/cesium/cesium-for-unreal/a19.jfif" alt=""></p>
+<p>2、前往“内容浏览器”并且在你工程内容文件夹下面创建一个名为“World”的文件夹。把当前空的关卡保存到此目录中，并取名为“Globe”。这将是接下来的持久关卡，代表整个地球。
+3、前往工具栏中的“设置”按钮并点击“世界设置”：<br>
+<img src="/img/cesium/cesium-for-unreal/a20.jfif" alt=""></p>
+<p>4、搜索“Enable World Composition”并激活它：  <br>
+<img src="/img/cesium/cesium-for-unreal/a21.jfif" alt=""></p>
+<p>5、仍然在“世界设置”里面，搜索“Enable World Bounds Check”并关闭它。在Cesium for Unreal的全球尺度世界中，物体可能会移动非常远的距离。关闭“Enable World Bounds Check”确保引擎不会删除那些远离原点的物体：<br>
+<img src="/img/cesium/cesium-for-unreal/a22.jfif" alt=""></p>
+<p>6、现在前往“窗口”并点击“关卡”来打开关卡面板：<br>
+<img src="/img/cesium/cesium-for-unreal/a23.jfif" alt=""></p>
+<p>7、接下来，在关卡面板中，点击“Summon World Composition”按钮：<br>
+<img src="/img/cesium/cesium-for-unreal/a24.jfif" alt=""></p>
+<p>8、在刚刚打开的“World Composition”窗口中，创建一个关闭了“Streaming Distance”的新层（CesiumGeoreference将会小心翼翼的决定什么时候去加载子关卡），并取名为“CesiumLayer”：  <br>
+<img src="/img/cesium/cesium-for-unreal/a25.jfif" alt=""></p>
+<p>如果你不小心保持“Streaming Distance”启用，你将不得不创建一个新的层。目前，一旦图层已经创建，就没有办法再编辑其设置。</p>
+<p>9、为了完成项目的创建，确保你在虚幻中登录了Cesium ion。如果你不确定该怎么做，阅读<a href="">快速开始</a>教程的第5步：
+<img src="/img/cesium/cesium-for-unreal/a26.jfif" alt=""></p>
+<p>  </p>
+<p><strong>步骤2：设置持久化全局关卡：</strong>  <br>
+如果你已经按顺序通过了<a href="">Cesium for Unreal快速入门</a>教程，这个步骤所做的事情将会很相似，如果有不确定的或令人困惑的情况，请遵循提供的链接以获得更详细的说明。</p>
+<p>1、现在项目已经设置好并且您已登录了，是时候使用Cesium ion的真实世界数据来填充持久化的全局关卡了。首先把“esium World Terrain + Bing Aerial Imagery”添加到场景中，这将是带有卫星图像的全球基础地形，如果你不确定该怎么做，阅读<a href="">快速开始</a>教程的第6步：<br>
+<img src="/img/cesium/cesium-for-unreal/a33.jpg" alt=""></p>
+<p>2、因为关卡还没有照明，所以添加“CesiumSunSky”Actor对象到场景中。如果你无法找到正确的对象或者您的屏幕完全显示一片白色，请遵循<a href="">快速开始</a>教程的第3步说明进行操作。一旦“CesiumSunsky”已被添加到场景中和“扩展亮度范围设置”已启用，你应该可以看见漂亮的蓝天下美丽的丹佛市山麓：
+<img src="/img/cesium/cesium-for-unreal/a34.jpg" alt=""></p>
+<p>3、“CesiumSunSky”还没有正确地定位到地球上，这可能最终会导致奇怪的照明问题。为了修复这个问题，在“世界大纲”中找到默认的CesiumGeoreference对象然后导航到其详细面板，在“Cesium Sun Sky”区域下，把“Sun Sky”属性的值设置为最近添加到场景中的CesiumSunSky对象： <br>
+<img src="/img/cesium/cesium-for-unreal/a27.jfif" alt=""></p>
+<p>4、为了在开始建立的子关卡上设置一些详细的，真实世界的位置，导入“Aerometrex Denver Photogrammetry”和“Nearmap Boston Photogrammetry”的3D Tileset瓦片集。关于如何搜索和添加来自Cesium ion上的3D瓷砖集的快速复习，请查看<a href="">Adding Datasets tutorial</a>教程。您可以随时双击“世界大纲”中的3D tiessets来将编辑器摄像机跳转到其所在的位置：<br>
+<img src="/img/cesium/cesium-for-unreal/a35.jpg" alt="">
+丹佛倾斜摄影测量3D Tileset瓷砖集。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a36.jpg" alt="">
+波士顿倾斜摄影测量3D ileset瓷砖集。</p>
+<p>如果你在资产列表中没有看见“Aerometrex Denver Photogrammetry”或者“Nearmap Boston Photogrammetry”。访问Cesium ion的资产仓库页，找到其倾斜模型tileset资产，点击“Add to my assert”按钮把他们都加进我的资产中。然后返回到引擎，关闭Cesium ion面板，并且点击Cesium面板上的“Add”按钮重新打开和刷新资产列表。</p>
+<p>5、为了不迷失方向的环绕整个地球飞行。添加一个“FloatingPawn”对象到场景中，并且在其细节面板中设置其“Auto Possess Player”为Player 0。当它绕着地球飞行时，它会调整它的方向，以始终保持合适的向上方向。如果你在查找“FloatingPawn”对象时遇到问题，查阅<a href="">快速入门</a>教程的第3步：<br>
+<img src="/img/cesium/cesium-for-unreal/a37.jpg" alt=""></p>
+<p>  </p>
+<p><strong>步骤3：创建一个地理引用的子关卡</strong>  <br>
+1、现在可以开始创建第一个地理引用子关卡了。首先，将编辑器摄像机移动到您想要构建第一个关卡的位置。这可以通过调整编辑器相机的速度，直接飞到编辑器中指定的位置，或者通过双击你想访问的倾斜模型tileset对象来实现。如果你知道你想要到达的地方在WGS84坐标系统中的位置，你可以直接在CesiumGeoreference对象的详细面板中输入。在这个教程中，我们将在“世界大纲”中双击“Aerometrex Denver”的倾斜模型tileset来快速移动到那，你可以自由选择你的第一个子关卡的任何位置：<br>
+<img src="/img/cesium/cesium-for-unreal/a38.jpg" alt=""></p>
+<p>在飞行或传送到地球上后，地球仪是否会在编辑器的视口中看向一边或上下颠倒? 点击CesiumGeoreference对象详细面板中的“Place Georeference Origin Here”按钮将当前编辑器摄像机位置设置为新的中心位置。但在世界中放置虚幻资产后要小心，如果它们没有正确地进行地理引用，很可能会失去目标位置。为了更全面地了解地理引用和物体放置，请查阅<a href="">Cesium for Unreal object placement</a>教程。</p>
+<p>2、现在你已经处于你大致感兴趣的区域了，把编辑器相机移动到一个具有代表性的、你想要构建子关卡的位置，然后再一次按下“Place Georeference Origin Here”按钮。在此教程中，我们将飞往丹佛市中心这座摩天大楼的屋顶：  <br>
+<img src="/img/cesium/cesium-for-unreal/a39.jpg" alt=""></p>
+<p>3、接下来，返回到“关卡”面板并创建一个新的子关卡。在World文件夹中创建一个名为“Sublevels”子文件夹，并把创建好的新关卡保存到此文件夹中：    <br>
+<img src="/img/cesium/cesium-for-unreal/a28.jfif" alt="">
+创建新的子关卡。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a29.jfif" alt="">
+在World文件夹中创建Sublevels文件夹。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a30.jfif" alt="">
+在Sublevels文件夹中保存子关卡。</p>
+<p>4、在“关卡”面板中，双击并加载新的子关卡。然后，右击子关卡，找到“Assign to Layer”为其选择名为“CesiumLayer”的层（或任何你在步骤1.8中命名的自定义关卡层的名字）：  <br>
+<img src="/img/cesium/cesium-for-unreal/a31.jfif" alt=""></p>
+<p>如果没有将子关卡添加到关闭了“Streaming Distance”属性的关卡层中，你可能会注意到子关卡偶尔会在游戏模式中生成在非常远的地方。如果你在任何时候注意到这一点，检查是否所有的子级别都被正确地放置在你的自定义级别层中，并检查它是否禁用了“Streaming Distance”属性。</p>
+<p>5、此时，子关卡已经创建完成，并且你所要的子关卡的中心位置已在CesiumGeoreference对象上正确设置。要对关卡进行地理引用(即锁定子关卡当前与全局的对齐)，前往CesiumGeoreference对象的“详细”面板并按下“Check for new Sublevels”按钮：<br>
+<img src="/img/cesium/cesium-for-unreal/a40.jpg" alt="">
+通过按下“Check for New Sublevels”来引用子关卡。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a41.jpg" alt="">
+一旦子关卡被成功地地理引用，您应该能够在Cesium Sublevels数组中看到一个新条目。</p>
+<p>6、您现在应该看到一个蓝色的线框球体。球体以子关卡的“中心位置”为中心(即地理引用)，其半径由CesiumGeoreference对象“详细”面板中的“Cesium Sublevels”数组中的“Load Radius”属性决定。这个球体指定了玩家摄像机进入后，加载关卡的区域。你可以根据你自己的需要自由地扩展或缩小“Load Radius”值：<br>
+<img src="/img/cesium/cesium-for-unreal/a42.jpg" alt=""></p>
+<p>  </p>
+<p><strong>步骤4：陷阱规避</strong>   <br>
+当您在使用地理引用子关卡遇到任何问题时，请参考此陷阱列表。</p>
+<p>在一个地理引用子关卡中创建和在Unreal中创建一样的简单，但在开始有趣的部分之前，你需要注意一些潜在的陷阱:</p>
+<p>a、在构建子关卡时，应该避免改变CesiumGeoreference世界的原点。</p>
+<ul>
+<li>在最好的情况下，它将导致一个稍微恼人的子关卡失调，可以通过输入适当的“当前关卡索引”或按下“跳转到当前关卡”来修复。最坏的情况是，最近添加的对象的对齐将完全丢失。</li>
+</ul>
+<p>b、小心不要误改或删除CesiumGeoreference对象Cesium Sublevels数组中的任何子关卡地理引用。</p>
+<ul>
+<li>这样做将导致先前放置在子关卡中的资产不再出现在它们最初放置的位置。</li>
+</ul>
+<p>c、为了检查最近放置的资产有没有被正确的添加到子关卡中，在“关卡”面板中切换子关卡旁边的可见性图标；当关卡隐藏后资产将会消失。</p>
+<ul>
+<li>如果你发现你现在已经把一系列的资产误放入到持久化的关卡而不是子关卡上，选中所有错放的资产，在“关卡”面板上右击需要的子关卡，然后点击“Move Selected Actors to Level”。要特别注意植被，因为它会将自己添加到与其绘制的几何图形相同的关卡中，而这通常会是一个持久的全局关卡。</li>
+</ul>
+<p>d、注意不要把已经被地理引用的对象添加到地理引用的子关卡中。</p>
+<ul>
+<li>尤其注意，不要把Cesium 3D Tileset对象、FloatingPawn、或者其他任何添加了CesiumGeoreferenceComponent组件的对象添加到地理引用的子关卡中。这些应该只放在持久全局关卡中。地理引用子关卡的目的很明确，就是提供一种方法来引用不能以在<a href="">Placing Objects on the Globe tutorial</a>教程中描述的典型方式进行地理引用的资源类型。</li>
+</ul>
+<p>  </p>
+<p><strong>步骤5：在地理引用子关卡内的进行创建：</strong><br>
+1、确保你的子关卡已经加载，并在“关卡”面板中双击它设置为当前关卡。在这个示例中，我们在这座丹佛建筑的屋顶上添加了一些道具和第三人称控制器。你也可以随意的添加自己的角色、汽车、植被、物理对象和游戏逻辑。可以查阅<a href="">adding custom controllers</a>一文获得一些灵感：<br>
+<img src="/img/cesium/cesium-for-unreal/a43.jpg" alt="">
+一个构建在屋顶上简单的虚幻场景。</p>
+<p><img src="/img/cesium/cesium-for-unreal/a44.jpg" alt="">
+使用您自己的任何角色或车辆来探索现实世界的数据。</p>
+<p>2、按下“Play”按钮，然后试着把“FloatingPawn”飞到太空，然后再找到你的子关卡。你可能需要一张地图！</p>
+<p>  </p>
+<p><strong>步骤6：创建多个子关卡：</strong>  <br>
+一旦构建了多个子关卡，地理引用子关卡的真正用处就变得显而易见了。</p>
+<p>1、保存你当前的关卡并创建一个新的。再次检查所有预期资产是否在正确的子关卡中，如果你发现任何资产被放到了错误的关卡中，则根据需要可以在不同关卡之间移动资产，使其放入正确的关卡中。按下“Ctrl + Shift + S”组合键保存所有子关卡和持久化的全局关卡。现在，右击“细节”面板中的子关卡然后选择“Unload”选项：
+<img src="/img/cesium/cesium-for-unreal/a45.jpg" alt=""></p>
+<p>在编辑器中工作时，一次应该只加载一个地理引用的子关卡。如果不同的地理引用子关卡同时被加载并且可见，它们将会令人困惑地在编辑器中相互叠加。这在游戏中倒不是问题。</p>
+<p>2、现在根据需要重复第3步去构建你的下一个子关卡。记住把所有子关卡保存到“Content/World/Sublevels/”目录下。同样，您可以在任何想要的地方构建此子关卡。我们在波士顿的一个足球场上建造了一个子关卡：<br>
+<img src="/img/cesium/cesium-for-unreal/a46.jpg" alt="">
+一个有草，树，角色，车辆和两个立方体的门柱的简单场景。</p>
+<p>3、如果你喜欢你可以自由的创建更多的子关卡。习惯相关的步骤，并记下常见的错误，以在未来避免它们。尝试在美国大峡谷（地名）创建最后一个子关卡。和平常一样，首先确保正确地保存和卸载之前的关卡。然后，把CesiumGeoreference对象的原点设置为以下坐标值：</p>
+<ul>
+<li>原点维度 = 36.056595</li>
+<li>原点经度 = 112.118392</li>
+<li>原点高度 = 2200</li>
+</ul>
+<p>从那里，飞到您想要构建子关卡的特定位置，按下“Place Georeference Origin Here”按钮，然后用通用的方式构建一个新的子关卡：<br>
+<img src="/img/cesium/cesium-for-unreal/a47.jpg" alt="">
+另一个构建子关卡的简单示例。</p>
+<p>  </p>
+<p><strong>下一步：</strong><br>
+在Cesium for Unreal插件提供的全球尺寸的世界中，玩家很容易在漫无目的地飞行时迷失方向。幸运的是，使用Cesium for Unreal插件中的地理参考系统，玩家不仅可以直接确定自己在地球上的位置，还可以朝着目标位置移动。这在使用“FloatingPawn”的飞行功能时特别容易。查看本系列的<a href="https://yunmin97.github.io/posts/cesium/cesium-for-unreal-transition-between-locations-on-the-globe/">下一个教程</a>，了解如何在全局位置之间进行转换。</p>
+<p>  </p>
+<p><strong>&mdash;&mdash; 模糊翻译，水平有限，若有错译，请予指正，<a href="https://cesium.com/learn/unreal/unreal-sublevels/">原文地址</a> &mdash;&mdash;</strong></p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >阅读其他文章</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+            
+              <span class="button next">
+                <a href="/posts/cesium/cesium-for-unreal/3-placing-objects-on-the-globe/">
+                  <span class="button__text">Cesium for Unreal：在地球上放置对象</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">Copyright © 2018 Yunmin</div>
+      
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>
