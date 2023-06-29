@@ -10,10 +10,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © 2018 Yunmin</copyright>
-    <lastBuildDate>Sat, 10 Jul 2021 18:11:30 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 29 Jun 2023 21:27:34 +0800</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>如何创建平衡的游戏经济设计</title>
+      <link>/posts/game-economy/how-to-create-a-well-balanced-game-economy-design/</link>
+      <pubDate>Thu, 29 Jun 2023 21:27:34 +0800</pubDate>
+      
+      <guid>/posts/game-economy/how-to-create-a-well-balanced-game-economy-design/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          你可以拥有完美的游戏经济，但如果游戏很无聊，玩家就不会玩游戏，也不会购买物品...
+          
+        
+        </description>
+    </item>
     
     <item>
       <title>Cesium for Unreal：使用地理引用子关卡构建地球场景</title>
